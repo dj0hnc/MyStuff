@@ -20,6 +20,6 @@ try {
 }
 props = { ...props, ...JSON.parse(extra) };
 
-execFileSync("npx", ["remotion", "render", "TikTokPro", salida, "--concurrency=4", `--props=${JSON.stringify(props)}`], {
+execFileSync("npx", ["remotion", "render", "TikTokPro", salida, "--concurrency=4", "--crf=23", `--props=${JSON.stringify(props)}`], {
   stdio: "inherit",
 });
