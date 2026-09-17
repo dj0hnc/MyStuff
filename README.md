@@ -14,7 +14,7 @@ Opcional:
 - `npm run sonidos` regenera música de fondo y efectos (`public/musica.mp3`, `public/sfx/`).
 - `npm run fondo -- "ciudad de noche"` descarga un video vertical de Pexels como fondo
   y luego pones `fondoVideo: "fondo.mp4"` en los props de `TikTokPro`.
-- `npm run imagen -- "zorro caricatura vector" zorro` genera `public/img/zorro.png` con IA (fal.ai)
+- `npm run imagen -- "zorro caricatura vector" zorro` genera `public/img/zorro.jpg` con IA (gratis con Pollinations, o FLUX si hay saldo en fal.ai)
   y lo usas con `fondoImagen: "img/zorro.png"`.
 - `npm run clip -- "el zorro saluda" --imagen public/img/zorro.png` anima esa imagen a un clip de 5 s
   (`public/clip.mp4`) para usar como `fondoVideo`.
