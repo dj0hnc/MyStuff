@@ -6,6 +6,7 @@ import { fade } from "@remotion/transitions/fade";
 import { z } from "zod";
 import { zColor } from "@remotion/zod-types";
 import { BackgroundPro } from "./BackgroundPro";
+import { ClipsBackground, type Clip } from "./ClipsBackground";
 import { HookPro } from "./HookPro";
 import { CaptionsPro } from "./CaptionsPro";
 import { OutroPro } from "./OutroPro";
@@ -25,11 +26,14 @@ export const tiktokProSchema = z.object({
   efectos: z.boolean().describe("Whoosh y ding en las transiciones"),
   fondoVideo: z.string().describe("Video en public/ para el fondo. Vacío = sin video"),
   palabrasClave: z.array(z.string()).default([]).describe("Palabras que se resaltan con color aunque ya hayan pasado"),
+  fondoClips: z.boolean().describe("Usar la secuencia de clips de public/clips.json (npm run fondo con varias búsquedas, o npm run clips)"),
+  segundosPorClip: z.number().min(1).max(15),
   fondoImagen: z.string().describe("Imagen en public/ para el fondo (ej. img/zorro.png). Vacío = gradiente"),
   // Se llenan solos desde public/voz.json y public/fondo.json
   words: z.array(z.object({ text: z.string(), start: z.number(), end: z.number() })).default([]),
   voiceDuration: z.number().default(0),
   fondoSegundos: z.number().default(10),
+  clips: z.array(z.object({ archivo: z.string(), duracion: z.number() })).default([]),
 });
 
 export type TikTokProProps = z.infer<typeof tiktokProSchema>;
@@ -52,12 +56,18 @@ export const calculateProMetadata: CalculateMetadataFunction<TikTokProProps> = a
     if (f?.ok) fondoSegundos = ((await f.json()) as { duracion: number }).duracion;
   }
 
+  let clips: Clip[] = props.clips;
+  if (props.fondoClips) {
+    const c = await fetch(staticFile("clips.json")).catch(() => null);
+    if (c?.ok) clips = ((await c.json()) as { clips: Clip[] }).clips;
+  }
+
   const hookF = Math.round(HOOK_S * FPS);
   const voiceSeqF = LEAD_F + Math.ceil(voz.duration * FPS) + TAIL_F;
   const outroF = Math.round(OUTRO_S * FPS);
   return {
     durationInFrames: hookF + voiceSeqF + outroF - 2 * TRANS_F,
-    props: { ...props, words: voz.words, voiceDuration: voz.duration, fondoSegundos },
+    props: { ...props, words: voz.words, voiceDuration: voz.duration, fondoSegundos, clips },
   };
 };
 
@@ -82,7 +92,11 @@ export const TikTokPro: React.FC<TikTokProProps> = (p) => {
 
   return (
     <AbsoluteFill style={{ background: p.bgFrom }}>
-      <BackgroundPro from={p.bgFrom} to={p.bgTo} accent={p.accent} video={p.fondoVideo || undefined} videoSeconds={p.fondoSegundos} imagen={p.fondoImagen || undefined} />
+      {p.fondoClips && p.clips.length > 0 ? (
+        <ClipsBackground clips={p.clips} segundosPorClip={p.segundosPorClip} from={p.bgFrom} to={p.bgTo} />
+      ) : (
+        <BackgroundPro from={p.bgFrom} to={p.bgTo} accent={p.accent} video={p.fondoVideo || undefined} videoSeconds={p.fondoSegundos} imagen={p.fondoImagen || undefined} />
+      )}
 
       <TransitionSeries>
         <TransitionSeries.Sequence durationInFrames={hookF}>

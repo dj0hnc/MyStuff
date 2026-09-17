@@ -10,3 +10,4 @@ build
 # Medios grandes regenerables (npm run fondo / npm run clip)
 public/fondo.mp4
 public/clip.mp4
+public/clips/
