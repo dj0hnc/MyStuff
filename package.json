@@ -27,7 +27,9 @@
     "dev": "remotion studio",
     "build": "remotion bundle",
     "upgrade": "remotion upgrade",
-    "lint": "eslint src && tsc"
+    "lint": "eslint src && tsc",
+    "voz": "node --env-file-if-exists=.env scripts/generar-voz.mjs",
+    "voces": "node --env-file-if-exists=.env scripts/listar-voces.mjs"
   },
   "sideEffects": [
     "*.css"
