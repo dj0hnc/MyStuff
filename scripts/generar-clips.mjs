@@ -102,11 +102,13 @@ const pixazo = async (prompt, destino) => {
   if (!key) throw new Error("sin PIXAZO_API_KEY");
   const h = { "Ocp-Apim-Subscription-Key": key, "Content-Type": "application/json" };
   const model = process.env.PIXAZO_MODEL ?? "ltx-video"; // gratis; "ltx-2-5-pro" de pago
-  const r = await fetch(`https://gateway.pixazo.ai/${model}/v1/text-to-video`, {
-    method: "POST",
-    headers: h,
-    body: JSON.stringify({ prompt, aspect_ratio: "9:16", resolution: "720p", duration: Math.min(10, Math.max(6, segundos)) }),
-  });
+  // El modelo gratis ignora aspect_ratio: hay que pedir ancho/alto y cuadros.
+  // Probado: 704x1280 a 24 fps da unos 4.4 s.
+  const body =
+    model === "ltx-video"
+      ? { prompt, width: 704, height: 1280, num_frames: Math.round(segundos * 24) + 1, frame_rate: 24 }
+      : { prompt, aspect_ratio: "9:16", resolution: "720p", duration: Math.min(10, Math.max(6, segundos)) };
+  const r = await fetch(`https://gateway.pixazo.ai/${model}/v1/text-to-video`, { method: "POST", headers: h, body: JSON.stringify(body) });
   if (!r.ok) throw new Error(`pixazo ${r.status}: ${(await r.text()).slice(0, 160)}`);
   const j = await r.json();
   let url = j.output?.media_url?.[0];
@@ -182,28 +184,31 @@ if (orden.length === 0) {
   process.exit(1);
 }
 
-// ---------- generar ----------
+// ---------- generar (hasta 4 clips a la vez) ----------
 await mkdir("public/clips", { recursive: true });
-const clips = [];
-for (let i = 0; i < prompts.length; i++) {
+const PARALELO = Number(process.env.CLIPS_PARALELO ?? 4);
+const generarUno = async (i) => {
   const destino = `public/clips/${String(i + 1).padStart(2, "0")}.mp4`;
-  console.log(`\n[${i + 1}/${prompts.length}] ${prompts[i]}`);
-  let ok = false;
+  console.log(`[${i + 1}/${prompts.length}] ${prompts[i]}`);
   for (const nombre of orden) {
     try {
-      process.stdout.write(`  ${nombre}... `);
       await PROVEEDORES[nombre](prompts[i], destino);
       const d = duracionDe(destino);
-      clips.push({ prompt: prompts[i], archivo: destino.replace("public/", ""), duracion: d, proveedor: nombre });
-      console.log(`ok (${d.toFixed(1)} s)`);
-      ok = true;
-      break;
+      console.log(`[${i + 1}] ${nombre} ok (${d.toFixed(1)} s)`);
+      return { prompt: prompts[i], archivo: destino.replace("public/", ""), duracion: d, proveedor: nombre, orden: i };
     } catch (e) {
-      console.log(`no: ${e.message.split("\n")[0]}`);
+      console.log(`[${i + 1}] ${nombre} no: ${e.message.split("\n")[0]}`);
     }
   }
-  if (!ok) console.warn("  ningún proveedor pudo con esta escena, se salta.");
+  console.warn(`[${i + 1}] ningún proveedor pudo con esta escena, se salta.`);
+  return null;
+};
+const resultados = [];
+for (let i = 0; i < prompts.length; i += PARALELO) {
+  const lote = Array.from({ length: Math.min(PARALELO, prompts.length - i) }, (_, k) => generarUno(i + k));
+  resultados.push(...(await Promise.all(lote)));
 }
+const clips = resultados.filter(Boolean).sort((a, b) => a.orden - b.orden).map(({ orden: _o, ...c }) => c);
 
 await writeFile("public/clips.json", JSON.stringify({ fuente: "ia", clips }, null, 2));
 console.log(`\nListo: ${clips.length}/${prompts.length} clips en public/clips/. Renderiza con: npm run video -- out/video.mp4 '{"fondoClips":true}'`);

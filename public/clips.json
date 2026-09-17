@@ -1,37 +1,29 @@
 {
-  "fuente": "pexels",
+  "fuente": "ia",
   "clips": [
     {
-      "query": "frustrated man closing laptop",
-      "id": 7263093,
-      "autor": "MART  PRODUCTION",
-      "url": "https://www.pexels.com/video/an-angry-man-talking-in-a-video-call-7263093/",
-      "duracion": 26,
-      "archivo": "clips/01.mp4"
+      "prompt": "Cinematic 9:16 vertical shot. Over-the-shoulder view of a person excitedly sketching ideas in a blank notebook. Bright, warm morning sunlight streaming through a window. Smooth slow-motion zoom.",
+      "archivo": "clips/01.mp4",
+      "duracion": 4.375,
+      "proveedor": "pixazo"
     },
     {
-      "query": "person staring at clock anxious",
-      "id": 8322005,
-      "autor": "Tima Miroshnichenko",
-      "url": "https://www.pexels.com/video/person-posing-with-a-clock-on-her-face-8322005/",
-      "duracion": 17,
-      "archivo": "clips/02.mp4"
+      "prompt": "Cinematic 9:16 vertical shot. Close-up of a stressed person rubbing their temples in front of a glowing laptop screen. Moody, dim blue-hour lighting. Handheld camera with subtle, anxious movement.",
+      "archivo": "clips/02.mp4",
+      "duracion": 4.375,
+      "proveedor": "pixazo"
     },
     {
-      "query": "someone writing notebook focused",
-      "id": 39425782,
-      "autor": "Sergei Starostin",
-      "url": "https://www.pexels.com/video/focused-study-session-with-laptop-and-notebook-39425782/",
-      "duracion": 28,
-      "archivo": "clips/03.mp4"
+      "prompt": "Cinematic 9:16 vertical shot. Slow-motion side profile of a person closing a laptop and walking away from a messy desk. Dramatic side-lighting casting long shadows. Smooth tracking shot backwards.",
+      "archivo": "clips/03.mp4",
+      "duracion": 4.375,
+      "proveedor": "pixazo"
     },
     {
-      "query": "person running sunrise",
-      "id": 19523592,
-      "autor": "Zakhar Vozhdaienko",
-      "url": "https://www.pexels.com/video/running-boy-19523592/",
-      "duracion": 26,
-      "archivo": "clips/04.mp4"
+      "prompt": "Cinematic 9:16 vertical shot. Close-up of a person's hands gently closing a small daily planner with a sense of completion. Soft, warm golden-hour lighting. Slow-motion steady shot with shallow depth of field.",
+      "archivo": "clips/04.mp4",
+      "duracion": 4.375,
+      "proveedor": "pixazo"
     }
   ]
 }
