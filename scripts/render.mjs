@@ -13,7 +13,7 @@ const [salida = "out/tiktok-pro.mp4", extra = "{}"] = process.argv.slice(2);
 let props = {};
 try {
   const g = JSON.parse(await readFile("public/guion.json", "utf8"));
-  props = { hook: g.hook, kicker: g.kicker, cta: g.cta };
+  props = { hook: g.hook, kicker: g.kicker, cta: g.cta, palabrasClave: g.palabrasClave ?? [] };
   console.log(`Usando guion.json: "${g.hook}" / ${g.kicker} / "${g.cta}"`);
 } catch {
   console.log("Sin public/guion.json, uso los props por defecto de Root.tsx");

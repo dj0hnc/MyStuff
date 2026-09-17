@@ -8,6 +8,7 @@
   "dependencies": {
     "@remotion/cli": "4.0.525",
     "@remotion/fonts": "^4.0.525",
+    "@remotion/install-whisper-cpp": "^4.0.525",
     "@remotion/media-utils": "^4.0.525",
     "@remotion/noise": "^4.0.525",
     "@remotion/tailwind-v4": "4.0.525",
@@ -40,7 +41,8 @@
     "imagen": "node --env-file-if-exists=.env scripts/generar-imagen.mjs",
     "clip": "node --env-file-if-exists=.env scripts/generar-clip-ia.mjs",
     "guion": "node --env-file-if-exists=.env scripts/generar-guion.mjs",
-    "video": "node scripts/render.mjs"
+    "video": "node scripts/render.mjs",
+    "revisar": "node --env-file-if-exists=.env scripts/revisar-video.mjs"
   },
   "sideEffects": [
     "*.css"

@@ -29,9 +29,14 @@ export const BackgroundPro: React.FC<Props> = ({ from, to, accent, video, videoS
   const b3 = blob("c", [50, 95], 12);
 
   const grainShift = (frame % 7) * 37;
+  // Cámara: zoom y paneo muy lentos, cambian de dirección cada ~4 s.
+  const camScale = 1.04 + Math.sin(t * 0.8) * 0.03;
+  const camX = noise2D("camx", t * 0.15, 0) * 18;
+  const camY = noise2D("camy", 0, t * 0.15) * 18;
 
   return (
     <AbsoluteFill style={{ background: `linear-gradient(160deg, ${from} 0%, ${to} 100%)` }}>
+      <AbsoluteFill style={{ transform: `scale(${camScale}) translate(${camX}px, ${camY}px)` }}>
       {imagen && !video ? (
         <AbsoluteFill>
           <Img
@@ -103,6 +108,7 @@ export const BackgroundPro: React.FC<Props> = ({ from, to, accent, video, videoS
         </svg>
       </AbsoluteFill>
 
+      </AbsoluteFill>
       <AbsoluteFill style={{ background: "radial-gradient(ellipse at center, rgba(0,0,0,0) 55%, rgba(0,0,0,0.45) 100%)" }} />
     </AbsoluteFill>
   );

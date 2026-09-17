@@ -8,7 +8,12 @@ subtítulos sincronizados palabra por palabra, música, efectos y fondo animado.
 1. Escribe el guion en `public/guion.txt`, una frase por línea, o pídeselo a Gemini:
    `npm run guion -- "3 hábitos para dormir mejor"` (gratis, también propone gancho y CTA).
 2. `npm run voz` genera `public/voz.mp3` y `public/voz.json` (tiempos por palabra).
-3. `npm run render` renderiza `out/tiktok-pro.mp4`, listo para subir.
+   Usa ElevenLabs; si se acaba la cuota pasa solo a la voz gratis de Gemini y saca
+   los tiempos con Whisper local.
+3. `npm run video` renderiza `out/tiktok-pro.mp4` con el gancho, etiqueta, CTA y
+   palabras clave del guion. Listo para subir.
+4. `npm run revisar` sube el video a Gemini y devuelve una crítica de editor con
+   los 3 cambios de más impacto (`out/revision.md`).
 
 Opcional:
 
@@ -20,6 +25,8 @@ Opcional:
 - `npm run clip -- "el zorro saluda" --imagen public/img/zorro.png` anima esa imagen a un clip de 5 s
   (`public/clip.mp4`) para usar como `fondoVideo`.
 - `npm run voces` lista las voces de tu cuenta para elegir otra en `.env`.
+- `node scripts/whisper.mjs public/mi-audio.mp3` saca tiempos por palabra de cualquier audio
+  (una grabación tuya, por ejemplo) para usarlo como voz del video.
 - `npm run dev` abre Remotion Studio para ver y editar en vivo.
 
 ## Composiciones (`src/Root.tsx`)
@@ -40,7 +47,8 @@ Copia `.env.example` a `.env` y llena:
 - `ELEVENLABS_API_KEY` para voz, efectos y música en loop (plan gratuito).
 - `PEXELS_API_KEY` para fondos de video de stock (gratis en pexels.com/api).
 - `FAL_KEY` para imágenes y video con IA (fal.ai, prepago; requiere saldo).
-- `GEMINI_API_KEY` para guiones (gratis) e imágenes Nano Banana (requiere facturación).
+- `GEMINI_API_KEY` para guiones, voz, revisión de video y análisis de imágenes (gratis).
+  Imágenes Nano Banana, música Lyria y video Veo requieren facturación activa.
 
 `.env` está ignorado por git.
 

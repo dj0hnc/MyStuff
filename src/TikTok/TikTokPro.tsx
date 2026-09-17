@@ -24,6 +24,7 @@ export const tiktokProSchema = z.object({
   volumenMusica: z.number().min(0).max(1),
   efectos: z.boolean().describe("Whoosh y ding en las transiciones"),
   fondoVideo: z.string().describe("Video en public/ para el fondo. Vacío = sin video"),
+  palabrasClave: z.array(z.string()).default([]).describe("Palabras que se resaltan con color aunque ya hayan pasado"),
   fondoImagen: z.string().describe("Imagen en public/ para el fondo (ej. img/zorro.png). Vacío = gradiente"),
   // Se llenan solos desde public/voz.json y public/fondo.json
   words: z.array(z.object({ text: z.string(), start: z.number(), end: z.number() })).default([]),
@@ -93,7 +94,7 @@ export const TikTokPro: React.FC<TikTokProProps> = (p) => {
         <TransitionSeries.Sequence durationInFrames={voiceSeqF}>
           <Sequence from={LEAD_F}>
             <Audio src={staticFile("voz.mp3")} />
-            <CaptionsPro words={p.words} accent={p.accent} voiceSrc="voz.mp3" />
+            <CaptionsPro words={p.words} accent={p.accent} voiceSrc="voz.mp3" keywords={p.palabrasClave} />
           </Sequence>
         </TransitionSeries.Sequence>
 

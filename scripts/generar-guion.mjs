@@ -37,7 +37,8 @@ Responde SOLO con JSON válido, sin markdown, con esta forma:
   "hook": "título de máximo 6 palabras que aparece en pantalla al inicio",
   "kicker": "una palabra en mayúsculas para la etiqueta sobre el título, ej. ATENCIÓN, DATO, OJO",
   "cta": "llamado a la acción de máximo 4 palabras, ej. Sígueme para más",
-  "frases": ["frase 1", "frase 2", "..."]
+  "frases": ["frase 1", "frase 2", "..."],
+  "palabrasClave": ["las 6 a 10 palabras del guion con más fuerza emocional, tal como aparecen en las frases"]
 }`;
 
 console.log(`Escribiendo guion sobre "${tema}" con ${model}...`);
@@ -58,6 +59,6 @@ await writeFile("public/guion.txt", data.frases.join("\n") + "\n");
 await writeFile("public/guion.json", JSON.stringify({ tema, ...data }, null, 2));
 
 const total = data.frases.join(" ").split(/\s+/).length;
-console.log(`\nKicker: ${data.kicker}\nHook:   ${data.hook}\nCTA:    ${data.cta}\n`);
+console.log(`\nKicker: ${data.kicker}\nHook:   ${data.hook}\nCTA:    ${data.cta}\nClave:  ${(data.palabrasClave ?? []).join(", ")}\n`);
 data.frases.forEach((f, i) => console.log(`${i + 1}. ${f}`));
 console.log(`\n${total} palabras -> public/guion.txt y public/guion.json. Siguiente: npm run voz`);
