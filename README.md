@@ -14,6 +14,10 @@ Opcional:
 - `npm run sonidos` regenera música de fondo y efectos (`public/musica.mp3`, `public/sfx/`).
 - `npm run fondo -- "ciudad de noche"` descarga un video vertical de Pexels como fondo
   y luego pones `fondoVideo: "fondo.mp4"` en los props de `TikTokPro`.
+- `npm run imagen -- "zorro caricatura vector" zorro` genera `public/img/zorro.png` con IA (fal.ai)
+  y lo usas con `fondoImagen: "img/zorro.png"`.
+- `npm run clip -- "el zorro saluda" --imagen public/img/zorro.png` anima esa imagen a un clip de 5 s
+  (`public/clip.mp4`) para usar como `fondoVideo`.
 - `npm run voces` lista las voces de tu cuenta para elegir otra en `.env`.
 - `npm run dev` abre Remotion Studio para ver y editar en vivo.
 
@@ -34,6 +38,7 @@ Copia `.env.example` a `.env` y llena:
 
 - `ELEVENLABS_API_KEY` para voz, efectos y música en loop (plan gratuito).
 - `PEXELS_API_KEY` para fondos de video de stock (gratis en pexels.com/api).
+- `FAL_KEY` para imágenes y video con IA (fal.ai, prepago; requiere saldo).
 
 `.env` está ignorado por git.
 

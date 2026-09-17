@@ -23,7 +23,8 @@ export const tiktokProSchema = z.object({
   musica: z.boolean().describe("Música de fondo (public/musica.mp3)"),
   volumenMusica: z.number().min(0).max(1),
   efectos: z.boolean().describe("Whoosh y ding en las transiciones"),
-  fondoVideo: z.string().describe("Archivo en public/ para el fondo. Vacío = gradiente animado"),
+  fondoVideo: z.string().describe("Video en public/ para el fondo. Vacío = sin video"),
+  fondoImagen: z.string().describe("Imagen en public/ para el fondo (ej. img/zorro.png). Vacío = gradiente"),
   // Se llenan solos desde public/voz.json y public/fondo.json
   words: z.array(z.object({ text: z.string(), start: z.number(), end: z.number() })).default([]),
   voiceDuration: z.number().default(0),
@@ -80,7 +81,7 @@ export const TikTokPro: React.FC<TikTokProProps> = (p) => {
 
   return (
     <AbsoluteFill style={{ background: p.bgFrom }}>
-      <BackgroundPro from={p.bgFrom} to={p.bgTo} accent={p.accent} video={p.fondoVideo || undefined} videoSeconds={p.fondoSegundos} />
+      <BackgroundPro from={p.bgFrom} to={p.bgTo} accent={p.accent} video={p.fondoVideo || undefined} videoSeconds={p.fondoSegundos} imagen={p.fondoImagen || undefined} />
 
       <TransitionSeries>
         <TransitionSeries.Sequence durationInFrames={hookF}>

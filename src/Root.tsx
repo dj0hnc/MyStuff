@@ -52,6 +52,7 @@ export const RemotionRoot: React.FC = () => {
           volumenMusica: 0.22,
           efectos: true,
           fondoVideo: "",
+          fondoImagen: "",
           words: [],
           voiceDuration: 0,
           fondoSegundos: 10,

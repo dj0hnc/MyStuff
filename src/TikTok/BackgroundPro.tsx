@@ -1,4 +1,4 @@
-import { AbsoluteFill, Loop, OffthreadVideo, interpolate, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
+import { AbsoluteFill, Img, Loop, OffthreadVideo, interpolate, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { noise2D } from "@remotion/noise";
 
 type Props = {
@@ -7,6 +7,7 @@ type Props = {
   readonly accent: string;
   readonly video?: string; // archivo en public/, vacío = sin video
   readonly videoSeconds?: number;
+  readonly imagen?: string; // archivo en public/, vacío = sin imagen
 };
 
 const PARTICLES = 28;
@@ -14,7 +15,7 @@ const PARTICLES = 28;
 // Fondo "pro": gradiente + manchas que flotan con ruido orgánico + partículas
 // + grano fino. Si hay video de stock, va debajo con una capa oscura encima
 // para que el texto siga legible.
-export const BackgroundPro: React.FC<Props> = ({ from, to, accent, video, videoSeconds }) => {
+export const BackgroundPro: React.FC<Props> = ({ from, to, accent, video, videoSeconds, imagen }) => {
   const frame = useCurrentFrame();
   const { width, height, fps } = useVideoConfig();
   const t = frame / fps;
@@ -31,6 +32,21 @@ export const BackgroundPro: React.FC<Props> = ({ from, to, accent, video, videoS
 
   return (
     <AbsoluteFill style={{ background: `linear-gradient(160deg, ${from} 0%, ${to} 100%)` }}>
+      {imagen && !video ? (
+        <AbsoluteFill>
+          <Img
+            src={staticFile(imagen)}
+            style={{
+              width,
+              height,
+              objectFit: "cover",
+              transform: `scale(${1.05 + t * 0.006})`, // zoom lento tipo Ken Burns
+            }}
+          />
+          <AbsoluteFill style={{ background: `linear-gradient(180deg, ${from}99 0%, rgba(0,0,0,0.25) 45%, ${to}B3 100%)` }} />
+        </AbsoluteFill>
+      ) : null}
+
       {video ? (
         <AbsoluteFill>
           <Loop durationInFrames={Math.max(1, Math.round((videoSeconds ?? 10) * fps))}>

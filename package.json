@@ -36,7 +36,9 @@
     "voces": "node --env-file-if-exists=.env scripts/listar-voces.mjs",
     "sonidos": "node --env-file-if-exists=.env scripts/generar-sonidos.mjs",
     "fondo": "node --env-file-if-exists=.env scripts/buscar-fondo.mjs",
-    "render": "remotion render TikTokPro out/tiktok-pro.mp4"
+    "render": "remotion render TikTokPro out/tiktok-pro.mp4",
+    "imagen": "node --env-file-if-exists=.env scripts/generar-imagen.mjs",
+    "clip": "node --env-file-if-exists=.env scripts/generar-clip-ia.mjs"
   },
   "sideEffects": [
     "*.css"
