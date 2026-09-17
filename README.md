@@ -26,7 +26,7 @@ Opcional:
   (`public/clip.mp4`) para usar como `fondoVideo`.
 - `npm run fondo -- "escena 1" "escena 2" "escena 3"` baja varios clips de Pexels a `public/clips/`.
 - `npm run clips -- --auto 5` genera 5 clips cortos con IA (Gemini inventa las escenas a partir
-  del guion; Pixazo, free.ai, Pollinations o fal.ai los generan, gratis los tres primeros).
+  del guion; ModelScope, Pixazo, free.ai, Pollinations o fal.ai los generan, gratis los cuatro primeros).
 - Con clips en `public/clips.json`, renderiza con `fondoClips: true`: el video los va cortando
   cada 3.5 s con fundido y zoom (`segundosPorClip` lo ajusta).
 - `npm run voces` lista las voces de tu cuenta para elegir otra en `.env`.

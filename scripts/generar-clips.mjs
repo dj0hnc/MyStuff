@@ -7,11 +7,12 @@
 // Crea: public/clips/01.mp4 ...  y  public/clips.json
 //
 // Proveedores (todos con clave en .env):
+//   modelscope   MODELSCOPE_TOKEN     Wan 2.2 gratis, cuota diaria (unos 2000 llamados/día). https://modelscope.cn/my/myaccesstoken
 //   pixazo       PIXAZO_API_KEY       LTX 2.5 gratis en preview, sin tarjeta.  https://api-console.pixazo.ai/api_keys
 //   freeai       FREEAI_API_KEY       30,000 tokens/día (unos 2-3 clips).       https://free.ai/signup/
 //   pollinations POLLINATIONS_API_KEY Muchos modelos (Wan, Seedance, Grok, Veo) por "pollen". https://enter.pollinations.ai
 //   fal          FAL_KEY              Prepago.                                 https://fal.ai
-// Fuerza uno con CLIPS_PROVEEDOR=pixazo|freeai|pollinations|fal. Duración por clip: CLIPS_SEGUNDOS (5).
+// Fuerza uno con CLIPS_PROVEEDOR=modelscope|pixazo|freeai|pollinations|fal. Duración por clip: CLIPS_SEGUNDOS (5).
 
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
@@ -69,6 +70,33 @@ if (!prompts?.length) {
 }
 
 // ---------- proveedores ----------
+const modelscope = async (prompt, destino) => {
+  const token = process.env.MODELSCOPE_TOKEN;
+  if (!token) throw new Error("sin MODELSCOPE_TOKEN");
+  const base = "https://api-inference.modelscope.cn/v1";
+  const h = { Authorization: `Bearer ${token}`, "Content-Type": "application/json" };
+  const model = process.env.MODELSCOPE_VIDEO_MODEL ?? "Wan-AI/Wan2.2-T2V-A14B";
+  const r = await fetch(`${base}/videos/generations`, {
+    method: "POST",
+    headers: { ...h, "X-ModelScope-Async-Mode": "true" },
+    body: JSON.stringify({ model, prompt, size: "720*1280", duration: segundos }),
+  });
+  if (!r.ok) throw new Error(`modelscope ${r.status}: ${(await r.text()).slice(0, 160)}`);
+  const j = await r.json();
+  const taskId = j.task_id ?? j.id;
+  let url = j.output?.video_url ?? j.output_videos?.[0] ?? j.video_url;
+  for (let i = 0; !url && taskId && i < 120; i++) {
+    await espera(5000);
+    const s = await (await fetch(`${base}/tasks/${taskId}`, { headers: { ...h, "X-ModelScope-Task-Type": "video_generation" } })).json();
+    const st = (s.task_status ?? s.status ?? "").toUpperCase();
+    if (/SUCCE/.test(st)) url = s.output?.video_url ?? s.output_videos?.[0] ?? s.video_url ?? s.output?.videos?.[0];
+    if (/FAIL|ERROR|CANCEL/.test(st)) throw new Error(`modelscope falló: ${JSON.stringify(s).slice(0, 160)}`);
+    if (/SUCCE/.test(st)) break;
+  }
+  if (!url) throw new Error("modelscope: sin video tras esperar");
+  await guardar(url, destino);
+};
+
 const pixazo = async (prompt, destino) => {
   const key = process.env.PIXAZO_API_KEY;
   if (!key) throw new Error("sin PIXAZO_API_KEY");
@@ -138,18 +166,19 @@ const fal = async (prompt, destino) => {
   await descargar(url, destino);
 };
 
-const PROVEEDORES = { pixazo, freeai, pollinations, fal };
+const PROVEEDORES = { modelscope, pixazo, freeai, pollinations, fal };
 const forzado = process.env.CLIPS_PROVEEDOR;
 const orden = forzado
   ? [forzado]
   : [
+      process.env.MODELSCOPE_TOKEN && "modelscope",
       process.env.PIXAZO_API_KEY && "pixazo",
       process.env.FREEAI_API_KEY && "freeai",
       process.env.POLLINATIONS_API_KEY && "pollinations",
       process.env.FAL_KEY && "fal",
     ].filter(Boolean);
 if (orden.length === 0) {
-  console.error("No hay ninguna clave de video en .env (PIXAZO_API_KEY, FREEAI_API_KEY, POLLINATIONS_API_KEY o FAL_KEY).");
+  console.error("No hay ninguna clave de video en .env (MODELSCOPE_TOKEN, PIXAZO_API_KEY, FREEAI_API_KEY, POLLINATIONS_API_KEY o FAL_KEY).");
   process.exit(1);
 }
 
