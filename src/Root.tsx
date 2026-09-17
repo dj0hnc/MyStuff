@@ -1,44 +1,54 @@
 import "./index.css";
 import { Composition } from "remotion";
-import { HelloWorld } from "./HelloWorld";
-import { Logo } from "./HelloWorld/Logo";
+import { TikTokVideo } from "./TikTok/TikTokVideo";
+import { tiktokSchema } from "./TikTok/schema";
 
-// Each <Composition> is an entry in the sidebar!
+// Cada <Composition> aparece en la barra lateral de Remotion Studio.
+// Para renderizar: npx remotion render TikTok out/tiktok.mp4
+
+const ejemplo = {
+  hook: "3 cosas que nadie te dice",
+  phrases: [
+    "La primera es que empezar",
+    "es más fácil de lo que crees",
+    "La segunda es que nadie",
+    "está mirando tan de cerca",
+    "Y la tercera",
+    "es que ya vas tarde",
+    "así que hazlo hoy",
+  ],
+  handle: "@juanjo",
+  cta: "Sígueme para más",
+  accent: "#FFE600",
+  bgFrom: "#5B21B6",
+  bgTo: "#EC4899",
+};
 
 export const RemotionRoot: React.FC = () => {
   return (
     <>
+      {/* Vertical 9:16 para TikTok, Reels y Shorts */}
       <Composition
-        // You can take the "id" to render a video:
-        // npx remotion render HelloWorld
-        id="HelloWorld"
-        component={HelloWorld}
-        durationInFrames={150}
+        id="TikTok"
+        component={TikTokVideo}
+        schema={tiktokSchema}
+        durationInFrames={30 * 12}
         fps={30}
-        width={1920}
-        height={1080}
-        // You can override these props for each render:
-        // https://www.remotion.dev/docs/parametrized-rendering
-        defaultProps={{
-          titleText: "Welcome to Remotion",
-          titleColor: "#000000",
-          logoColor1: "#91EAE4",
-          logoColor2: "#86A8E7",
-        }}
+        width={1080}
+        height={1920}
+        defaultProps={ejemplo}
       />
 
-      {/* Mount any React component to make it show up in the sidebar and work on it individually! */}
+      {/* El mismo componente en 16:9 para YouTube */}
       <Composition
-        id="OnlyLogo"
-        component={Logo}
-        durationInFrames={150}
+        id="YouTube"
+        component={TikTokVideo}
+        schema={tiktokSchema}
+        durationInFrames={30 * 12}
         fps={30}
         width={1920}
         height={1080}
-        defaultProps={{
-          logoColor1: "#91dAE2",
-          logoColor2: "#86A8E7",
-        }}
+        defaultProps={ejemplo}
       />
     </>
   );
