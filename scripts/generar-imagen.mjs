@@ -7,7 +7,10 @@
 //   pollinations  gratis, sin clave. Calidad media. Es el que se usa si no hay FAL_KEY
 //                 o si fal.ai no tiene saldo.
 //   fal           FLUX en fal.ai, mejor calidad, cuesta fracciones de centavo. Requiere FAL_KEY con saldo.
-// Fuerza uno con IMAGEN_PROVEEDOR=pollinations|fal en .env.
+//   gemini        Nano Banana (Gemini Flash Image). Excelente calidad y texto legible. Requiere
+//                 GEMINI_API_KEY con facturación activa (el nivel gratis no incluye imágenes).
+// Orden automático: gemini si hay clave, luego fal, luego pollinations. Si uno falla por cuota o
+// saldo, pasa al siguiente. Fuerza uno con IMAGEN_PROVEEDOR=gemini|fal|pollinations en .env.
 
 import { mkdir, writeFile, rename } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
@@ -65,16 +68,39 @@ const conFal = async () => {
   return destino;
 };
 
-const proveedor = process.env.IMAGEN_PROVEEDOR ?? (process.env.FAL_KEY ? "fal" : "pollinations");
+const conGemini = async () => {
+  const { generateContent, imagenDe } = await import("./gemini.mjs");
+  const model = process.env.GEMINI_IMAGEN_MODEL ?? "gemini-2.5-flash-image";
+  console.log(`Generando con ${model} (Nano Banana)...`);
+  const out = await generateContent(model, {
+    contents: [{ parts: [{ text: prompt }] }],
+    generationConfig: { responseModalities: ["IMAGE"], imageConfig: { aspectRatio: horizontal ? "16:9" : "9:16" } },
+  });
+  const img = imagenDe(out);
+  if (!img) throw new Error("Gemini no devolvió imagen");
+  const ext = img.inlineData.mimeType.includes("jpeg") ? "jpg" : "png";
+  const destino = `public/img/${nombre}.${ext}`;
+  await writeFile(destino, Buffer.from(img.inlineData.data, "base64"));
+  return destino;
+};
+
+const PROVEEDORES = { gemini: conGemini, fal: conFal, pollinations: conPollinations };
+const forzado = process.env.IMAGEN_PROVEEDOR;
+const orden = forzado
+  ? [forzado]
+  : [process.env.GEMINI_API_KEY && "gemini", process.env.FAL_KEY && "fal", "pollinations"].filter(Boolean);
+
 let destino;
-if (proveedor === "fal") {
+for (const nombreProv of orden) {
   try {
-    destino = await conFal();
+    destino = await PROVEEDORES[nombreProv]();
+    break;
   } catch (e) {
-    console.warn(`fal.ai no disponible (${e.message.split("\n")[0]}). Usando Pollinations gratis.`);
-    destino = await conPollinations();
+    console.warn(`${nombreProv} no disponible: ${e.message.split("\n")[0]}`);
   }
-} else {
-  destino = await conPollinations();
+}
+if (!destino) {
+  console.error("Ningún proveedor pudo generar la imagen.");
+  process.exit(1);
 }
 console.log(`Listo: ${destino}. Úsala con fondoImagen: "${destino.replace("public/", "")}"`);

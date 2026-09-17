@@ -5,7 +5,8 @@ subtítulos sincronizados palabra por palabra, música, efectos y fondo animado.
 
 ## Flujo normal
 
-1. Escribe el guion en `public/guion.txt`, una frase por línea.
+1. Escribe el guion en `public/guion.txt`, una frase por línea, o pídeselo a Gemini:
+   `npm run guion -- "3 hábitos para dormir mejor"` (gratis, también propone gancho y CTA).
 2. `npm run voz` genera `public/voz.mp3` y `public/voz.json` (tiempos por palabra).
 3. `npm run render` renderiza `out/tiktok-pro.mp4`, listo para subir.
 
@@ -39,6 +40,7 @@ Copia `.env.example` a `.env` y llena:
 - `ELEVENLABS_API_KEY` para voz, efectos y música en loop (plan gratuito).
 - `PEXELS_API_KEY` para fondos de video de stock (gratis en pexels.com/api).
 - `FAL_KEY` para imágenes y video con IA (fal.ai, prepago; requiere saldo).
+- `GEMINI_API_KEY` para guiones (gratis) e imágenes Nano Banana (requiere facturación).
 
 `.env` está ignorado por git.
 

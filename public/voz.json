@@ -1,220 +1,310 @@
 {
-  "duration": 12.864,
+  "duration": 25.31,
   "words": [
     {
-      "text": "Hay",
+      "text": "Empiezas",
       "start": 0,
-      "end": 0.151
+      "end": 0.453
+    },
+    {
+      "text": "un",
+      "start": 0.522,
+      "end": 0.569
+    },
+    {
+      "text": "proyecto",
+      "start": 0.604,
+      "end": 0.975
+    },
+    {
+      "text": "con",
+      "start": 1.022,
+      "end": 1.149
+    },
+    {
+      "text": "ganas,",
+      "start": 1.219,
+      "end": 1.776
+    },
+    {
+      "text": "pero",
+      "start": 2.101,
+      "end": 2.31
+    },
+    {
+      "text": "a",
+      "start": 2.345,
+      "end": 2.368
+    },
+    {
+      "text": "los",
+      "start": 2.403,
+      "end": 2.543
     },
     {
       "text": "tres",
-      "start": 0.197,
-      "end": 0.383
+      "start": 2.601,
+      "end": 2.798
     },
     {
-      "text": "cosas",
-      "start": 0.441,
-      "end": 0.697
-    },
-    {
-      "text": "que",
-      "start": 0.743,
-      "end": 0.813
-    },
-    {
-      "text": "nadie",
-      "start": 0.882,
-      "end": 1.126
-    },
-    {
-      "text": "te",
-      "start": 1.173,
-      "end": 1.242
-    },
-    {
-      "text": "dice",
-      "start": 1.289,
-      "end": 1.509
-    },
-    {
-      "text": "cuando",
-      "start": 1.544,
-      "end": 1.765
-    },
-    {
-      "text": "empiezas.",
-      "start": 1.788,
-      "end": 2.415
-    },
-    {
-      "text": "La",
-      "start": 3.019,
-      "end": 3.135
-    },
-    {
-      "text": "primera",
-      "start": 3.17,
-      "end": 3.495
-    },
-    {
-      "text": "es",
-      "start": 3.518,
-      "end": 3.564
-    },
-    {
-      "text": "que",
-      "start": 3.611,
-      "end": 3.68
-    },
-    {
-      "text": "empezar",
-      "start": 3.704,
-      "end": 4.11
-    },
-    {
-      "text": "es",
-      "start": 4.156,
-      "end": 4.214
-    },
-    {
-      "text": "más",
-      "start": 4.284,
-      "end": 4.447
-    },
-    {
-      "text": "fácil",
-      "start": 4.528,
-      "end": 4.841
-    },
-    {
-      "text": "de",
-      "start": 4.899,
-      "end": 4.946
+      "text": "días",
+      "start": 2.856,
+      "end": 3.111
     },
     {
       "text": "lo",
-      "start": 4.992,
-      "end": 5.062
+      "start": 3.181,
+      "end": 3.274
     },
     {
-      "text": "que",
-      "start": 5.108,
-      "end": 5.19
+      "text": "abandonas.",
+      "start": 3.32,
+      "end": 4.075
     },
     {
-      "text": "crees.",
-      "start": 5.224,
-      "end": 5.7
-    },
-    {
-      "text": "La",
-      "start": 6.397,
-      "end": 6.513
-    },
-    {
-      "text": "segunda",
-      "start": 6.56,
-      "end": 7.059
+      "text": "No",
+      "start": 4.772,
+      "end": 4.923
     },
     {
       "text": "es",
-      "start": 7.303,
-      "end": 7.442
+      "start": 4.969,
+      "end": 5.016
     },
     {
-      "text": "que",
-      "start": 7.488,
-      "end": 7.558
-    },
-    {
-      "text": "nadie",
-      "start": 7.651,
-      "end": 7.918
-    },
-    {
-      "text": "está",
-      "start": 7.941,
-      "end": 8.104
-    },
-    {
-      "text": "mirando",
-      "start": 8.162,
-      "end": 8.464
-    },
-    {
-      "text": "tan",
-      "start": 8.533,
-      "end": 8.696
+      "text": "falta",
+      "start": 5.085,
+      "end": 5.352
     },
     {
       "text": "de",
-      "start": 8.742,
-      "end": 8.812
+      "start": 5.399,
+      "end": 5.468
     },
     {
-      "text": "cerca.",
-      "start": 8.847,
-      "end": 9.311
+      "text": "disciplina",
+      "start": 5.515,
+      "end": 6.049
     },
     {
-      "text": "Y",
-      "start": 9.915,
-      "end": 9.996
+      "text": "ni",
+      "start": 6.095,
+      "end": 6.177
     },
     {
-      "text": "la",
-      "start": 10.077,
-      "end": 10.136
+      "text": "de",
+      "start": 6.223,
+      "end": 6.293
     },
     {
-      "text": "tercera",
-      "start": 10.194,
-      "end": 10.553
+      "text": "tiempo,",
+      "start": 6.339,
+      "end": 6.966
     },
     {
       "text": "es",
+      "start": 7.175,
+      "end": 7.326
+    },
+    {
+      "text": "adicción",
+      "start": 7.384,
+      "end": 7.895
+    },
+    {
+      "text": "a",
+      "start": 7.964,
+      "end": 8.011
+    },
+    {
+      "text": "la",
+      "start": 8.057,
+      "end": 8.127
+    },
+    {
+      "text": "novedad.",
+      "start": 8.173,
+      "end": 8.754
+    },
+    {
+      "text": "Tu",
+      "start": 9.451,
+      "end": 9.613
+    },
+    {
+      "text": "cerebro",
+      "start": 9.648,
+      "end": 10.101
+    },
+    {
+      "text": "ama",
+      "start": 10.194,
+      "end": 10.414
+    },
+    {
+      "text": "la",
+      "start": 10.461,
+      "end": 10.53
+    },
+    {
+      "text": "dopamina",
       "start": 10.577,
-      "end": 10.623
+      "end": 11.076
     },
     {
-      "text": "que",
-      "start": 10.67,
-      "end": 10.751
+      "text": "del",
+      "start": 11.122,
+      "end": 11.238
     },
     {
-      "text": "ya",
-      "start": 10.82,
-      "end": 10.925
+      "text": "inicio,",
+      "start": 11.297,
+      "end": 11.9
     },
     {
-      "text": "vas",
-      "start": 10.971,
-      "end": 11.099
+      "text": "cuando",
+      "start": 12.179,
+      "end": 12.458
     },
     {
-      "text": "tarde,",
-      "start": 11.157,
-      "end": 11.552
+      "text": "todo",
+      "start": 12.539,
+      "end": 12.783
     },
     {
-      "text": "así",
-      "start": 11.68,
-      "end": 11.877
+      "text": "es",
+      "start": 12.829,
+      "end": 12.887
     },
     {
-      "text": "que",
-      "start": 11.923,
-      "end": 12.016
+      "text": "perfecto.",
+      "start": 12.957,
+      "end": 13.653
     },
     {
-      "text": "hazlo",
-      "start": 12.063,
-      "end": 12.33
+      "text": "Pero",
+      "start": 14.35,
+      "end": 14.582
     },
     {
-      "text": "hoy.",
-      "start": 12.353,
-      "end": 12.864
+      "text": "cuando",
+      "start": 14.629,
+      "end": 14.884
+    },
+    {
+      "text": "llega",
+      "start": 14.919,
+      "end": 15.139
+    },
+    {
+      "text": "el",
+      "start": 15.163,
+      "end": 15.209
+    },
+    {
+      "text": "trabajo",
+      "start": 15.267,
+      "end": 15.685
+    },
+    {
+      "text": "duro,",
+      "start": 15.731,
+      "end": 16.289
+    },
+    {
+      "text": "pierdes",
+      "start": 16.463,
+      "end": 16.904
+    },
+    {
+      "text": "el",
+      "start": 16.962,
+      "end": 17.02
+    },
+    {
+      "text": "interés.",
+      "start": 17.078,
+      "end": 17.67
+    },
+    {
+      "text": "No",
+      "start": 18.367,
+      "end": 18.495
+    },
+    {
+      "text": "te",
+      "start": 18.541,
+      "end": 18.611
+    },
+    {
+      "text": "falta",
+      "start": 18.669,
+      "end": 18.947
+    },
+    {
+      "text": "capacidad,",
+      "start": 18.994,
+      "end": 19.76
+    },
+    {
+      "text": "te",
+      "start": 19.934,
+      "end": 20.05
+    },
+    {
+      "text": "sobra",
+      "start": 20.108,
+      "end": 20.445
+    },
+    {
+      "text": "impaciencia.",
+      "start": 20.573,
+      "end": 21.56
+    },
+    {
+      "text": "Apaga",
+      "start": 22.001,
+      "end": 22.384
+    },
+    {
+      "text": "la",
+      "start": 22.419,
+      "end": 22.477
+    },
+    {
+      "text": "distracción",
+      "start": 22.523,
+      "end": 23.115
+    },
+    {
+      "text": "y",
+      "start": 23.185,
+      "end": 23.243
+    },
+    {
+      "text": "termina",
+      "start": 23.324,
+      "end": 23.719
+    },
+    {
+      "text": "hoy",
+      "start": 23.754,
+      "end": 23.963
+    },
+    {
+      "text": "una",
+      "start": 24.114,
+      "end": 24.334
+    },
+    {
+      "text": "sola",
+      "start": 24.381,
+      "end": 24.613
+    },
+    {
+      "text": "cosa.",
+      "start": 24.66,
+      "end": 25.31
     }
   ]
 }
