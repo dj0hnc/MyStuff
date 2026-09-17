@@ -3,6 +3,7 @@ import { Composition } from "remotion";
 import { TikTokVideo } from "./TikTok/TikTokVideo";
 import { tiktokSchema } from "./TikTok/schema";
 import { TikTokVoz, tiktokVozSchema, calculateVozMetadata } from "./TikTok/TikTokVoz";
+import { TikTokPro, tiktokProSchema, calculateProMetadata } from "./TikTok/TikTokPro";
 
 // Cada <Composition> aparece en la barra lateral de Remotion Studio.
 // Para renderizar: npx remotion render TikTok out/tiktok.mp4
@@ -28,6 +29,35 @@ const ejemplo = {
 export const RemotionRoot: React.FC = () => {
   return (
     <>
+      {/* Versión completa: fuentes, fondo animado, transiciones, voz, música y efectos.
+          Requiere `npm run voz` y `npm run sonidos`. Fondo de video opcional con `npm run fondo`. */}
+      <Composition
+        id="TikTokPro"
+        component={TikTokPro}
+        schema={tiktokProSchema}
+        calculateMetadata={calculateProMetadata}
+        durationInFrames={30 * 15}
+        fps={30}
+        width={1080}
+        height={1920}
+        defaultProps={{
+          hook: ejemplo.hook,
+          kicker: "ATENCIÓN",
+          handle: ejemplo.handle,
+          cta: ejemplo.cta,
+          accent: ejemplo.accent,
+          bgFrom: "#1E1B4B",
+          bgTo: "#BE185D",
+          musica: true,
+          volumenMusica: 0.22,
+          efectos: true,
+          fondoVideo: "",
+          words: [],
+          voiceDuration: 0,
+          fondoSegundos: 10,
+        }}
+      />
+
       {/* Vertical 9:16 para TikTok, Reels y Shorts */}
       <Composition
         id="TikTok"

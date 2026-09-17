@@ -1,54 +1,47 @@
-# Remotion video
+# MyStuff · videos para TikTok y YouTube con Remotion
 
-<p align="center">
-  <a href="https://github.com/remotion-dev/logo">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://github.com/remotion-dev/logo/raw/main/animated-logo-banner-dark.apng">
-      <img alt="Animated Remotion Logo" src="https://github.com/remotion-dev/logo/raw/main/animated-logo-banner-light.gif">
-    </picture>
-  </a>
-</p>
+Videos verticales generados con código: guion en texto, voz con ElevenLabs,
+subtítulos sincronizados palabra por palabra, música, efectos y fondo animado.
 
-Welcome to your Remotion project!
+## Flujo normal
 
-## Commands
+1. Escribe el guion en `public/guion.txt`, una frase por línea.
+2. `npm run voz` genera `public/voz.mp3` y `public/voz.json` (tiempos por palabra).
+3. `npm run render` renderiza `out/tiktok-pro.mp4`, listo para subir.
 
-**Install Dependencies**
+Opcional:
 
-```console
-npm i
+- `npm run sonidos` regenera música de fondo y efectos (`public/musica.mp3`, `public/sfx/`).
+- `npm run fondo -- "ciudad de noche"` descarga un video vertical de Pexels como fondo
+  y luego pones `fondoVideo: "fondo.mp4"` en los props de `TikTokPro`.
+- `npm run voces` lista las voces de tu cuenta para elegir otra en `.env`.
+- `npm run dev` abre Remotion Studio para ver y editar en vivo.
+
+## Composiciones (`src/Root.tsx`)
+
+| ID | Qué es |
+| --- | --- |
+| `TikTokPro` | Versión completa: fuentes Montserrat y Bebas Neue, fondo con ruido y partículas, transiciones, voz, visualizador, música con ducking y efectos. |
+| `TikTokVoz` | Voz y subtítulos sincronizados, estilo simple. |
+| `TikTok` | Sin voz, subtítulos repartidos por tiempo. |
+| `YouTube` | Igual que `TikTok` pero 1920x1080. |
+
+Todos los textos y colores son props editables en Studio.
+
+## Claves
+
+Copia `.env.example` a `.env` y llena:
+
+- `ELEVENLABS_API_KEY` para voz, efectos y música en loop (plan gratuito).
+- `PEXELS_API_KEY` para fondos de video de stock (gratis en pexels.com/api).
+
+`.env` está ignorado por git.
+
+## Estructura
+
 ```
-
-**Start Preview**
-
-```console
-npm run dev
+public/           guion, voz, música, efectos, fuentes y fondo
+scripts/          generar-voz, generar-sonidos, buscar-fondo, listar-voces
+src/TikTok/       componentes de las composiciones
+src/Root.tsx      registro de composiciones y props por defecto
 ```
-
-**Render video**
-
-```console
-npx remotion render
-```
-
-**Upgrade Remotion**
-
-```console
-npx remotion upgrade
-```
-
-## Docs
-
-Get started with Remotion by reading the [fundamentals page](https://www.remotion.dev/docs/the-fundamentals).
-
-## Help
-
-We provide help on our [Discord server](https://discord.gg/6VzzNDwUwV).
-
-## Issues
-
-Found an issue with Remotion? [File an issue here](https://github.com/remotion-dev/remotion/issues/new).
-
-## License
-
-Note that for some entities a company license is needed. [Read the terms here](https://github.com/remotion-dev/remotion/blob/main/LICENSE.md).
