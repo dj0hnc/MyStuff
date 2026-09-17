@@ -43,7 +43,8 @@
     "guion": "node --env-file-if-exists=.env scripts/generar-guion.mjs",
     "video": "node scripts/render.mjs",
     "revisar": "node --env-file-if-exists=.env scripts/revisar-video.mjs",
-    "clips": "node --env-file-if-exists=.env scripts/generar-clips.mjs"
+    "clips": "node --env-file-if-exists=.env scripts/generar-clips.mjs",
+    "traducir": "node --env-file-if-exists=.env scripts/traducir-guion.mjs"
   },
   "sideEffects": [
     "*.css"

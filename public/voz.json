@@ -1,296 +1,296 @@
 {
-  "duration": 23.96,
+  "duration": 22.524,
   "words": [
     {
-      "text": "No",
+      "text": "It’s",
       "start": 0,
-      "end": 0.32
+      "end": 0.197
     },
     {
-      "text": "es",
-      "start": 0.32,
-      "end": 0.33
-    },
-    {
-      "text": "falta",
-      "start": 0.33,
-      "end": 0.84
-    },
-    {
-      "text": "de",
-      "start": 0.84,
-      "end": 0.89
-    },
-    {
-      "text": "disciplina.",
-      "start": 0.89,
-      "end": 2.08
-    },
-    {
-      "text": "Es",
-      "start": 2.08,
-      "end": 2.17
-    },
-    {
-      "text": "miedo",
-      "start": 2.17,
-      "end": 2.61
-    },
-    {
-      "text": "al",
-      "start": 2.61,
-      "end": 2.83
-    },
-    {
-      "text": "fracaso.",
-      "start": 2.83,
-      "end": 3.4
-    },
-    {
-      "text": "Inicia",
-      "start": 3.4,
-      "end": 3.82
+      "text": "not",
+      "start": 0.244,
+      "end": 0.372
     },
     {
       "text": "a",
-      "start": 3.82,
-      "end": 3.89
+      "start": 0.418,
+      "end": 0.441
     },
     {
-      "text": "su",
-      "start": 3.89,
-      "end": 4.03
+      "text": "lack",
+      "start": 0.488,
+      "end": 0.662
     },
     {
-      "text": "proyecto",
-      "start": 4.03,
-      "end": 4.71
+      "text": "of",
+      "start": 0.708,
+      "end": 0.755
     },
     {
-      "text": "con",
-      "start": 4.71,
-      "end": 4.86
+      "text": "discipline,",
+      "start": 0.824,
+      "end": 1.509
     },
     {
-      "text": "muchísima",
-      "start": 4.86,
-      "end": 5.52
+      "text": "it’s",
+      "start": 1.66,
+      "end": 1.846
     },
     {
-      "text": "emoción.",
-      "start": 5.52,
-      "end": 6.16
+      "text": "fear",
+      "start": 1.904,
+      "end": 2.101
     },
     {
-      "text": "Pero",
-      "start": 6.16,
-      "end": 6.44
+      "text": "of",
+      "start": 2.159,
+      "end": 2.229
     },
     {
-      "text": "cuando",
-      "start": 6.44,
-      "end": 6.84
+      "text": "failure.",
+      "start": 2.31,
+      "end": 2.879
     },
     {
-      "text": "aparece",
-      "start": 6.84,
-      "end": 7.32
+      "text": "You",
+      "start": 3.32,
+      "end": 3.448
     },
     {
-      "text": "la",
-      "start": 7.32,
-      "end": 7.56
-    },
-    {
-      "text": "primera",
-      "start": 7.56,
-      "end": 7.93
-    },
-    {
-      "text": "dificultad,",
-      "start": 7.93,
-      "end": 8.89
-    },
-    {
-      "text": "tu",
-      "start": 8.89,
-      "end": 8.91
-    },
-    {
-      "text": "cerebro",
-      "start": 8.91,
-      "end": 9.45
-    },
-    {
-      "text": "busca",
-      "start": 9.45,
-      "end": 9.84
-    },
-    {
-      "text": "escapar.",
-      "start": 9.84,
-      "end": 10.4
-    },
-    {
-      "text": "Prefieres",
-      "start": 10.4,
-      "end": 10.99
-    },
-    {
-      "text": "dejarlo",
-      "start": 10.99,
-      "end": 11.46
-    },
-    {
-      "text": "incompleto",
-      "start": 11.46,
-      "end": 12.2
-    },
-    {
-      "text": "antes",
-      "start": 12.2,
-      "end": 12.54
-    },
-    {
-      "text": "que",
-      "start": 12.54,
-      "end": 12.74
-    },
-    {
-      "text": "arriesgarte",
-      "start": 12.74,
-      "end": 13.51
+      "text": "start",
+      "start": 3.506,
+      "end": 3.692
     },
     {
       "text": "a",
-      "start": 13.51,
-      "end": 13.53
+      "start": 3.727,
+      "end": 3.75
     },
     {
-      "text": "que",
-      "start": 13.53,
-      "end": 13.73
+      "text": "project",
+      "start": 3.808,
+      "end": 4.133
     },
     {
-      "text": "salga",
-      "start": 13.73,
-      "end": 14.06
+      "text": "with",
+      "start": 4.156,
+      "end": 4.261
     },
     {
-      "text": "mal.",
-      "start": 14.06,
-      "end": 14.36
+      "text": "so",
+      "start": 4.307,
+      "end": 4.4
     },
     {
-      "text": "Abandonarte",
-      "start": 14.36,
-      "end": 15.13
+      "text": "much",
+      "start": 4.458,
+      "end": 4.598
     },
     {
-      "text": "da",
-      "start": 15.13,
-      "end": 15.27
+      "text": "excitement.",
+      "start": 4.644,
+      "end": 5.283
     },
     {
-      "text": "una",
-      "start": 15.27,
-      "end": 15.52
+      "text": "But",
+      "start": 6.235,
+      "end": 6.385
     },
     {
-      "text": "falsa",
-      "start": 15.52,
-      "end": 15.83
+      "text": "at",
+      "start": 6.42,
+      "end": 6.478
     },
     {
-      "text": "sensación",
-      "start": 15.83,
-      "end": 16.53
+      "text": "the",
+      "start": 6.513,
+      "end": 6.583
     },
     {
-      "text": "de",
-      "start": 16.53,
-      "end": 16.67
+      "text": "first",
+      "start": 6.641,
+      "end": 6.908
+    },
+    {
+      "text": "obstacle,",
+      "start": 7.001,
+      "end": 7.709
+    },
+    {
+      "text": "your",
+      "start": 7.953,
+      "end": 8.092
+    },
+    {
+      "text": "brain",
+      "start": 8.139,
+      "end": 8.359
+    },
+    {
+      "text": "wants",
+      "start": 8.417,
+      "end": 8.615
+    },
+    {
+      "text": "to",
+      "start": 8.649,
+      "end": 8.719
+    },
+    {
+      "text": "escape.",
+      "start": 8.8,
+      "end": 9.369
+    },
+    {
+      "text": "You’d",
+      "start": 10.066,
+      "end": 10.263
+    },
+    {
+      "text": "rather",
+      "start": 10.31,
+      "end": 10.519
+    },
+    {
+      "text": "leave",
+      "start": 10.565,
+      "end": 10.716
+    },
+    {
+      "text": "it",
+      "start": 10.739,
+      "end": 10.786
+    },
+    {
+      "text": "unfinished",
+      "start": 10.832,
+      "end": 11.285
+    },
+    {
+      "text": "than",
+      "start": 11.308,
+      "end": 11.424
+    },
+    {
+      "text": "risk",
+      "start": 11.494,
+      "end": 11.691
+    },
+    {
+      "text": "failing.",
+      "start": 11.749,
+      "end": 12.295
+    },
+    {
+      "text": "Quitting",
+      "start": 13.247,
+      "end": 13.572
+    },
+    {
+      "text": "gives",
+      "start": 13.607,
+      "end": 13.781
+    },
+    {
+      "text": "you",
+      "start": 13.816,
+      "end": 13.897
+    },
+    {
+      "text": "a",
+      "start": 13.967,
+      "end": 14.002
+    },
+    {
+      "text": "false",
+      "start": 14.095,
+      "end": 14.397
+    },
+    {
+      "text": "sense",
+      "start": 14.42,
+      "end": 14.652
+    },
+    {
+      "text": "of",
+      "start": 14.675,
+      "end": 14.733
     },
     {
       "text": "control.",
-      "start": 16.67,
-      "end": 17.44
+      "start": 14.791,
+      "end": 15.418
     },
     {
-      "text": "El",
-      "start": 17.44,
-      "end": 17.66
+      "text": "Perfectionism",
+      "start": 16.115,
+      "end": 16.893
     },
     {
-      "text": "perfeccionismo",
-      "start": 17.66,
-      "end": 18.59
+      "text": "is",
+      "start": 16.951,
+      "end": 17.055
     },
     {
-      "text": "te",
-      "start": 18.59,
-      "end": 18.74
+      "text": "just",
+      "start": 17.125,
+      "end": 17.346
     },
     {
-      "text": "está",
-      "start": 18.74,
-      "end": 19.1
+      "text": "disguising",
+      "start": 17.392,
+      "end": 17.938
     },
     {
-      "text": "disfrazando",
-      "start": 19.1,
-      "end": 19.9
+      "text": "your",
+      "start": 17.972,
+      "end": 18.077
     },
     {
-      "text": "el",
-      "start": 19.9,
-      "end": 20.04
+      "text": "self-sabotage.",
+      "start": 18.123,
+      "end": 19.064
     },
     {
-      "text": "sabotaje.",
-      "start": 20.04,
-      "end": 20.72
+      "text": "Finish",
+      "start": 19.76,
+      "end": 20.062
     },
     {
-      "text": "Termina",
-      "start": 20.72,
-      "end": 21.31
+      "text": "something",
+      "start": 20.109,
+      "end": 20.422
     },
     {
-      "text": "hoy",
-      "start": 21.31,
-      "end": 21.56
+      "text": "small",
+      "start": 20.492,
+      "end": 20.782
     },
     {
-      "text": "algo",
-      "start": 21.56,
-      "end": 21.9
+      "text": "today",
+      "start": 20.84,
+      "end": 21.2
     },
     {
-      "text": "pequeño",
-      "start": 21.9,
-      "end": 22.6
+      "text": "and",
+      "start": 21.281,
+      "end": 21.421
     },
     {
-      "text": "y",
-      "start": 22.6,
-      "end": 22.75
+      "text": "break",
+      "start": 21.479,
+      "end": 21.688
     },
     {
-      "text": "rompe",
-      "start": 22.75,
-      "end": 23.07
+      "text": "the",
+      "start": 21.734,
+      "end": 21.804
     },
     {
-      "text": "ese",
-      "start": 23.07,
-      "end": 23.3
-    },
-    {
-      "text": "ciclo.",
-      "start": 23.3,
-      "end": 23.96
+      "text": "cycle.",
+      "start": 21.85,
+      "end": 22.524
     }
   ],
-  "proveedor": "gemini"
+  "proveedor": "elevenlabs"
 }

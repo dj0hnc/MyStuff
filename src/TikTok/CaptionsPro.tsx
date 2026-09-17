@@ -13,7 +13,10 @@ type Props = {
 
 // Palabras sin peso: cuando están activas solo se encienden en blanco, sin pastilla.
 const VACIAS = new Set(
-  "el la los las un una unos unas de del al a en con por para que se su sus lo le les y o u e ni es son era fue ser no si te me nos mi tu tus mis".split(" "),
+  (
+    "el la los las un una unos unas de del al a en con por para que se su sus lo le les y o u e ni es son era fue ser no si te me nos mi tu tus mis " +
+    "the a an of to in on at for with and or but is are was were be been it its this that these those you your my me we our they them he she his her not so if as by from into than then"
+  ).split(" "),
 );
 const limpia = (w: string) => w.toLowerCase().replace(/[^a-záéíóúñü]/g, "");
 
