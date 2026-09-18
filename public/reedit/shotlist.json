@@ -1,0 +1,384 @@
+{
+  "shots": [
+    {
+      "start": "00:00.0",
+      "end": "00:03.0",
+      "quien": "el",
+      "que_pasa": "Mirando el celular en la entrada",
+      "dialogo": "",
+      "texto_en_pantalla": "DOMINGO EN CASA BE LIKE...",
+      "musica": "country",
+      "valor": 5
+    },
+    {
+      "start": "00:03.0",
+      "end": "00:08.0",
+      "quien": "ambos",
+      "que_pasa": "Ella sale con el scooter del garage",
+      "dialogo": "A dónde vas? - Solo a dar una vuelta",
+      "texto_en_pantalla": "A DONDE VAS? / A DAR LA VUELTA",
+      "musica": "country",
+      "valor": 7
+    },
+    {
+      "start": "00:08.0",
+      "end": "00:15.0",
+      "quien": "ella",
+      "que_pasa": "Ella se va en el scooter",
+      "dialogo": "",
+      "texto_en_pantalla": "ELLA EN SU MUNDO...",
+      "musica": "country",
+      "valor": 6
+    },
+    {
+      "start": "00:15.0",
+      "end": "00:18.8",
+      "quien": "el",
+      "que_pasa": "POV manejando el scooter",
+      "dialogo": "",
+      "texto_en_pantalla": "COUNTRY MOOD ACTIVATED 🤠🎶",
+      "musica": "country",
+      "valor": 6
+    },
+    {
+      "start": "00:18.8",
+      "end": "00:20.8",
+      "quien": "el",
+      "que_pasa": "POV de sus manos en el manubrio",
+      "dialogo": "",
+      "texto_en_pantalla": "",
+      "musica": "country",
+      "valor": 5
+    },
+    {
+      "start": "00:20.8",
+      "end": "00:33.8",
+      "quien": "el",
+      "que_pasa": "POV manejando por la calle",
+      "dialogo": "",
+      "texto_en_pantalla": "SUNDAY, FUN DAY! ☀️",
+      "musica": "country",
+      "valor": 6
+    },
+    {
+      "start": "00:33.8",
+      "end": "00:34.8",
+      "quien": "el",
+      "que_pasa": "POV de sus manos en el manubrio",
+      "dialogo": "",
+      "texto_en_pantalla": "",
+      "musica": "country",
+      "valor": 5
+    },
+    {
+      "start": "00:34.8",
+      "end": "00:39.8",
+      "quien": "el",
+      "que_pasa": "POV manejando por la calle",
+      "dialogo": "",
+      "texto_en_pantalla": "",
+      "musica": "country",
+      "valor": 6
+    },
+    {
+      "start": "00:39.8",
+      "end": "00:43.0",
+      "quien": "el",
+      "que_pasa": "POV lavándose las manos en la cocina",
+      "dialogo": "",
+      "texto_en_pantalla": "MIENTRAS TANTO... 🦥 A MI ME TOCARON LOS MANDADOS 😅",
+      "musica": "psytrance",
+      "valor": 6
+    },
+    {
+      "start": "00:43.0",
+      "end": "00:45.0",
+      "quien": "el",
+      "que_pasa": "POV secándose las manos y mostrando comida",
+      "dialogo": "",
+      "texto_en_pantalla": "MIENTRAS TANTO... 🦥 A MI ME TOCARON LOS MANDADOS 😅",
+      "musica": "psytrance",
+      "valor": 6
+    },
+    {
+      "start": "00:45.0",
+      "end": "00:48.8",
+      "quien": "el",
+      "que_pasa": "POV caminando por la cocina y abriendo puerta",
+      "dialogo": "",
+      "texto_en_pantalla": "PERO CADA QUIEN CON SU MUSICA... 🔊",
+      "musica": "psytrance",
+      "valor": 6
+    },
+    {
+      "start": "00:48.8",
+      "end": "00:50.8",
+      "quien": "nadie",
+      "que_pasa": "Pantalla de título",
+      "dialogo": "",
+      "texto_en_pantalla": "THE RAVE COUPLE 🤠❤️👽",
+      "musica": "psytrance",
+      "valor": 5
+    },
+    {
+      "start": "00:50.8",
+      "end": "00:53.0",
+      "quien": "el",
+      "que_pasa": "POV caminando hacia el garage",
+      "dialogo": "",
+      "texto_en_pantalla": "",
+      "musica": "psytrance",
+      "valor": 5
+    },
+    {
+      "start": "00:53.0",
+      "end": "00:58.5",
+      "quien": "ambos",
+      "que_pasa": "Ella entra al garage y le entrega el scooter",
+      "dialogo": "A dónde mandaste? - A hacerte los mandados!",
+      "texto_en_pantalla": "A DONDE VAS? / A HACERTE LOS MANDADOS! 😂",
+      "musica": "psytrance",
+      "valor": 8
+    },
+    {
+      "start": "00:58.5",
+      "end": "01:03.8",
+      "quien": "el",
+      "que_pasa": "POV tomando el scooter",
+      "dialogo": "",
+      "texto_en_pantalla": "A HACERTE LOS MANDADOS! 😂",
+      "musica": "psytrance",
+      "valor": 7
+    },
+    {
+      "start": "01:03.8",
+      "end": "01:07.8",
+      "quien": "ella",
+      "que_pasa": "Ella se despide con un beso",
+      "dialogo": "",
+      "texto_en_pantalla": "LOVE + MISSIONS 😂",
+      "musica": "psytrance",
+      "valor": 8
+    },
+    {
+      "start": "01:07.8",
+      "end": "01:10.0",
+      "quien": "el",
+      "que_pasa": "POV arrancando el scooter",
+      "dialogo": "",
+      "texto_en_pantalla": "LOVE + MISSIONS 😂",
+      "musica": "psytrance",
+      "valor": 6
+    },
+    {
+      "start": "01:10.0",
+      "end": "01:12.0",
+      "quien": "el",
+      "que_pasa": "POV manejando por la acera",
+      "dialogo": "",
+      "texto_en_pantalla": "PSYTRANCE MODE ON 👽🧠⚡️🛸",
+      "musica": "psytrance",
+      "valor": 6
+    },
+    {
+      "start": "01:12.0",
+      "end": "01:15.8",
+      "quien": "el",
+      "que_pasa": "POV de sus manos en el manubrio",
+      "dialogo": "",
+      "texto_en_pantalla": "PSYTRANCE MODE ON 👽🧠⚡️🛸",
+      "musica": "psytrance",
+      "valor": 5
+    },
+    {
+      "start": "01:15.8",
+      "end": "01:20.0",
+      "quien": "el",
+      "que_pasa": "POV manejando hacia los buzones",
+      "dialogo": "",
+      "texto_en_pantalla": "",
+      "musica": "psytrance",
+      "valor": 6
+    },
+    {
+      "start": "01:20.0",
+      "end": "01:23.8",
+      "quien": "el",
+      "que_pasa": "POV abriendo el buzón y sacando correspondencia",
+      "dialogo": "",
+      "texto_en_pantalla": "",
+      "musica": "psytrance",
+      "valor": 7
+    },
+    {
+      "start": "01:23.8",
+      "end": "01:27.8",
+      "quien": "el",
+      "que_pasa": "POV manejando de regreso",
+      "dialogo": "",
+      "texto_en_pantalla": "MISION CUMPLIDA ✔️",
+      "musica": "psytrance",
+      "valor": 6
+    },
+    {
+      "start": "01:27.8",
+      "end": "01:34.0",
+      "quien": "el",
+      "que_pasa": "POV manejando por un sendero largo",
+      "dialogo": "",
+      "texto_en_pantalla": "PERO ME FUI POR LA RUTA LARGA 🎶🛸",
+      "musica": "psytrance",
+      "valor": 6
+    },
+    {
+      "start": "01:34.0",
+      "end": "01:37.0",
+      "quien": "el",
+      "que_pasa": "POV esquivando a un señor que camina",
+      "dialogo": "",
+      "texto_en_pantalla": "TRUCHA DON QUE LO TUMBO!! 😂🔥🛸",
+      "musica": "psytrance",
+      "valor": 8
+    },
+    {
+      "start": "01:37.0",
+      "end": "01:43.8",
+      "quien": "el",
+      "que_pasa": "POV manejando por el sendero y la calle",
+      "dialogo": "",
+      "texto_en_pantalla": "",
+      "musica": "psytrance",
+      "valor": 6
+    },
+    {
+      "start": "01:43.8",
+      "end": "01:47.0",
+      "quien": "el",
+      "que_pasa": "POV llegando a la casa",
+      "dialogo": "",
+      "texto_en_pantalla": "REGRESANDO COMO SI NADA 😅",
+      "musica": "psytrance",
+      "valor": 6
+    },
+    {
+      "start": "01:47.0",
+      "end": "01:51.8",
+      "quien": "el",
+      "que_pasa": "POV entrando al garage donde ella espera sentada",
+      "dialogo": "",
+      "texto_en_pantalla": "",
+      "musica": "psytrance",
+      "valor": 6
+    },
+    {
+      "start": "01:51.8",
+      "end": "01:55.0",
+      "quien": "ambos",
+      "que_pasa": "POV mostrándole las cartas",
+      "dialogo": "A ver - Sí había algo?",
+      "texto_en_pantalla": "SI HABIA ALGO?",
+      "musica": "psytrance",
+      "valor": 7
+    },
+    {
+      "start": "01:55.0",
+      "end": "02:01.0",
+      "quien": "ambos",
+      "que_pasa": "POV entregándole las cartas",
+      "dialogo": "Sí, para ti. Es para ti.",
+      "texto_en_pantalla": "SÍ, PARA TI! 👀...",
+      "musica": "psytrance",
+      "valor": 7
+    },
+    {
+      "start": "02:01.0",
+      "end": "02:04.0",
+      "quien": "ella",
+      "que_pasa": "Ella revisa las cartas con ironía",
+      "dialogo": "Ahora sí quieren perros, ahora sí",
+      "texto_en_pantalla": "",
+      "musica": "psytrance",
+      "valor": 8
+    },
+    {
+      "start": "02:04.0",
+      "end": "02:09.0",
+      "quien": "ella",
+      "que_pasa": "Ella habla sobre su historial de crédito",
+      "dialogo": "Cuando llegué a este país nadie me pelaba",
+      "texto_en_pantalla": "DE NO TENER CREDITO...",
+      "musica": "psytrance",
+      "valor": 8
+    },
+    {
+      "start": "02:09.0",
+      "end": "02:11.0",
+      "quien": "ella",
+      "que_pasa": "Ella recoge un papel del suelo",
+      "dialogo": "",
+      "texto_en_pantalla": "",
+      "musica": "psytrance",
+      "valor": 6
+    },
+    {
+      "start": "02:11.0",
+      "end": "02:17.0",
+      "quien": "ella",
+      "que_pasa": "Ella muestra las ofertas de tarjetas de crédito",
+      "dialogo": "Cuando llegué, nadie, yo pedía y nadie me daba nada",
+      "texto_en_pantalla": "A QUE TE RUEGUEN 😂",
+      "musica": "psytrance",
+      "valor": 8
+    },
+    {
+      "start": "02:17.0",
+      "end": "02:20.0",
+      "quien": "ambos",
+      "que_pasa": "Ella mira las cartas y él bromea",
+      "dialogo": "Ya te quieren, ya te ama el sistema",
+      "texto_en_pantalla": "",
+      "musica": "psytrance",
+      "valor": 7
+    },
+    {
+      "start": "02:20.0",
+      "end": "02:22.0",
+      "quien": "nadie",
+      "que_pasa": "Pantalla de cierre",
+      "dialogo": "",
+      "texto_en_pantalla": "THE RAVE COUPLE 👽❤️🤠",
+      "musica": "psytrance",
+      "valor": 5
+    }
+  ],
+  "mejores_momentos": [
+    {
+      "start": "00:53.0",
+      "end": "01:07.8",
+      "por_que": "Divertido relevo del scooter con actitud cariñosa"
+    },
+    {
+      "start": "01:34.0",
+      "end": "01:37.0",
+      "por_que": "Momento de tensión cómica al esquivar al peatón"
+    },
+    {
+      "start": "02:04.0",
+      "end": "02:17.0",
+      "por_que": "Monólogo irónico sobre el sistema crediticio"
+    }
+  ],
+  "casi_atropello": {
+    "start": "01:34.0",
+    "end": "01:37.0"
+  },
+  "chiste_final_credito": {
+    "start": "02:04.0",
+    "end": "02:17.0",
+    "dialogo": "Cuando llegué a este país nadie me pelaba... Cuando llegué, nadie, yo pedía y nadie me daba nada"
+  },
+  "entrega_scooter_love_missions": {
+    "start": "00:58.5",
+    "end": "01:07.8"
+  }
+}

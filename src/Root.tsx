@@ -4,6 +4,7 @@ import { TikTokVideo } from "./TikTok/TikTokVideo";
 import { tiktokSchema } from "./TikTok/schema";
 import { TikTokVoz, tiktokVozSchema, calculateVozMetadata } from "./TikTok/TikTokVoz";
 import { TikTokPro, tiktokProSchema, calculateProMetadata } from "./TikTok/TikTokPro";
+import { Reedit, reeditSchema, calculateReeditMetadata } from "./Reedit/Reedit";
 
 // Cada <Composition> aparece en la barra lateral de Remotion Studio.
 // Para renderizar: npx remotion render TikTok out/tiktok.mp4
@@ -61,6 +62,19 @@ export const RemotionRoot: React.FC = () => {
           voiceDuration: 0,
           fondoSegundos: 10,
         }}
+      />
+
+      {/* Reedición de un video existente a partir de una EDL (public/reedit/edl.json) */}
+      <Composition
+        id="Reedit"
+        component={Reedit}
+        schema={reeditSchema}
+        calculateMetadata={calculateReeditMetadata}
+        durationInFrames={30 * 60}
+        fps={30}
+        width={1080}
+        height={1920}
+        defaultProps={{ edl: "reedit/edl.json" }}
       />
 
       {/* Vertical 9:16 para TikTok, Reels y Shorts */}
