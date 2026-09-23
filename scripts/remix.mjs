@@ -36,7 +36,8 @@ const brief = opt("brief", null) ? await readFile(opt("brief"), "utf8") : "";
 const nombre = basename(carpeta);
 
 const require = createRequire(import.meta.url);
-const ffprobe = join(dirname(require.resolve("@remotion/compositor-linux-x64-gnu/package.json")), "ffprobe");
+const comp = dirname(require.resolve("@remotion/compositor-linux-x64-gnu/package.json"));
+const ffprobe = join(comp, "ffprobe"), ffmpeg = join(comp, "ffmpeg");
 const cacheDir = `out/remix/cache/${nombre}`;
 await mkdir(cacheDir, { recursive: true });
 
@@ -116,7 +117,13 @@ for (const [k, e] of edits.slice(0, N).entries()) {
   md.push(`## ${n}. ${e.titulo} · ${total.toFixed(0)} s`, `\`${salida}\` · ${segs.map((s) => `${s.c.id} ${s.from}-${s.to}`).join(" · ")}`, `> ${e.angulo}`, "", "```", caption, "```", "");
   console.log(`\nEdit ${n}: ${e.titulo} (${total.toFixed(0)} s, ${segs.length} segmentos de ${new Set(segs.map((s) => s.c.id)).size} clips)\n  Hook: ${e.hook}`);
   if (total < 15) console.warn(`  Aviso: dura ${total.toFixed(1)} s, la campaña pide 15 s o más.`);
-  if (!args.includes("--sin-render")) execFileSync("npx", ["remotion", "render", "Reedit", salida, "--concurrency=4", "--crf=20", `--props=${JSON.stringify({ edl: edlPath })}`], { stdio: "inherit" });
+  if (!args.includes("--sin-render")) {
+    execFileSync("npx", ["remotion", "render", "Reedit", salida, "--concurrency=4", "--crf=20", `--props=${JSON.stringify({ edl: edlPath })}`], { stdio: "inherit" });
+    // Las muestras vienen a volúmenes distintos y con picos en 0 dB: loudness de TikTok (-14 LUFS) y picos a -1.5 dB.
+    const tmp = salida.replace(/\.mp4$/, ".tmp.mp4");
+    execFileSync(ffmpeg, ["-y", "-loglevel", "error", "-i", salida, "-c:v", "copy", "-af", "loudnorm=I=-14:TP=-1.5:LRA=11", "-ar", "48000", "-c:a", "aac", "-b:a", "192k", tmp]);
+    execFileSync("mv", [tmp, salida]);
+  }
 }
 await writeFile(`out/remix/${nombre}.md`, md.join("\n"));
 console.log(`\nListo: out/remix/ y captions en out/remix/${nombre}.md`);
