@@ -1,107 +1,37 @@
 {
- "fuente": "karen-nails",
+ "fuente": "05-estudio",
  "clips": [
   {
-   "archivo": "clips/v1.mp4",
-   "duracion": 17.33,
-   "w": 720,
-   "h": 1280
+   "archivo": "reedit/nails/pack/estudio1.mp4",
+   "duracion": 7.67
   },
   {
-   "archivo": "clips/f01.mp4",
-   "duracion": 3,
-   "w": 430,
-   "h": 476
+   "archivo": "reedit/nails/pack/estudio.mp4",
+   "duracion": 3
   },
   {
-   "archivo": "clips/f02.mp4",
-   "duracion": 3,
-   "w": 430,
-   "h": 476
+   "archivo": "reedit/nails/pack/estudio2.mp4",
+   "duracion": 11.67
   },
   {
-   "archivo": "clips/v2.mp4",
-   "duracion": 10.5,
-   "w": 576,
-   "h": 1024
+   "archivo": "reedit/nails/pack/v2.mp4",
+   "duracion": 10.52
   },
   {
-   "archivo": "clips/f03.mp4",
-   "duracion": 3,
-   "w": 430,
-   "h": 476
+   "archivo": "reedit/nails/pack/estudio1.mp4",
+   "duracion": 7.67
   },
   {
-   "archivo": "clips/f04.mp4",
-   "duracion": 3,
-   "w": 430,
-   "h": 476
+   "archivo": "reedit/nails/pack/v1.mp4",
+   "duracion": 17.33
   },
   {
-   "archivo": "clips/v3.mp4",
-   "duracion": 8.17,
-   "w": 576,
-   "h": 1024
+   "archivo": "reedit/nails/pack/estudio2.mp4",
+   "duracion": 11.67
   },
   {
-   "archivo": "clips/f05.mp4",
-   "duracion": 3,
-   "w": 430,
-   "h": 476
-  },
-  {
-   "archivo": "clips/f06.mp4",
-   "duracion": 3,
-   "w": 430,
-   "h": 476
-  },
-  {
-   "archivo": "clips/v4.mp4",
-   "duracion": 33.2,
-   "w": 576,
-   "h": 1024
-  },
-  {
-   "archivo": "clips/f07.mp4",
-   "duracion": 3,
-   "w": 430,
-   "h": 476
-  },
-  {
-   "archivo": "clips/f08.mp4",
-   "duracion": 3,
-   "w": 430,
-   "h": 476
-  },
-  {
-   "archivo": "clips/v5.mp4",
-   "duracion": 9.47,
-   "w": 576,
-   "h": 1024
-  },
-  {
-   "archivo": "clips/f09.mp4",
-   "duracion": 3,
-   "w": 430,
-   "h": 476
-  },
-  {
-   "archivo": "clips/f10.mp4",
-   "duracion": 3,
-   "w": 430,
-   "h": 476
-  },
-  {
-   "archivo": "clips/f11.mp4",
-   "duracion": 3,
-   "w": 430,
-   "h": 476
-  },
-  {
-   "archivo": "clips/f12.mp4",
-   "duracion": 3,
-   "w": 430,
-   "h": 476
+   "archivo": "reedit/nails/pack/set-blanco-flores.mp4",
+   "duracion": 3
   }
  ]
 }

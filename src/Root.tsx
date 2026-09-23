@@ -95,6 +95,7 @@ export const RemotionRoot: React.FC = () => {
           oro: "#D4AF37",
           negro: "#1A0F14",
           segundosPorClip: 2.2,
+          titulo: "",
           words: [],
           voiceDuration: 0,
           clips: [],

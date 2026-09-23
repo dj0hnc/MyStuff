@@ -51,7 +51,8 @@
     "clipear": "node --env-file-if-exists=.env scripts/clipear.mjs",
     "stats": "node --env-file-if-exists=.env scripts/stats.mjs",
     "fabrica": "node --env-file-if-exists=.env scripts/fabrica.mjs",
-    "recap": "node --env-file-if-exists=.env scripts/recap.mjs"
+    "recap": "node --env-file-if-exists=.env scripts/recap.mjs",
+    "pack-nails": "node --env-file-if-exists=.env scripts/pack-nails.mjs"
   },
   "sideEffects": [
     "*.css"

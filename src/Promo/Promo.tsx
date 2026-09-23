@@ -4,7 +4,7 @@ import { TransitionSeries, linearTiming } from "@remotion/transitions";
 import { fade } from "@remotion/transitions/fade";
 import { z } from "zod";
 import { zColor } from "@remotion/zod-types";
-import { montserrat, script, serif } from "../TikTok/fonts";
+import { bebas, montserrat, script, serif } from "../TikTok/fonts";
 import { ClipsBackground, type Clip } from "../TikTok/ClipsBackground";
 import { CaptionsPro } from "../TikTok/CaptionsPro";
 import type { Word } from "../TikTok/CaptionsVoz";
@@ -25,6 +25,7 @@ export const promoSchema = z.object({
   oro: zColor(),
   negro: zColor(),
   segundosPorClip: z.number(),
+  titulo: z.string().default("").describe("Título del video, aparece sobre el footage los primeros segundos"),
   words: z.array(z.object({ text: z.string(), start: z.number(), end: z.number() })).default([]),
   voiceDuration: z.number().default(0),
   clips: z.array(z.object({ archivo: z.string(), duracion: z.number() })).default([]),
@@ -65,6 +66,7 @@ export const Promo: React.FC<PromoProps> = (p) => {
           <ClipsBackground clips={p.clips} segundosPorClip={p.segundosPorClip} from={p.negro} to={p.rosaFuerte} />
           <AbsoluteFill style={{ background: `linear-gradient(180deg, ${p.rosa}22, transparent 30%, transparent 70%, ${p.negro}99)` }} />
           <MarcoOro oro={p.oro} />
+          {p.titulo ? <Titulo texto={p.titulo} oro={p.oro} negro={p.negro} rosa={p.rosa} /> : null}
           <Sequence from={LEAD_F} layout="none">
             <Audio src={staticFile("voz.mp3")} />
             <CaptionsPro words={p.words} accent={p.rosaFuerte} voiceSrc="voz.mp3" keywords={p.palabrasClave} />
@@ -165,6 +167,22 @@ const Servicios: React.FC<{ servicios: PromoProps["servicios"]; words: Word[]; o
             </div>
           );
         })}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+// Título del video: entra con rebote, se queda 2.4 s y sube al salir.
+const Titulo: React.FC<{ texto: string; oro: string; negro: string; rosa: string }> = ({ texto, oro, negro, rosa }) => {
+  const f = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const e = spring({ frame: f, fps, config: { damping: 12, stiffness: 150 } });
+  const out = interpolate(f, [fps * 2.4, fps * 2.8], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+  if (out <= 0) return null;
+  return (
+    <AbsoluteFill style={{ justifyContent: "flex-start", alignItems: "center", paddingTop: 200, opacity: out }}>
+      <div style={{ transform: `translateY(${interpolate(e, [0, 1], [-40, 0]) - (1 - out) * 60}px) scale(${interpolate(e, [0, 1], [0.8, 1])})`, background: `${rosa}F2`, border: `4px solid ${oro}`, borderRadius: 28, padding: "22px 44px", fontFamily: bebas, fontSize: 92, lineHeight: 1, color: negro, textAlign: "center", maxWidth: 940, boxShadow: "0 20px 60px rgba(0,0,0,0.35)" }}>
+        {texto}
       </div>
     </AbsoluteFill>
   );

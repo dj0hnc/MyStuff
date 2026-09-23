@@ -37,6 +37,11 @@ Crear desde cero (narrado):
 - `npm run video -- out/x.mp4 '{"fondoClips":true}'` → render de `TikTokPro` con props del guion
 - `npm run revisar -- out/x.mp4` → crítica de editor por Gemini (`out/revision.md`)
 
+Promos para el estudio de uñas de Karen (`Promo` en `src/Promo/`, marca @karenareyesnails, solo español, sin precios,
+voz Gemini Leda con `GEMINI_VOICE_STYLE` tapatía):
+- `npm run pack-nails [-- 02-tamanos]` → los 5 videos (marca, tamaños, diseños, gel, estudio) a `out/pack/<id>(-web).mp4`.
+  Guiones y orden de clips viven en `scripts/pack-nails.mjs`; los clips fuente en `public/reedit/nails/pack/` (nube, no git).
+
 Reeditar material propio:
 - `npm run bajar -- "URL" nombre` → baja TikTok/IG/YT/FB a `public/reedit/nombre.mp4` (yt-dlp en `.tools/`)
 - `npm run corte-bruto -- public/reedit/x.mp4 --respiro 1.5 [--max 60] [--idioma es]`
