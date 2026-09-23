@@ -25,6 +25,7 @@ export const tiktokProSchema = z.object({
   volumenMusica: z.number().min(0).max(1),
   efectos: z.boolean().describe("Whoosh y ding en las transiciones"),
   fondoVideo: z.string().describe("Video en public/ para el fondo. Vacío = sin video"),
+  logo: z.string().default("").describe("Imagen en public/ (ej. img/kr-logo.png). Sale en el gancho y el cierre"),
   palabrasClave: z.array(z.string()).default([]).describe("Palabras que se resaltan con color aunque ya hayan pasado"),
   fondoClips: z.boolean().describe("Usar la secuencia de clips de public/clips.json (npm run fondo con varias búsquedas, o npm run clips)"),
   segundosPorClip: z.number().min(1).max(15),
@@ -100,7 +101,7 @@ export const TikTokPro: React.FC<TikTokProProps> = (p) => {
 
       <TransitionSeries>
         <TransitionSeries.Sequence durationInFrames={hookF}>
-          <HookPro text={p.hook} accent={p.accent} kicker={p.kicker} />
+          <HookPro text={p.hook} accent={p.accent} kicker={p.kicker} logo={p.logo || undefined} />
         </TransitionSeries.Sequence>
 
         <TransitionSeries.Transition presentation={slide({ direction: "from-right" })} timing={linearTiming({ durationInFrames: TRANS_F })} />
@@ -115,7 +116,7 @@ export const TikTokPro: React.FC<TikTokProProps> = (p) => {
         <TransitionSeries.Transition presentation={fade()} timing={linearTiming({ durationInFrames: TRANS_F })} />
 
         <TransitionSeries.Sequence durationInFrames={outroF}>
-          <OutroPro cta={p.cta} handle={p.handle} accent={p.accent} />
+          <OutroPro cta={p.cta} handle={p.handle} accent={p.accent} logo={p.logo || undefined} />
         </TransitionSeries.Sequence>
       </TransitionSeries>
 

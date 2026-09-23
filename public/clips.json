@@ -1,29 +1,37 @@
 {
-  "fuente": "ia",
-  "clips": [
-    {
-      "prompt": "Cinematic 9:16 vertical shot. Over-the-shoulder view of a person excitedly sketching ideas in a blank notebook. Bright, warm morning sunlight streaming through a window. Smooth slow-motion zoom.",
-      "archivo": "clips/01.mp4",
-      "duracion": 4.375,
-      "proveedor": "pixazo"
-    },
-    {
-      "prompt": "Cinematic 9:16 vertical shot. Close-up of a stressed person rubbing their temples in front of a glowing laptop screen. Moody, dim blue-hour lighting. Handheld camera with subtle, anxious movement.",
-      "archivo": "clips/02.mp4",
-      "duracion": 4.375,
-      "proveedor": "pixazo"
-    },
-    {
-      "prompt": "Cinematic 9:16 vertical shot. Slow-motion side profile of a person closing a laptop and walking away from a messy desk. Dramatic side-lighting casting long shadows. Smooth tracking shot backwards.",
-      "archivo": "clips/03.mp4",
-      "duracion": 4.375,
-      "proveedor": "pixazo"
-    },
-    {
-      "prompt": "Cinematic 9:16 vertical shot. Close-up of a person's hands gently closing a small daily planner with a sense of completion. Soft, warm golden-hour lighting. Slow-motion steady shot with shallow depth of field.",
-      "archivo": "clips/04.mp4",
-      "duracion": 4.375,
-      "proveedor": "pixazo"
-    }
-  ]
+ "fuente": "05-estudio",
+ "clips": [
+  {
+   "archivo": "reedit/nails/pack/estudio1.mp4",
+   "duracion": 7.67
+  },
+  {
+   "archivo": "reedit/nails/pack/estudio.mp4",
+   "duracion": 3
+  },
+  {
+   "archivo": "reedit/nails/pack/estudio2.mp4",
+   "duracion": 11.67
+  },
+  {
+   "archivo": "reedit/nails/pack/v2.mp4",
+   "duracion": 10.52
+  },
+  {
+   "archivo": "reedit/nails/pack/estudio1.mp4",
+   "duracion": 7.67
+  },
+  {
+   "archivo": "reedit/nails/pack/v1.mp4",
+   "duracion": 17.33
+  },
+  {
+   "archivo": "reedit/nails/pack/estudio2.mp4",
+   "duracion": 11.67
+  },
+  {
+   "archivo": "reedit/nails/pack/set-blanco-flores.mp4",
+   "duracion": 3
+  }
+ ]
 }

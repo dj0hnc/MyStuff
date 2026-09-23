@@ -79,7 +79,7 @@ const conElevenLabs = async () => {
 
 const conGemini = async () => {
   const { generateContent, imagenDe } = await import("./gemini.mjs");
-  const { palabrasDe } = await import("./whisper.mjs");
+  const { palabrasDe, alinearAlGuion } = await import("./whisper.mjs");
   const model = process.env.GEMINI_TTS_MODEL ?? "gemini-3.1-flash-tts-preview";
   const voice = process.env.GEMINI_VOICE ?? "Puck";
   const estilo = process.env.GEMINI_VOICE_STYLE ?? "Habla en español neutro, con energía y ritmo de creador de TikTok, claro y natural";
@@ -97,7 +97,7 @@ const conGemini = async () => {
 
   console.log("Sacando tiempos por palabra con Whisper local...");
   const r = await palabrasDe("public/voz.mp3");
-  return { ...r, proveedor: "gemini" };
+  return { ...r, words: alinearAlGuion(texto, r.words), proveedor: "gemini" };
 };
 
 const PROVEEDORES = { elevenlabs: conElevenLabs, gemini: conGemini };

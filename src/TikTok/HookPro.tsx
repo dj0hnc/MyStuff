@@ -1,10 +1,10 @@
-import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
+import { AbsoluteFill, Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { bebas, montserrat } from "./fonts";
 
-type Props = { readonly text: string; readonly accent: string; readonly kicker?: string };
+type Props = { readonly text: string; readonly accent: string; readonly kicker?: string; readonly logo?: string };
 
 // Gancho: cada palabra cae desde arriba con rebote, una tras otra.
-export const HookPro: React.FC<Props> = ({ text, accent, kicker = "ATENCIÓN" }) => {
+export const HookPro: React.FC<Props> = ({ text, accent, kicker = "ATENCIÓN", logo }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const words = text.split(" ");
@@ -13,8 +13,23 @@ export const HookPro: React.FC<Props> = ({ text, accent, kicker = "ATENCIÓN" })
 
   return (
     <AbsoluteFill style={{ justifyContent: "center", alignItems: "center", padding: 70 }}>
+      {logo ? (
+        <Img
+          src={staticFile(logo)}
+          style={{
+            width: 360,
+            height: 360,
+            borderRadius: 180,
+            marginBottom: 40,
+            transform: `scale(${interpolate(kick, [0, 1], [0.6, 1])})`,
+            opacity: kick,
+            boxShadow: `0 30px 80px rgba(0,0,0,0.5), 0 0 0 6px ${accent}`,
+          }}
+        />
+      ) : null}
       <div
         style={{
+          display: logo ? "none" : "block",
           transform: `scale(${interpolate(kick, [0, 1], [0.6, 1])})`,
           opacity: kick,
           fontFamily: montserrat,

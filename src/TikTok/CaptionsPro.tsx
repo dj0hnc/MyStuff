@@ -29,8 +29,20 @@ export const CaptionsPro: React.FC<Props> = ({ words, accent, perLine = 3, voice
   const { fps } = useVideoConfig();
   const t = frame / fps;
 
+  // Grupos de hasta perLine palabras que cortan en la puntuación (no cruzan
+  // frases); una palabra huérfana tras la coma se pega al grupo anterior.
   const groups: Word[][] = [];
-  for (let i = 0; i < words.length; i += perLine) groups.push(words.slice(i, i + perLine));
+  let g: Word[] = [];
+  for (const w of words) {
+    g.push(w);
+    if (g.length >= perLine || /[.,;:?!]$/.test(w.text)) {
+      const prev = groups[groups.length - 1];
+      if (g.length === 1 && prev && prev.length <= perLine && !/[.?!:]$/.test(prev[prev.length - 1].text)) prev.push(w);
+      else groups.push(g);
+      g = [];
+    }
+  }
+  if (g.length) groups.push(g);
 
   const gi = groups.findIndex((g) => t >= g[0].start - 0.12 && t < g[g.length - 1].end + 0.12);
   const group = gi >= 0 ? groups[gi] : null;
@@ -104,7 +116,7 @@ const Line: React.FC<{ group: Word[]; accent: string; t: number; frame: number; 
               boxShadow: conPastilla ? `0 18px 50px ${accent}77` : "none",
             }}
           >
-            {w.text}
+            {w.text.replace(/[.,;:¿?¡!"“”]/g, "")}
           </span>
         );
       })}

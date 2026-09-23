@@ -5,6 +5,7 @@ import { tiktokSchema } from "./TikTok/schema";
 import { TikTokVoz, tiktokVozSchema, calculateVozMetadata } from "./TikTok/TikTokVoz";
 import { TikTokPro, tiktokProSchema, calculateProMetadata } from "./TikTok/TikTokPro";
 import { Reedit, reeditSchema, calculateReeditMetadata } from "./Reedit/Reedit";
+import { Promo, promoSchema, calculatePromoMetadata } from "./Promo/Promo";
 
 // Cada <Composition> aparece en la barra lateral de Remotion Studio.
 // Para renderizar: npx remotion render TikTok out/tiktok.mp4
@@ -58,9 +59,47 @@ export const RemotionRoot: React.FC = () => {
           segundosPorClip: 3.5,
           clips: [],
           palabrasClave: [],
+          logo: "",
           words: [],
           voiceDuration: 0,
           fondoSegundos: 10,
+        }}
+      />
+
+      {/* Promo de marca (logo, tagline, servicios, footage con voz). Requiere voz.json y clips.json */}
+      <Composition
+        id="Promo"
+        component={Promo}
+        schema={promoSchema}
+        calculateMetadata={calculatePromoMetadata}
+        durationInFrames={30 * 25}
+        fps={30}
+        width={1080}
+        height={1920}
+        defaultProps={{
+          marca: "KAREN A REYES",
+          sub: "NAIL STUDIO",
+          tagline: "Girlie con carácter",
+          ciudad: "Princeton, TX",
+          servicios: [
+            { icono: "♥", texto: "Uñas hermosas siempre" },
+            { icono: "◆", texto: "Acrílicas y gel polish" },
+            { icono: "♛", texto: "Diseños personalizados" },
+            { icono: "✦", texto: "Calidad y detalle" },
+          ],
+          cta: "DM @karenareyesnails",
+          handle: "@karenareyesnails",
+          logo: "img/kr-logo.png",
+          rosa: "#F8C8D8",
+          rosaFuerte: "#E91E63",
+          oro: "#D4AF37",
+          negro: "#1A0F14",
+          segundosPorClip: 2.2,
+          titulo: "",
+          words: [],
+          voiceDuration: 0,
+          clips: [],
+          palabrasClave: [],
         }}
       />
 
