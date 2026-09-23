@@ -1,295 +1,210 @@
 {
-  "duration": 22.524,
+  "duration": 17.833,
   "words": [
     {
-      "text": "It’s",
+      "text": "Live",
       "start": 0,
-      "end": 0.197
+      "end": 0.453
     },
     {
-      "text": "not",
-      "start": 0.244,
-      "end": 0.372
+      "text": "in",
+      "start": 0.511,
+      "end": 0.604
     },
     {
-      "text": "a",
-      "start": 0.418,
-      "end": 0.441
+      "text": "Princeton,",
+      "start": 0.685,
+      "end": 1.173
     },
     {
-      "text": "lack",
-      "start": 0.488,
-      "end": 0.662
-    },
-    {
-      "text": "of",
-      "start": 0.708,
-      "end": 0.755
-    },
-    {
-      "text": "discipline,",
-      "start": 0.824,
-      "end": 1.509
-    },
-    {
-      "text": "it’s",
-      "start": 1.66,
-      "end": 1.846
-    },
-    {
-      "text": "fear",
-      "start": 1.904,
-      "end": 2.101
-    },
-    {
-      "text": "of",
-      "start": 2.159,
-      "end": 2.229
-    },
-    {
-      "text": "failure.",
-      "start": 2.31,
-      "end": 2.879
-    },
-    {
-      "text": "You",
-      "start": 3.32,
-      "end": 3.448
-    },
-    {
-      "text": "start",
-      "start": 3.506,
-      "end": 3.692
-    },
-    {
-      "text": "a",
-      "start": 3.727,
-      "end": 3.75
-    },
-    {
-      "text": "project",
-      "start": 3.808,
-      "end": 4.133
-    },
-    {
-      "text": "with",
-      "start": 4.156,
-      "end": 4.261
-    },
-    {
-      "text": "so",
-      "start": 4.307,
-      "end": 4.4
-    },
-    {
-      "text": "much",
-      "start": 4.458,
-      "end": 4.598
-    },
-    {
-      "text": "excitement.",
-      "start": 4.644,
-      "end": 5.283
-    },
-    {
-      "text": "But",
-      "start": 6.235,
-      "end": 6.385
-    },
-    {
-      "text": "at",
-      "start": 6.42,
-      "end": 6.478
-    },
-    {
-      "text": "the",
-      "start": 6.513,
-      "end": 6.583
-    },
-    {
-      "text": "first",
-      "start": 6.641,
-      "end": 6.908
-    },
-    {
-      "text": "obstacle,",
-      "start": 7.001,
-      "end": 7.709
-    },
-    {
-      "text": "your",
-      "start": 7.953,
-      "end": 8.092
-    },
-    {
-      "text": "brain",
-      "start": 8.139,
-      "end": 8.359
-    },
-    {
-      "text": "wants",
-      "start": 8.417,
-      "end": 8.615
-    },
-    {
-      "text": "to",
-      "start": 8.649,
-      "end": 8.719
-    },
-    {
-      "text": "escape.",
-      "start": 8.8,
-      "end": 9.369
-    },
-    {
-      "text": "You’d",
-      "start": 10.066,
-      "end": 10.263
-    },
-    {
-      "text": "rather",
-      "start": 10.31,
-      "end": 10.519
-    },
-    {
-      "text": "leave",
-      "start": 10.565,
-      "end": 10.716
-    },
-    {
-      "text": "it",
-      "start": 10.739,
-      "end": 10.786
-    },
-    {
-      "text": "unfinished",
-      "start": 10.832,
-      "end": 11.285
-    },
-    {
-      "text": "than",
-      "start": 11.308,
-      "end": 11.424
-    },
-    {
-      "text": "risk",
-      "start": 11.494,
-      "end": 11.691
-    },
-    {
-      "text": "failing.",
-      "start": 11.749,
-      "end": 12.295
-    },
-    {
-      "text": "Quitting",
-      "start": 13.247,
-      "end": 13.572
-    },
-    {
-      "text": "gives",
-      "start": 13.607,
-      "end": 13.781
-    },
-    {
-      "text": "you",
-      "start": 13.816,
-      "end": 13.897
-    },
-    {
-      "text": "a",
-      "start": 13.967,
-      "end": 14.002
-    },
-    {
-      "text": "false",
-      "start": 14.095,
-      "end": 14.397
-    },
-    {
-      "text": "sense",
-      "start": 14.42,
-      "end": 14.652
-    },
-    {
-      "text": "of",
-      "start": 14.675,
-      "end": 14.733
-    },
-    {
-      "text": "control.",
-      "start": 14.791,
-      "end": 15.418
-    },
-    {
-      "text": "Perfectionism",
-      "start": 16.115,
-      "end": 16.893
-    },
-    {
-      "text": "is",
-      "start": 16.951,
-      "end": 17.055
-    },
-    {
-      "text": "just",
-      "start": 17.125,
-      "end": 17.346
-    },
-    {
-      "text": "disguising",
-      "start": 17.392,
-      "end": 17.938
-    },
-    {
-      "text": "your",
-      "start": 17.972,
-      "end": 18.077
-    },
-    {
-      "text": "self-sabotage.",
-      "start": 18.123,
-      "end": 19.064
-    },
-    {
-      "text": "Finish",
-      "start": 19.76,
-      "end": 20.062
-    },
-    {
-      "text": "something",
-      "start": 20.109,
-      "end": 20.422
-    },
-    {
-      "text": "small",
-      "start": 20.492,
-      "end": 20.782
-    },
-    {
-      "text": "today",
-      "start": 20.84,
-      "end": 21.2
+      "text": "Texas",
+      "start": 1.196,
+      "end": 1.718
     },
     {
       "text": "and",
-      "start": 21.281,
-      "end": 21.421
+      "start": 1.776,
+      "end": 1.916
     },
     {
-      "text": "break",
-      "start": 21.479,
-      "end": 21.688
+      "text": "want",
+      "start": 1.997,
+      "end": 2.194
     },
     {
-      "text": "the",
-      "start": 21.734,
-      "end": 21.804
+      "text": "cute",
+      "start": 2.241,
+      "end": 2.485
     },
     {
-      "text": "cycle.",
-      "start": 21.85,
-      "end": 22.524
+      "text": "nails?",
+      "start": 2.531,
+      "end": 3.077
+    },
+    {
+      "text": "I'm",
+      "start": 3.32,
+      "end": 3.495
+    },
+    {
+      "text": "Karen,",
+      "start": 3.553,
+      "end": 4.063
+    },
+    {
+      "text": "nail",
+      "start": 4.238,
+      "end": 4.481
+    },
+    {
+      "text": "tech.",
+      "start": 4.54,
+      "end": 4.911
+    },
+    {
+      "text": "Acrylics,",
+      "start": 5.12,
+      "end": 5.793
+    },
+    {
+      "text": "gel,",
+      "start": 5.875,
+      "end": 6.409
+    },
+    {
+      "text": "French",
+      "start": 6.56,
+      "end": 6.896
+    },
+    {
+      "text": "tips,",
+      "start": 6.943,
+      "end": 7.372
+    },
+    {
+      "text": "nail",
+      "start": 7.454,
+      "end": 7.732
+    },
+    {
+      "text": "art,",
+      "start": 7.802,
+      "end": 8.104
+    },
+    {
+      "text": "and",
+      "start": 8.15,
+      "end": 8.336
+    },
+    {
+      "text": "macaron",
+      "start": 8.429,
+      "end": 8.94
+    },
+    {
+      "text": "gel",
+      "start": 9.009,
+      "end": 9.218
+    },
+    {
+      "text": "polish.",
+      "start": 9.276,
+      "end": 9.857
+    },
+    {
+      "text": "Every",
+      "start": 10.24,
+      "end": 10.623
+    },
+    {
+      "text": "set",
+      "start": 10.693,
+      "end": 10.948
+    },
+    {
+      "text": "customized",
+      "start": 11.029,
+      "end": 11.691
+    },
+    {
+      "text": "for",
+      "start": 11.749,
+      "end": 11.9
+    },
+    {
+      "text": "you,",
+      "start": 11.981,
+      "end": 12.144
+    },
+    {
+      "text": "by",
+      "start": 12.167,
+      "end": 12.33
+    },
+    {
+      "text": "appointment,",
+      "start": 12.388,
+      "end": 12.934
+    },
+    {
+      "text": "never",
+      "start": 13.015,
+      "end": 13.259
+    },
+    {
+      "text": "rushed.",
+      "start": 13.328,
+      "end": 13.769
+    },
+    {
+      "text": "DM",
+      "start": 14.095,
+      "end": 14.454
+    },
+    {
+      "text": "me",
+      "start": 14.512,
+      "end": 14.582
+    },
+    {
+      "text": "on",
+      "start": 14.652,
+      "end": 14.745
+    },
+    {
+      "text": "Instagram",
+      "start": 14.814,
+      "end": 15.418
+    },
+    {
+      "text": "at",
+      "start": 15.476,
+      "end": 15.557
+    },
+    {
+      "text": "karenareyesnails",
+      "start": 15.615,
+      "end": 16.591
+    },
+    {
+      "text": "to",
+      "start": 16.649,
+      "end": 16.707
+    },
+    {
+      "text": "book",
+      "start": 16.776,
+      "end": 16.951
+    },
+    {
+      "text": "your",
+      "start": 16.997,
+      "end": 17.113
+    },
+    {
+      "text": "spot.",
+      "start": 17.148,
+      "end": 17.833
     }
   ],
   "proveedor": "elevenlabs"

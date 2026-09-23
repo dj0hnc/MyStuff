@@ -1,29 +1,107 @@
 {
-  "fuente": "ia",
-  "clips": [
-    {
-      "prompt": "Cinematic 9:16 vertical shot. Over-the-shoulder view of a person excitedly sketching ideas in a blank notebook. Bright, warm morning sunlight streaming through a window. Smooth slow-motion zoom.",
-      "archivo": "clips/01.mp4",
-      "duracion": 4.375,
-      "proveedor": "pixazo"
-    },
-    {
-      "prompt": "Cinematic 9:16 vertical shot. Close-up of a stressed person rubbing their temples in front of a glowing laptop screen. Moody, dim blue-hour lighting. Handheld camera with subtle, anxious movement.",
-      "archivo": "clips/02.mp4",
-      "duracion": 4.375,
-      "proveedor": "pixazo"
-    },
-    {
-      "prompt": "Cinematic 9:16 vertical shot. Slow-motion side profile of a person closing a laptop and walking away from a messy desk. Dramatic side-lighting casting long shadows. Smooth tracking shot backwards.",
-      "archivo": "clips/03.mp4",
-      "duracion": 4.375,
-      "proveedor": "pixazo"
-    },
-    {
-      "prompt": "Cinematic 9:16 vertical shot. Close-up of a person's hands gently closing a small daily planner with a sense of completion. Soft, warm golden-hour lighting. Slow-motion steady shot with shallow depth of field.",
-      "archivo": "clips/04.mp4",
-      "duracion": 4.375,
-      "proveedor": "pixazo"
-    }
-  ]
+ "fuente": "karen-nails",
+ "clips": [
+  {
+   "archivo": "clips/v1.mp4",
+   "duracion": 17.33,
+   "w": 720,
+   "h": 1280
+  },
+  {
+   "archivo": "clips/f01.mp4",
+   "duracion": 3,
+   "w": 430,
+   "h": 476
+  },
+  {
+   "archivo": "clips/f02.mp4",
+   "duracion": 3,
+   "w": 430,
+   "h": 476
+  },
+  {
+   "archivo": "clips/v2.mp4",
+   "duracion": 10.5,
+   "w": 576,
+   "h": 1024
+  },
+  {
+   "archivo": "clips/f03.mp4",
+   "duracion": 3,
+   "w": 430,
+   "h": 476
+  },
+  {
+   "archivo": "clips/f04.mp4",
+   "duracion": 3,
+   "w": 430,
+   "h": 476
+  },
+  {
+   "archivo": "clips/v3.mp4",
+   "duracion": 8.17,
+   "w": 576,
+   "h": 1024
+  },
+  {
+   "archivo": "clips/f05.mp4",
+   "duracion": 3,
+   "w": 430,
+   "h": 476
+  },
+  {
+   "archivo": "clips/f06.mp4",
+   "duracion": 3,
+   "w": 430,
+   "h": 476
+  },
+  {
+   "archivo": "clips/v4.mp4",
+   "duracion": 33.2,
+   "w": 576,
+   "h": 1024
+  },
+  {
+   "archivo": "clips/f07.mp4",
+   "duracion": 3,
+   "w": 430,
+   "h": 476
+  },
+  {
+   "archivo": "clips/f08.mp4",
+   "duracion": 3,
+   "w": 430,
+   "h": 476
+  },
+  {
+   "archivo": "clips/v5.mp4",
+   "duracion": 9.47,
+   "w": 576,
+   "h": 1024
+  },
+  {
+   "archivo": "clips/f09.mp4",
+   "duracion": 3,
+   "w": 430,
+   "h": 476
+  },
+  {
+   "archivo": "clips/f10.mp4",
+   "duracion": 3,
+   "w": 430,
+   "h": 476
+  },
+  {
+   "archivo": "clips/f11.mp4",
+   "duracion": 3,
+   "w": 430,
+   "h": 476
+  },
+  {
+   "archivo": "clips/f12.mp4",
+   "duracion": 3,
+   "w": 430,
+   "h": 476
+  }
+ ]
 }

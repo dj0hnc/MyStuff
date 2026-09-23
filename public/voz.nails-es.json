@@ -1,0 +1,221 @@
+{
+  "duration": 18.53,
+  "words": [
+    {
+      "text": "¿Vives",
+      "start": 0,
+      "end": 0.58
+    },
+    {
+      "text": "en",
+      "start": 0.673,
+      "end": 0.743
+    },
+    {
+      "text": "Princeton,",
+      "start": 0.813,
+      "end": 1.382
+    },
+    {
+      "text": "Texas,",
+      "start": 1.428,
+      "end": 2.043
+    },
+    {
+      "text": "y",
+      "start": 2.078,
+      "end": 2.125
+    },
+    {
+      "text": "quieres",
+      "start": 2.206,
+      "end": 2.461
+    },
+    {
+      "text": "uñas",
+      "start": 2.531,
+      "end": 2.798
+    },
+    {
+      "text": "lindas?",
+      "start": 2.868,
+      "end": 3.518
+    },
+    {
+      "text": "Soy",
+      "start": 3.796,
+      "end": 3.994
+    },
+    {
+      "text": "Karen,",
+      "start": 4.04,
+      "end": 4.563
+    },
+    {
+      "text": "nail",
+      "start": 4.656,
+      "end": 4.923
+    },
+    {
+      "text": "tech.",
+      "start": 4.992,
+      "end": 5.422
+    },
+    {
+      "text": "Acrílicas,",
+      "start": 5.503,
+      "end": 6.316
+    },
+    {
+      "text": "gel,",
+      "start": 6.362,
+      "end": 6.734
+    },
+    {
+      "text": "francesas,",
+      "start": 6.78,
+      "end": 7.558
+    },
+    {
+      "text": "nail",
+      "start": 7.651,
+      "end": 7.906
+    },
+    {
+      "text": "art",
+      "start": 8.022,
+      "end": 8.255
+    },
+    {
+      "text": "y",
+      "start": 8.324,
+      "end": 8.417
+    },
+    {
+      "text": "macaron",
+      "start": 8.533,
+      "end": 8.916
+    },
+    {
+      "text": "gel",
+      "start": 8.963,
+      "end": 9.16
+    },
+    {
+      "text": "polish.",
+      "start": 9.23,
+      "end": 9.903
+    },
+    {
+      "text": "Cada",
+      "start": 10.228,
+      "end": 10.542
+    },
+    {
+      "text": "set",
+      "start": 10.623,
+      "end": 10.925
+    },
+    {
+      "text": "hecho",
+      "start": 10.983,
+      "end": 11.262
+    },
+    {
+      "text": "a",
+      "start": 11.297,
+      "end": 11.32
+    },
+    {
+      "text": "tu",
+      "start": 11.366,
+      "end": 11.436
+    },
+    {
+      "text": "gusto,",
+      "start": 11.482,
+      "end": 11.935
+    },
+    {
+      "text": "con",
+      "start": 11.97,
+      "end": 12.121
+    },
+    {
+      "text": "cita",
+      "start": 12.167,
+      "end": 12.516
+    },
+    {
+      "text": "y",
+      "start": 12.585,
+      "end": 12.632
+    },
+    {
+      "text": "sin",
+      "start": 12.701,
+      "end": 12.852
+    },
+    {
+      "text": "prisas.",
+      "start": 12.899,
+      "end": 13.526
+    },
+    {
+      "text": "Escríbeme",
+      "start": 13.735,
+      "end": 14.327
+    },
+    {
+      "text": "por",
+      "start": 14.373,
+      "end": 14.547
+    },
+    {
+      "text": "Instagram,",
+      "start": 14.617,
+      "end": 15.197
+    },
+    {
+      "text": "arroba",
+      "start": 15.244,
+      "end": 15.697
+    },
+    {
+      "text": "karena",
+      "start": 15.766,
+      "end": 16.115
+    },
+    {
+      "text": "reyes",
+      "start": 16.196,
+      "end": 16.498
+    },
+    {
+      "text": "nails,",
+      "start": 16.579,
+      "end": 17.09
+    },
+    {
+      "text": "y",
+      "start": 17.264,
+      "end": 17.322
+    },
+    {
+      "text": "agenda",
+      "start": 17.392,
+      "end": 17.717
+    },
+    {
+      "text": "tu",
+      "start": 17.763,
+      "end": 17.856
+    },
+    {
+      "text": "cita.",
+      "start": 17.903,
+      "end": 18.53
+    }
+  ],
+  "proveedor": "elevenlabs"
+}
