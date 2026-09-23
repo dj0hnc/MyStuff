@@ -13,8 +13,9 @@
 //       --handle @micanal  marca de agua arriba (o CLIP_HANDLE en .env)
 //       --nombre podcast1  nombre de los archivos (default: id del video)
 //       --desde 600 --hasta 3000   solo busca clips en ese tramo (s) del video
+//       --pausa 0.6        quita las pausas más largas que eso (jump cuts); --pausa 0 no corta nada
 //       --sin-render       solo propone los clips (EDL + textos), no renderiza
-// Crea: out/clips/<nombre>[-<subs>]-<n>.mp4 y out/clips/<nombre>[-<subs>].md (textos para publicar)
+// Crea: out/clips/<nombre>[-<subs>]-<n>.mp4 y out/clips/<nombre>[-<subs>].md/.json (textos para publicar)
 //
 // Cómo decide:
 //   1. Whisper local transcribe todo el audio con tiempo por palabra (se guarda en caché).
@@ -32,7 +33,7 @@ import { ytdlp } from "./ytdlp.mjs";
 
 const args = process.argv.slice(2);
 const opt = (n, d) => { const i = args.indexOf(`--${n}`); return i >= 0 ? args[i + 1] : d; };
-const conValor = new Set(["--n", "--dur", "--idioma", "--subs", "--encuadre", "--handle", "--nombre", "--desde", "--hasta"]);
+const conValor = new Set(["--pausa", "--n", "--dur", "--idioma", "--subs", "--encuadre", "--handle", "--nombre", "--desde", "--hasta"]);
 const fuente = args.find((a, i) => !a.startsWith("--") && !conValor.has(args[i - 1]));
 if (!fuente) { console.error('Uso: npm run clipear -- "URL o ruta.mp4" [--n 5] [--subs es] [--handle @canal]'); process.exit(1); }
 const N = Number(opt("n", 5));
@@ -44,6 +45,7 @@ const HANDLE = opt("handle", process.env.CLIP_HANDLE ?? "");
 const DESDE = Number(opt("desde", 0));
 const HASTA = Number(opt("hasta", Infinity));
 const SIN_RENDER = args.includes("--sin-render");
+const PAUSA = Number(opt("pausa", 0.6));
 const MODELO = process.env.GEMINI_TEXT_MODEL ?? "gemini-3.6-flash";
 const ACENTO = process.env.CLIP_COLOR || "#FFE600";
 
@@ -180,21 +182,37 @@ const traducir = async (ws, idioma) => {
 if (SUBS && !conGemini) console.log("Sin GEMINI_API_KEY no hay traducción: los subtítulos quedan en el idioma original.");
 const base = SUBS ? `${nombre}-${SUBS}` : nombre;
 const [sw, sh] = W > H ? (ENCUADRE === "completo" ? [9, 16] : ENCUADRE === "ancho" ? [W, H] : [1, 1]) : [W, H];
+const meta = [];
 const md = [`# Clips de "${info.titulo}"`, "", info.url ? `Fuente: ${info.canal} · ${info.url}` : "", ""];
 for (const [k, c] of clips.entries()) {
   const n = k + 1;
   const subs = SUBS && conGemini ? await traducir(c.ws, SUBS) : c.ws;
   const gancho = SUBS === "en" ? c.gancho_en : SUBS === "es" ? c.gancho_es : (IDIOMA === "en" ? c.gancho_en : c.gancho_es);
-  const corte = Math.min(c.end, c.start + 3);
+  // Cortes rápidos: cada pausa de más de PAUSA s entre palabras se quita (jump cut).
+  const tramos = [];
+  for (const w of c.ws) {
+    const t = tramos.at(-1);
+    if (t && (PAUSA <= 0 || w.start - t.ultima < PAUSA)) { t.to = w.end; t.ultima = w.end; }
+    else tramos.push({ from: w.start, to: w.end, ultima: w.end });
+  }
+  const rangos = tramos.map((t) => ({ from: +Math.max(c.start, t.from - 0.12).toFixed(2), to: +Math.min(c.end, t.to + 0.2).toFixed(2) }));
+  rangos[0].from = c.start;
+  rangos.at(-1).to = c.end;
+  // El gancho vive en el primer bloque; si es largo se parte a los 3 s sin tocar el audio.
+  if (rangos[0].to - rangos[0].from > 3.5) rangos.splice(0, 1, { from: rangos[0].from, to: +(rangos[0].from + 3).toFixed(2), seguido: true }, { from: +(rangos[0].from + 3).toFixed(2), to: rangos[0].to });
+  const bloques = rangos.map((r, i) => ({
+    video: { from: r.from, to: r.to }, audio: "sync", gain: 1, quien: "el", dialogo: true,
+    ...(i === 0 ? { label: String(gancho ?? "").toUpperCase() } : {}),
+    fadeIn: i === 0 ? 2 : rangos[i - 1].seguido ? 0 : 1,
+    fadeOut: i === rangos.length - 1 ? 8 : r.seguido ? 0 : 1,
+  }));
+  const durFinal = bloques.reduce((a, b) => a + b.video.to - b.video.from, 0);
   const edl = {
     src: `reedit/${basename(video)}`,
     audioSrc: `reedit/${basename(audio)}`,
     srcWidth: sw,
     srcHeight: sh,
-    bloques: [
-      { video: { from: c.start, to: corte }, audio: "sync", gain: 1, quien: "el", label: String(gancho ?? "").toUpperCase(), dialogo: true, fadeIn: 2, fadeOut: 0 },
-      ...(c.end > corte ? [{ video: { from: corte, to: c.end }, audio: "sync", gain: 1, quien: "el", dialogo: true, fadeIn: 0, fadeOut: 8 }] : []),
-    ],
+    bloques,
     words: subs,
     handle: HANDLE,
     subsBottom: 420,
@@ -205,7 +223,7 @@ for (const [k, c] of clips.entries()) {
   const salida = `out/clips/${base}-${n}.mp4`;
   const credito = info.canal ? `\n\nCréditos / Credit: ${info.canal}${info.url ? ` (${info.url})` : ""}` : "";
   md.push(
-    `## Clip ${n} · ${(c.end - c.start).toFixed(0)} s · viral ${c.viral}/10`,
+    `## Clip ${n} · ${durFinal.toFixed(0)} s · viral ${c.viral}/10`,
     `\`${salida}\` · ${c.start.toFixed(1)}–${c.end.toFixed(1)} s del original`,
     `> ${c.por_que}`,
     "",
@@ -213,11 +231,13 @@ for (const [k, c] of clips.entries()) {
     `**EN** · ${c.titulo_en}`, "", `${c.descripcion_en}${credito}`, "",
     (c.hashtags ?? []).map((h) => (h.startsWith("#") ? h : `#${h}`)).join(" "), "",
   );
-  console.log(`\nClip ${n}: ${c.start.toFixed(1)}-${c.end.toFixed(1)} s (${(c.end - c.start).toFixed(0)} s) viral ${c.viral}/10\n  ${c.titulo_es}\n  ${c.titulo_en}`);
+  meta.push({ archivo: salida, duracion: +durFinal.toFixed(1), viral: c.viral, gancho, titulo_es: c.titulo_es, titulo_en: c.titulo_en, descripcion_es: c.descripcion_es + credito, descripcion_en: c.descripcion_en + credito, hashtags: (c.hashtags ?? []).map((h) => (h.startsWith("#") ? h : `#${h}`)), subs: SUBS ?? "original", fuente: info.url });
+  console.log(`\nClip ${n}: ${c.start.toFixed(1)}-${c.end.toFixed(1)} s (${durFinal.toFixed(0)} s tras quitar pausas) viral ${c.viral}/10\n  ${c.titulo_es}\n  ${c.titulo_en}`);
   if (!SIN_RENDER) {
     execFileSync("npx", ["remotion", "render", "Reedit", salida, "--concurrency=4", "--crf=23", `--props=${JSON.stringify({ edl: edlPath })}`], { stdio: "inherit" });
   }
 }
 await writeFile(`out/clips/${base}.md`, md.join("\n"));
+await writeFile(`out/clips/${base}.json`, JSON.stringify(meta, null, 1));
 console.log(`\nListo: ${clips.length} clips${SIN_RENDER ? " propuestos (sin render)" : ""} en out/clips/. Textos para publicar: out/clips/${base}.md`);
 if (SIN_RENDER) console.log(`Para renderizar uno: npx remotion render Reedit out/clips/${base}-1.mp4 --props='{"edl":"reedit/${base}-clip1.json"}'`);

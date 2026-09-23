@@ -54,7 +54,12 @@ Estrategia completa, nicho recomendado y programas que pagan por vistas: `docs/c
 - `npm run clipear -- "URL" --n 5 --subs es --handle @canal` baja el video, lo transcribe con Whisper,
   Gemini elige los mejores momentos y renderiza clips 9:16 con gancho arriba y subtítulos palabra por palabra
   (traducidos con `--subs`). Deja en `out/clips/` los .mp4 y un .md con títulos, descripciones y hashtags ES/EN.
+  Quita las pausas de más de 0.6 s (jump cuts; `--pausa 0` las deja).
   `--encuadre cuadrado|completo|ancho`, `--dur 45`, `--desde/--hasta` (s), `--sin-render`.
+- `npm run fabrica -- --subs es --doble --handle @canal` hace la producción del día en un comando: busca virales,
+  clipea los que no has usado y arma `out/publicar/calendario.md` y `.csv` con fecha, hora, cuenta por idioma y textos.
+- `npm run stats -- @tucanal @competidor` lee los Shorts y videos públicos, marca los ganadores (2x la mediana)
+  y con Gemini explica el patrón y propone los próximos 10 clips. Escribe `out/stats-<canal>.md`.
 
 ## Composiciones (`src/Root.tsx`)
 

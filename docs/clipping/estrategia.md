@@ -53,32 +53,38 @@ YouTube → tu foto → Configuración → *Agregar o administrar canales* → *
 Queda como cuenta de marca y cambias entre canales desde tu foto. Haz lo mismo en
 TikTok (una cuenta por idioma) e Instagram.
 
-## 3. La rutina diaria (1 a 2 horas)
+## 3. La rutina diaria (30 minutos tuyos)
 
 ```bash
-# 1. ¿Qué está pegando hoy?
-npm run virales -- podcast-en negocios-en --periodo hoy
-npm run virales -- podcast-es negocios-es
+# Una vez por semana: espía a 2 o 3 canales que ya crecieron en tu nicho y revisa el tuyo
+npm run stats -- @competidor1 @competidor2 @tucanal
 
-# 2. Clipear el mejor (5 clips, subtítulos en español, tu marca)
-npm run clipear -- "https://www.youtube.com/watch?v=..." --n 5 --subs es --handle @tucanal
-
-# 3. Versión con el audio y subtítulos originales en inglés para la cuenta EN
-#    (el video y la transcripción ya están en caché, así que es rápido)
-npm run clipear -- "https://www.youtube.com/watch?v=..." --n 5 --handle @tucanal_en
+# Cada día: producción completa en un comando
+#   busca virales, clipea los 2 mejores que no has usado (4 clips cada uno),
+#   versión con subtítulos en español + versión original, y arma el calendario
+npm run fabrica -- --subs es --doble --handle @tucanal
 ```
 
-Salen `out/clips/*.mp4` (1080x1920; los de subtítulos traducidos llevan `-es` en el nombre) y un `.md` con título, descripción,
-hashtags y créditos en los dos idiomas, listos para copiar y pegar.
+Resultado:
+- `out/clips/*.mp4`: clips 1080x1920 sin pausas, con gancho y subtítulos (`-es` en el nombre = traducidos).
+- `out/publicar/calendario.md`: qué subir, a qué hora y en qué cuenta, con título, descripción y hashtags.
+- `out/publicar/calendario.csv`: lo mismo para cargarlo en un programador (Metricool, Buffer).
 
-Publica 3 a 5 clips al día por cuenta. A la semana, repite lo que superó tu promedio
-de vistas y deja lo que no.
+Tú solo subes (o cargas el CSV en el programador). A mano, clip por clip:
+
+```bash
+npm run virales -- podcast-en negocios-en --periodo hoy
+npm run clipear -- "https://www.youtube.com/watch?v=..." --n 5 --subs es --handle @tucanal
+```
+
+Publica 3 a 5 clips al día por cuenta. Cada semana corre `npm run stats -- @tucanal`:
+repite el patrón de los ganadores (2x la mediana) y deja lo que no pegó.
 
 ## 4. Reglas para que pegue
 
 - **Los primeros 2 segundos lo son todo**: el gancho arriba y la frase más fuerte primero
   (el script ya lo hace).
-- 20 a 45 s rinde mejor que 60 s para tener buena retención.
+- 20 a 45 s rinde mejor que 60 s para tener buena retención. Las pausas se cortan solas.
 - Subtítulos grandes a media pantalla, lejos de los botones de TikTok (ya viene así).
 - Da crédito al creador original en la descripción (ya viene en el .md).
 - No subas a Instagram un archivo con marca de agua de TikTok: sube siempre el .mp4 limpio.
@@ -89,6 +95,8 @@ de vistas y deja lo que no.
 | Herramienta | Para qué | Costo |
 | --- | --- | --- |
 | `npm run virales` (este repo) | Encontrar videos largos con más vistas del día, la semana o el mes por nicho | Gratis |
+| `npm run fabrica` (este repo) | Producción diaria completa y calendario de publicación | Gratis |
+| `npm run stats` (este repo) | Ganadores de tu canal y de la competencia, patrón y próximas ideas | Gratis |
 | `npm run clipear` (este repo) | Transcribir, elegir momentos, traducir, cortar a 9:16 con subtítulos y textos ES/EN | Gratis (Gemini gratis + Whisper local) |
 | CapCut | Retoques manuales, sin marca de agua | Gratis |
 | Klap / Opus Clip / Submagic | Alternativas de pago si quieres otra opinión de IA o subtítulos animados | Suscripción; cobran por minuto de video |
@@ -102,3 +110,11 @@ Si YouTube bloquea la descarga (error 429), usa tus cookies con
 
 Crear las cuentas y los canales, entrar a Whop/Vyro, aceptar las campañas y subir los clips.
 Todo eso pide tu identidad y tus contraseñas. Lo demás lo hacen los scripts.
+
+## 7. Por qué no se sube solo (todavía)
+
+- **YouTube:** la API sí permite subir, pero los proyectos nuevos sin verificar quedan con
+  los videos en privado hasta pasar una auditoría de Google (gratis, tarda semanas).
+  Si quieres, se tramita y luego agregamos `npm run subir`.
+- **TikTok e Instagram:** sus APIs de publicación piden app aprobada o cuenta de empresa.
+- Mientras tanto, lo más rápido es el CSV en Metricool o Buffer (tienen plan gratis) o subir desde el celular.
