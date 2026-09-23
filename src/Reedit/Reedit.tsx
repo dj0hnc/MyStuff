@@ -57,7 +57,7 @@ export const Reedit: React.FC<Props> = ({ data }) => {
               />
             ) : null}
             {b.label ? <Label text={b.label} sub={b.sub} pos={b.labelPos ?? "top"} color={color} frames={frames} /> : null}
-            {b.dialogo ? <Dialogo words={edl.words} from={b.video.from} to={b.video.to} color={color} /> : null}
+            {b.dialogo ? <Dialogo words={edl.words} from={b.video.from} to={b.video.to} color={color} bottom={edl.subsBottom ?? 44} /> : null}
           </Sequence>
         );
       })}
@@ -119,7 +119,7 @@ const Label: React.FC<{ text: string; sub?: string; pos: "top" | "center"; color
             fontFamily: bebas,
             fontSize: pos === "top" ? 88 : 120,
             lineHeight: 0.95,
-            whiteSpace: "nowrap",
+            whiteSpace: text.length > 18 ? "normal" : "nowrap",
             color: "white",
             textShadow: `0 0 30px ${color}AA, 0 10px 30px rgba(0,0,0,0.7)`,
             WebkitTextStroke: "2px rgba(0,0,0,0.35)",
@@ -136,7 +136,7 @@ const Label: React.FC<{ text: string; sub?: string; pos: "top" | "center"; color
 };
 
 // Subtítulos del diálogo: frases de hasta 4 palabras, la palabra que suena en color.
-const Dialogo: React.FC<{ words: Word[]; from: number; to: number; color: string }> = ({ words, from, to, color }) => {
+const Dialogo: React.FC<{ words: Word[]; from: number; to: number; color: string; bottom: number }> = ({ words, from, to, color, bottom }) => {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
   const t = from + f / fps;
@@ -156,7 +156,7 @@ const Dialogo: React.FC<{ words: Word[]; from: number; to: number; color: string
   if (!g) return null;
   const enter = spring({ frame: f - Math.round((g[0].start - 0.1 - from) * fps), fps, config: { damping: 14, stiffness: 200 } });
   return (
-    <AbsoluteFill style={{ justifyContent: "flex-end", alignItems: "center", paddingBottom: 44 }}>
+    <AbsoluteFill style={{ justifyContent: "flex-end", alignItems: "center", paddingBottom: bottom }}>
       <div
         style={{
           transform: `translateY(${interpolate(enter, [0, 1], [30, 0])}px)`,

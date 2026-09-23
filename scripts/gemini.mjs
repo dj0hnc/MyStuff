@@ -13,6 +13,8 @@ const RESPALDO = { "gemini-3.6-flash": "gemini-3.5-flash", "gemini-3.5-flash": "
 
 // Reintenta ante 503/429 transitorios y, si sigue fallando, prueba un modelo hermano.
 export const generateContent = async (model, body, intento = 0) => {
+  // Una variable vacía en .env (GEMINI_TEXT_MODEL=) no debe dejar el modelo en blanco.
+  model ||= "gemini-3.6-flash";
   try {
     return await generateContentUnaVez(model, body);
   } catch (e) {
@@ -34,7 +36,13 @@ const generateContentUnaVez = async (model, body) => {
     `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${geminiKey()}`,
     { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) },
   );
-  const json = await res.json();
+  // Una respuesta vacía o cortada (proxy, timeout) se trata como error transitorio.
+  let json;
+  try {
+    json = JSON.parse(await res.text());
+  } catch {
+    throw new Error(`Gemini respondió ${res.status} sin JSON válido${res.status >= 500 ? " (temporal)" : ""}`);
+  }
   if (!res.ok) {
     const msg = json.error?.message ?? JSON.stringify(json);
     if (res.status === 429 && /quota/i.test(msg)) {

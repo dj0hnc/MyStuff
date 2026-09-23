@@ -24,5 +24,6 @@ export type EDL = {
   bloques: Bloque[];
   words: Word[]; // palabras con tiempos del video FUENTE
   handle: string;
+  subsBottom?: number; // px desde abajo para los subtítulos (default 44; ~420 deja libre la interfaz de TikTok/Shorts)
   colores: { ella: string; el: string };
 };
