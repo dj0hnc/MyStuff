@@ -1,185 +1,200 @@
 {
-  "duration": 17,
+  "duration": 19.02,
   "words": [
     {
       "text": "Esto",
-      "start": 0.29,
-      "end": 0.38
+      "start": 0.3,
+      "end": 0.43
     },
     {
       "text": "no",
-      "start": 0.38,
-      "end": 0.67
+      "start": 0.43,
+      "end": 0.69
     },
     {
       "text": "es",
-      "start": 0.67,
-      "end": 0.76
+      "start": 0.69,
+      "end": 0.85
     },
     {
       "text": "una",
-      "start": 0.76,
-      "end": 1.04
+      "start": 0.85,
+      "end": 1.18
     },
     {
       "text": "mesa",
-      "start": 1.04,
-      "end": 1.42
+      "start": 1.18,
+      "end": 1.6
     },
     {
       "text": "en",
-      "start": 1.42,
-      "end": 1.61
+      "start": 1.6,
+      "end": 1.81
     },
     {
       "text": "la",
-      "start": 1.61,
-      "end": 1.8
+      "start": 1.81,
+      "end": 2.02
     },
     {
       "text": "cocina.",
-      "start": 1.8,
-      "end": 2.5
+      "start": 2.02,
+      "end": 2.91
     },
     {
       "text": "Es",
-      "start": 2.5,
-      "end": 2.71
+      "start": 2.91,
+      "end": 3.03
     },
     {
       "text": "mi",
-      "start": 2.71,
-      "end": 2.87
+      "start": 3.03,
+      "end": 3.18
     },
     {
       "text": "estudio",
-      "start": 2.87,
-      "end": 3.49
+      "start": 3.18,
+      "end": 3.84
     },
     {
       "text": "en",
-      "start": 3.49,
-      "end": 3.67
+      "start": 3.84,
+      "end": 4.11
     },
     {
-      "text": "Princeton",
-      "start": 3.67,
-      "end": 4.49
+      "text": "Princeton,",
+      "start": 4.11,
+      "end": 4.88
     },
     {
-      "text": "Tejas.",
-      "start": 4.49,
-      "end": 5
+      "text": "Texas:",
+      "start": 4.88,
+      "end": 5.64
     },
     {
-      "text": "Privado,",
-      "start": 5,
-      "end": 5.99
+      "text": "privado,",
+      "start": 5.64,
+      "end": 6.4
     },
     {
       "text": "limpio",
-      "start": 5.99,
-      "end": 6.65
+      "start": 6.4,
+      "end": 7.18
     },
     {
       "text": "y",
-      "start": 6.65,
-      "end": 6.76
+      "start": 7.18,
+      "end": 7.38
     },
     {
       "text": "certificado.",
-      "start": 6.76,
-      "end": 8
+      "start": 7.38,
+      "end": 8.26
     },
     {
       "text": "Tú,",
-      "start": 8,
-      "end": 8.53
+      "start": 8.26,
+      "end": 8.79
     },
     {
       "text": "tu",
-      "start": 8.53,
-      "end": 8.81
+      "start": 8.79,
+      "end": 9.1
     },
     {
       "text": "música",
-      "start": 8.81,
-      "end": 9.49
-    },
-    {
-      "text": "y",
-      "start": 9.49,
-      "end": 9.59
-    },
-    {
-      "text": "tus",
-      "start": 9.59,
+      "start": 9.1,
       "end": 9.91
     },
     {
-      "text": "uñas.",
+      "text": "y",
       "start": 9.91,
-      "end": 10.5
+      "end": 10.03
     },
     {
-      "text": "Sin",
-      "start": 10.5,
-      "end": 10.8
+      "text": "tus",
+      "start": 10.03,
+      "end": 10.24
     },
     {
-      "text": "frisas",
-      "start": 10.8,
-      "end": 11.39
+      "text": "uñas,",
+      "start": 10.24,
+      "end": 11.33
+    },
+    {
+      "text": "sin",
+      "start": 11.33,
+      "end": 11.45
+    },
+    {
+      "text": "prisas",
+      "start": 11.45,
+      "end": 12
     },
     {
       "text": "y",
-      "start": 11.39,
-      "end": 11.63
+      "start": 12,
+      "end": 12.12
     },
     {
-      "text": "concita.",
-      "start": 11.63,
-      "end": 12.5
+      "text": "con",
+      "start": 12.12,
+      "end": 12.597
     },
     {
-      "text": "Me",
-      "start": 12.5,
-      "end": 12.86
+      "text": "cita.",
+      "start": 12.597,
+      "end": 13.26
     },
     {
-      "text": "da",
-      "start": 12.86,
-      "end": 12.96
+      "text": "Ven",
+      "start": 13.26,
+      "end": 13.56
+    },
+    {
+      "text": "a",
+      "start": 13.56,
+      "end": 13.68
     },
     {
       "text": "conocerlo.",
-      "start": 12.96,
-      "end": 14
+      "start": 13.68,
+      "end": 14.9
     },
     {
       "text": "Escríbeme",
-      "start": 14,
-      "end": 14.65
+      "start": 14.9,
+      "end": 15.75
     },
     {
       "text": "por",
-      "start": 14.65,
-      "end": 14.85
+      "start": 15.75,
+      "end": 16.01
     },
     {
-      "text": "Instagram.",
-      "start": 14.85,
-      "end": 15.5
+      "text": "Instagram,",
+      "start": 16.01,
+      "end": 17.03
     },
     {
       "text": "Karen",
-      "start": 15.5,
-      "end": 15.89
+      "start": 17.03,
+      "end": 17.49
     },
     {
-      "text": "Arrelles-Nales.",
-      "start": 15.89,
-      "end": 17
+      "text": "A",
+      "start": 17.49,
+      "end": 17.617
+    },
+    {
+      "text": "Reyes",
+      "start": 17.745,
+      "end": 18.383
+    },
+    {
+      "text": "Nails.",
+      "start": 18.383,
+      "end": 19.02
     }
   ],
   "proveedor": "gemini"
