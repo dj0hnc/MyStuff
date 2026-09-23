@@ -50,7 +50,8 @@
     "virales": "node scripts/buscar-virales.mjs",
     "clipear": "node --env-file-if-exists=.env scripts/clipear.mjs",
     "stats": "node --env-file-if-exists=.env scripts/stats.mjs",
-    "fabrica": "node --env-file-if-exists=.env scripts/fabrica.mjs"
+    "fabrica": "node --env-file-if-exists=.env scripts/fabrica.mjs",
+    "recap": "node --env-file-if-exists=.env scripts/recap.mjs"
   },
   "sideEffects": [
     "*.css"
