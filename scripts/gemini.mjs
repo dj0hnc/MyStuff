@@ -25,7 +25,7 @@ export const generateContent = async (model, body, intento = 0) => {
     }
     if (transitorio && RESPALDO[model] && intento < 5) {
       console.warn(`${model} saturado, probando ${RESPALDO[model]}...`);
-      return generateContent(RESPALDO[model], body, 4);
+      return generateContent(RESPALDO[model], body, 5); // un solo intento con el hermano, sin ping-pong
     }
     throw e;
   }

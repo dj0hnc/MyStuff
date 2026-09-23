@@ -52,7 +52,8 @@
     "stats": "node --env-file-if-exists=.env scripts/stats.mjs",
     "fabrica": "node --env-file-if-exists=.env scripts/fabrica.mjs",
     "recap": "node --env-file-if-exists=.env scripts/recap.mjs",
-    "pack-nails": "node --env-file-if-exists=.env scripts/pack-nails.mjs"
+    "pack-nails": "node --env-file-if-exists=.env scripts/pack-nails.mjs",
+    "remix": "node --env-file-if-exists=.env scripts/remix.mjs"
   },
   "sideEffects": [
     "*.css"

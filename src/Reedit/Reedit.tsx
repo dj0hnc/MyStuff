@@ -41,10 +41,10 @@ export const Reedit: React.FC<Props> = ({ data }) => {
         const audioFrom = b.audio === "sync" ? b.video.from : b.audio === "none" ? null : b.audio.from;
         return (
           <Sequence key={i} from={start} durationInFrames={frames} layout="none">
-            <Shot src={edl.src} from={b.video.from} to={b.video.to} width={width} height={height} tint={b.quien} colores={edl.colores} srcW={edl.srcWidth ?? 720} srcH={edl.srcHeight ?? 958} />
+            <Shot src={b.src ?? edl.src} from={b.video.from} to={b.video.to} width={width} height={height} tint={b.quien} colores={edl.colores} srcW={b.srcWidth ?? edl.srcWidth ?? 720} srcH={b.srcHeight ?? edl.srcHeight ?? 958} />
             {audioFrom !== null ? (
               <Audio
-                src={staticFile(edl.audioSrc)}
+                src={staticFile(b.src ?? edl.audioSrc)}
                 startFrom={Math.round(audioFrom * fps)}
                 endAt={Math.round(audioFrom * fps) + frames}
                 volume={(f) =>
