@@ -34,6 +34,16 @@ Opcional:
   (una grabación tuya, por ejemplo) para usarlo como voz del video.
 - `npm run dev` abre Remotion Studio para ver y editar en vivo.
 
+## Reeditar material propio
+
+- `npm run bajar -- "URL" nombre` baja un video de TikTok, Instagram, YouTube o Facebook a `public/reedit/`.
+- `npm run corte-bruto -- public/reedit/nombre.mp4 --respiro 1.5` escucha el video, conserva solo lo que se
+  habla, tira silencios y muletillas, nivela la voz por bloque y escribe `public/reedit/edl.json`.
+  Con `--max 60` limita la duración. La EDL se puede ajustar a mano (tiempos, ganancia, textos).
+- `npx remotion render Reedit out/corte.mp4` renderiza la EDL: audio original intacto, fondo desenfocado
+  para fuentes que no son 9:16, textos narradores en la franja superior, subtítulos abajo.
+- Los videos crudos no se suben a git (usa enlaces de nube); en el repo viven solo las EDL y los guiones.
+
 ## Composiciones (`src/Root.tsx`)
 
 | ID | Qué es |

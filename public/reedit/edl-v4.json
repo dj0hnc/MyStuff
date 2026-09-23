@@ -1,0 +1,502 @@
+{
+ "src": "reedit/v4.mp4",
+ "audioSrc": "reedit/v4-audio.mp3",
+ "bloques": [
+  {
+   "video": {
+    "from": 93.6,
+    "to": 97
+   },
+   "audio": "sync",
+   "gain": 0.45,
+   "quien": "el",
+   "label": "CASI ATROPELLO A UN VECINO 💀",
+   "sub": "POR IR AL BUZÓN EN SCOOTER",
+   "labelPos": "top",
+   "fadeOut": 15
+  },
+  {
+   "video": {
+    "from": 3,
+    "to": 8
+   },
+   "audio": "sync",
+   "gain": 6,
+   "quien": "ambos",
+   "label": "PERO TODO EMPEZÓ ASÍ...",
+   "labelPos": "top",
+   "dialogo": true,
+   "fadeIn": 6
+  },
+  {
+   "video": {
+    "from": 15,
+    "to": 16.6
+   },
+   "audio": {
+    "from": 15,
+    "to": 16.6
+   },
+   "gain": 6,
+   "quien": "ella"
+  },
+  {
+   "video": {
+    "from": 22,
+    "to": 23.4
+   },
+   "audio": {
+    "from": 16.6,
+    "to": 18
+   },
+   "gain": 6,
+   "quien": "ella",
+   "fadeOut": 12
+  },
+  {
+   "video": {
+    "from": 40.6,
+    "to": 43
+   },
+   "audio": "sync",
+   "gain": 4,
+   "quien": "el",
+   "fadeIn": 4
+  },
+  {
+   "video": {
+    "from": 53,
+    "to": 58.5
+   },
+   "audio": "sync",
+   "gain": 6,
+   "quien": "ambos",
+   "dialogo": true
+  },
+  {
+   "video": {
+    "from": 63.8,
+    "to": 66.1
+   },
+   "audio": "sync",
+   "gain": 6,
+   "quien": "ambos",
+   "fadeOut": 6
+  },
+  {
+   "video": {
+    "from": 66.12,
+    "to": 67.8
+   },
+   "audio": {
+    "from": 74.4,
+    "to": 76.08
+   },
+   "gain": 1.8,
+   "quien": "el",
+   "label": "MISIÓN: EL BUZÓN",
+   "labelPos": "top",
+   "fadeIn": 3,
+   "fadeOut": 0
+  },
+  {
+   "video": {
+    "from": 67.8,
+    "to": 71.16
+   },
+   "audio": {
+    "from": 76.11,
+    "to": 79.47
+   },
+   "gain": 0.6,
+   "quien": "el",
+   "fadeIn": 0
+  },
+  {
+   "video": {
+    "from": 76.11,
+    "to": 79.47
+   },
+   "audio": {
+    "from": 79.47,
+    "to": 82.83
+   },
+   "gain": 0.6,
+   "quien": "el"
+  },
+  {
+   "video": {
+    "from": 80,
+    "to": 83.36
+   },
+   "audio": {
+    "from": 82.83,
+    "to": 86.19
+   },
+   "gain": 0.6,
+   "quien": "el"
+  },
+  {
+   "video": {
+    "from": 92.91,
+    "to": 97.95
+   },
+   "audio": "sync",
+   "gain": 0.55,
+   "quien": "el",
+   "label": "Y AQUÍ FUE... 💀",
+   "labelPos": "top",
+   "fadeOut": 15
+  },
+  {
+   "video": {
+    "from": 107,
+    "to": 108.7
+   },
+   "audio": "sync",
+   "gain": 1.4,
+   "quien": "el",
+   "fadeIn": 8
+  },
+  {
+   "video": {
+    "from": 112,
+    "to": 117.2
+   },
+   "audio": "sync",
+   "gain": 6,
+   "quien": "ambos",
+   "dialogo": true
+  },
+  {
+   "video": {
+    "from": 120.5,
+    "to": 123.9
+   },
+   "audio": "sync",
+   "gain": 5.5,
+   "quien": "ella",
+   "dialogo": true
+  },
+  {
+   "video": {
+    "from": 132.5,
+    "to": 139.6
+   },
+   "audio": "sync",
+   "gain": 5.5,
+   "quien": "ella",
+   "dialogo": true
+  },
+  {
+   "video": {
+    "from": 139.6,
+    "to": 141.8
+   },
+   "audio": "sync",
+   "gain": 3,
+   "quien": "ambos",
+   "label": "SÍGUENOS 👽",
+   "sub": "@theravecouple.official",
+   "labelPos": "top",
+   "fadeOut": 12
+  }
+ ],
+ "words": [
+  {
+   "text": "A",
+   "start": 2.75,
+   "end": 3.41
+  },
+  {
+   "text": "dónde",
+   "start": 3.44,
+   "end": 4.09
+  },
+  {
+   "text": "vas?",
+   "start": 4.12,
+   "end": 4.78
+  },
+  {
+   "text": "Solo",
+   "start": 4.81,
+   "end": 5.46
+  },
+  {
+   "text": "a",
+   "start": 5.5,
+   "end": 6.15
+  },
+  {
+   "text": "dar",
+   "start": 6.18,
+   "end": 6.84
+  },
+  {
+   "text": "una",
+   "start": 6.87,
+   "end": 7.52
+  },
+  {
+   "text": "vuelta",
+   "start": 7.55,
+   "end": 8.21
+  },
+  {
+   "text": "A",
+   "start": 52.75,
+   "end": 53.4
+  },
+  {
+   "text": "dónde",
+   "start": 53.43,
+   "end": 54.07
+  },
+  {
+   "text": "mandaste?",
+   "start": 54.1,
+   "end": 54.75
+  },
+  {
+   "text": "A",
+   "start": 54.78,
+   "end": 55.42
+  },
+  {
+   "text": "hacerte",
+   "start": 55.45,
+   "end": 56.1
+  },
+  {
+   "text": "los",
+   "start": 56.13,
+   "end": 56.77
+  },
+  {
+   "text": "mandados!",
+   "start": 56.8,
+   "end": 57.45
+  },
+  {
+   "text": "A",
+   "start": 111.55,
+   "end": 112.17
+  },
+  {
+   "text": "ver",
+   "start": 112.2,
+   "end": 112.82
+  },
+  {
+   "text": "Sí",
+   "start": 112.85,
+   "end": 113.46
+  },
+  {
+   "text": "había",
+   "start": 113.49,
+   "end": 114.11
+  },
+  {
+   "text": "algo?",
+   "start": 114.14,
+   "end": 114.76
+  },
+  {
+   "text": "Sí,",
+   "start": 114.72,
+   "end": 115.76
+  },
+  {
+   "text": "para",
+   "start": 115.79,
+   "end": 116.83
+  },
+  {
+   "text": "ti.",
+   "start": 116.86,
+   "end": 117.91
+  },
+  {
+   "text": "Es",
+   "start": 117.94,
+   "end": 118.98
+  },
+  {
+   "text": "para",
+   "start": 119.01,
+   "end": 120.05
+  },
+  {
+   "text": "ti.",
+   "start": 120.08,
+   "end": 121.12
+  },
+  {
+   "text": "Ahora",
+   "start": 120.74,
+   "end": 121.3
+  },
+  {
+   "text": "sí",
+   "start": 121.33,
+   "end": 121.89
+  },
+  {
+   "text": "quieren",
+   "start": 121.92,
+   "end": 122.48
+  },
+  {
+   "text": "perros,",
+   "start": 122.51,
+   "end": 123.07
+  },
+  {
+   "text": "ahora",
+   "start": 123.1,
+   "end": 123.66
+  },
+  {
+   "text": "sí",
+   "start": 123.69,
+   "end": 124.25
+  },
+  {
+   "text": "Cuando",
+   "start": 123.75,
+   "end": 124.09
+  },
+  {
+   "text": "llegué",
+   "start": 124.12,
+   "end": 124.46
+  },
+  {
+   "text": "a",
+   "start": 124.49,
+   "end": 124.83
+  },
+  {
+   "text": "este",
+   "start": 124.86,
+   "end": 125.19
+  },
+  {
+   "text": "país",
+   "start": 125.22,
+   "end": 125.56
+  },
+  {
+   "text": "nadie",
+   "start": 125.59,
+   "end": 125.93
+  },
+  {
+   "text": "me",
+   "start": 125.96,
+   "end": 126.3
+  },
+  {
+   "text": "pelaba",
+   "start": 126.33,
+   "end": 126.67
+  },
+  {
+   "text": "Cuando",
+   "start": 130.75,
+   "end": 131.35
+  },
+  {
+   "text": "llegué,",
+   "start": 131.38,
+   "end": 131.99
+  },
+  {
+   "text": "nadie,",
+   "start": 132.02,
+   "end": 132.63
+  },
+  {
+   "text": "yo",
+   "start": 132.66,
+   "end": 133.26
+  },
+  {
+   "text": "pedía",
+   "start": 133.29,
+   "end": 133.9
+  },
+  {
+   "text": "y",
+   "start": 133.93,
+   "end": 134.53
+  },
+  {
+   "text": "nadie",
+   "start": 134.56,
+   "end": 135.16
+  },
+  {
+   "text": "me",
+   "start": 135.19,
+   "end": 135.8
+  },
+  {
+   "text": "daba",
+   "start": 135.83,
+   "end": 136.44
+  },
+  {
+   "text": "nada",
+   "start": 136.47,
+   "end": 137.07
+  },
+  {
+   "text": "Ya",
+   "start": 136.75,
+   "end": 137.09
+  },
+  {
+   "text": "te",
+   "start": 137.12,
+   "end": 137.46
+  },
+  {
+   "text": "quieren,",
+   "start": 137.49,
+   "end": 137.83
+  },
+  {
+   "text": "ya",
+   "start": 137.86,
+   "end": 138.19
+  },
+  {
+   "text": "te",
+   "start": 138.22,
+   "end": 138.56
+  },
+  {
+   "text": "ama",
+   "start": 138.59,
+   "end": 138.93
+  },
+  {
+   "text": "el",
+   "start": 138.96,
+   "end": 139.3
+  },
+  {
+   "text": "sistema",
+   "start": 139.33,
+   "end": 139.67
+  }
+ ],
+ "handle": "@theravecouple.official",
+ "colores": {
+  "ella": "#F59E0B",
+  "el": "#39FF14"
+ }
+}

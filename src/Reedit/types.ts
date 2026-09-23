@@ -13,11 +13,14 @@ export type Bloque = {
   dialogo?: boolean;
   fadeIn?: number; // frames de fade de entrada del audio (para cambios de música)
   fadeOut?: number; // frames de fade de salida
+  nota?: string; // texto de referencia (no se muestra)
 };
 export type Word = { text: string; start: number; end: number };
 export type EDL = {
   src: string; // video en public/
   audioSrc: string; // audio extraído en public/
+  srcWidth?: number; // tamaño del video fuente (default 720x958)
+  srcHeight?: number;
   bloques: Bloque[];
   words: Word[]; // palabras con tiempos del video FUENTE
   handle: string;

@@ -1,0 +1,114 @@
+{
+ "tramos": [
+  {
+   "start": 0.18,
+   "end": 5.04,
+   "texto": "Ella no sabía que este día iba a ser especial."
+  },
+  {
+   "start": 12.65,
+   "end": 14.6,
+   "texto": "Hermosa."
+  },
+  {
+   "start": 15.85,
+   "end": 19.8,
+   "texto": "Por fin vamos a donde querías venir hace mucho, ¿no?"
+  },
+  {
+   "start": 20.1,
+   "end": 23.1,
+   "texto": "Sí, yo tenía ganas de conocer esta tienda."
+  },
+  {
+   "start": 36.13,
+   "end": 41.1,
+   "texto": "Por fin llegamos a donde querías venir. Está chido, ¿no?"
+  },
+  {
+   "start": 46.95,
+   "end": 53.9,
+   "texto": "Mira, ahí hay un... venados también, mira. Un unicornio."
+  },
+  {
+   "start": 53.96,
+   "end": 55.9,
+   "texto": "A ver, póntelo."
+  },
+  {
+   "start": 57.1,
+   "end": 59,
+   "texto": "Me lo quiero probar."
+  },
+  {
+   "start": 100.6,
+   "end": 102.1,
+   "texto": "Sí."
+  },
+  {
+   "start": 132.65,
+   "end": 134.6,
+   "texto": "¿Te quieres subir?"
+  },
+  {
+   "start": 134.25,
+   "end": 136.2,
+   "texto": "¿Te quieres subir a uno?"
+  },
+  {
+   "start": 136.3,
+   "end": 138,
+   "texto": "No, mi niño."
+  }
+ ],
+ "segs": [
+  {
+   "start": 0,
+   "end": 5.29,
+   "palabras": 10,
+   "texto": "Ella no sabía que este día iba a ser especial."
+  },
+  {
+   "start": 12.4,
+   "end": 14.85,
+   "palabras": 1,
+   "texto": "Hermosa."
+  },
+  {
+   "start": 15.6,
+   "end": 23.35,
+   "palabras": 18,
+   "texto": "Por fin vamos a donde querías venir hace mucho, ¿no? Sí, yo tenía ganas de conocer esta tienda."
+  },
+  {
+   "start": 35.88,
+   "end": 41.35,
+   "palabras": 10,
+   "texto": "Por fin llegamos a donde querías venir. Está chido, ¿no?"
+  },
+  {
+   "start": 46.7,
+   "end": 56.15,
+   "palabras": 12,
+   "texto": "Mira, ahí hay un... venados también, mira. Un unicornio. A ver, póntelo."
+  },
+  {
+   "start": 56.85,
+   "end": 59.25,
+   "palabras": 4,
+   "texto": "Me lo quiero probar."
+  },
+  {
+   "start": 100.35,
+   "end": 102.35,
+   "palabras": 1,
+   "texto": "Sí."
+  },
+  {
+   "start": 132.4,
+   "end": 138.25,
+   "palabras": 11,
+   "texto": "¿Te quieres subir? ¿Te quieres subir a uno? No, mi niño."
+  }
+ ]
+}

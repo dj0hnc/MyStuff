@@ -41,7 +41,7 @@ export const Reedit: React.FC<Props> = ({ data }) => {
         const audioFrom = b.audio === "sync" ? b.video.from : b.audio === "none" ? null : b.audio.from;
         return (
           <Sequence key={i} from={start} durationInFrames={frames} layout="none">
-            <Shot src={edl.src} from={b.video.from} to={b.video.to} width={width} height={height} tint={b.quien} colores={edl.colores} />
+            <Shot src={edl.src} from={b.video.from} to={b.video.to} width={width} height={height} tint={b.quien} colores={edl.colores} srcW={edl.srcWidth ?? 720} srcH={edl.srcHeight ?? 958} />
             {audioFrom !== null ? (
               <Audio
                 src={staticFile(edl.audioSrc)}
@@ -68,7 +68,7 @@ export const Reedit: React.FC<Props> = ({ data }) => {
 
 // Video fuente (720x958) sobre 1080x1920: fondo del mismo video desenfocado y
 // oscurecido, primer plano a todo el ancho. Tinte suave según quién manda.
-const Shot: React.FC<{ src: string; from: number; to: number; width: number; height: number; tint: Bloque["quien"]; colores: EDL["colores"] }> = ({
+const Shot: React.FC<{ src: string; from: number; to: number; width: number; height: number; tint: Bloque["quien"]; colores: EDL["colores"]; srcW: number; srcH: number }> = ({
   src,
   from,
   to,
@@ -76,12 +76,15 @@ const Shot: React.FC<{ src: string; from: number; to: number; width: number; hei
   height,
   tint,
   colores,
+  srcW,
+  srcH,
 }) => {
   const { fps } = useVideoConfig();
   const f = useCurrentFrame();
   const startFrom = Math.round(from * fps);
   const endAt = Math.round(to * fps);
-  const fgH = Math.round((width * 958) / 720);
+  // Fuente vertical más alta que 9:16: llena todo. Si no, va a todo lo ancho con fondo desenfocado.
+  const fgH = Math.min(height, Math.round((width * srcH) / srcW));
   const zoom = interpolate(f, [0, (to - from) * fps], [1, 1.04]);
   const tintColor = tint === "ella" ? colores.ella : tint === "el" ? colores.el : null;
   return (

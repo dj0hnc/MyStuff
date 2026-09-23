@@ -1,497 +1,497 @@
 {
- "src": "reedit/v4.mp4",
- "audioSrc": "reedit/v4-audio.mp3",
+ "src": "reedit/v3.mp4",
+ "audioSrc": "reedit/v3-audio.mp3",
+ "srcWidth": 720,
+ "srcHeight": 958,
  "bloques": [
   {
    "video": {
-    "from": 93.6,
-    "to": 97
+    "from": 0,
+    "to": 5.29
    },
    "audio": "sync",
-   "gain": 0.45,
-   "quien": "el",
-   "label": "CASI ATROPELLO A UN VECINO 💀",
-   "sub": "POR IR AL BUZÓN EN SCOOTER",
-   "labelPos": "top",
-   "fadeOut": 15
-  },
-  {
-   "video": {
-    "from": 3,
-    "to": 8
-   },
-   "audio": "sync",
-   "gain": 6,
+   "gain": 0.91,
    "quien": "ambos",
-   "label": "PERO TODO EMPEZÓ ASÍ...",
-   "labelPos": "top",
    "dialogo": true,
-   "fadeIn": 6
+   "fadeIn": 2,
+   "fadeOut": 2,
+   "nota": "Ella no sabía que este día iba a ser especial."
   },
   {
    "video": {
-    "from": 15,
-    "to": 16.6
-   },
-   "audio": {
-    "from": 15,
-    "to": 16.6
-   },
-   "gain": 6,
-   "quien": "ella"
-  },
-  {
-   "video": {
-    "from": 22,
-    "to": 23.4
-   },
-   "audio": {
-    "from": 16.6,
-    "to": 18
-   },
-   "gain": 6,
-   "quien": "ella",
-   "fadeOut": 12
-  },
-  {
-   "video": {
-    "from": 40.6,
-    "to": 43
-   },
-   "audio": "sync",
-   "gain": 4,
-   "quien": "el",
-   "fadeIn": 4
-  },
-  {
-   "video": {
-    "from": 53,
-    "to": 58.5
-   },
-   "audio": "sync",
-   "gain": 6,
-   "quien": "ambos",
-   "dialogo": true
-  },
-  {
-   "video": {
-    "from": 63.8,
-    "to": 66.1
-   },
-   "audio": "sync",
-   "gain": 6,
-   "quien": "ambos",
-   "fadeOut": 6
-  },
-  {
-   "video": {
-    "from": 66.12,
-    "to": 67.8
-   },
-   "audio": {
-    "from": 74.4,
-    "to": 76.08
-   },
-   "gain": 1.8,
-   "quien": "el",
-   "label": "MISIÓN: EL BUZÓN",
-   "labelPos": "top",
-   "fadeIn": 3,
-   "fadeOut": 0
-  },
-  {
-   "video": {
-    "from": 67.8,
-    "to": 71.16
-   },
-   "audio": {
-    "from": 76.11,
-    "to": 79.47
-   },
-   "gain": 0.6,
-   "quien": "el",
-   "fadeIn": 0
-  },
-  {
-   "video": {
-    "from": 76.11,
-    "to": 79.47
-   },
-   "audio": {
-    "from": 79.47,
-    "to": 82.83
-   },
-   "gain": 0.6,
-   "quien": "el"
-  },
-  {
-   "video": {
-    "from": 80,
-    "to": 83.36
-   },
-   "audio": {
-    "from": 82.83,
-    "to": 86.19
-   },
-   "gain": 0.6,
-   "quien": "el"
-  },
-  {
-   "video": {
-    "from": 92.91,
-    "to": 97.95
-   },
-   "audio": "sync",
-   "gain": 0.55,
-   "quien": "el",
-   "label": "Y AQUÍ FUE... 💀",
-   "labelPos": "top",
-   "fadeOut": 15
-  },
-  {
-   "video": {
-    "from": 107,
-    "to": 108.7
-   },
-   "audio": "sync",
-   "gain": 1.4,
-   "quien": "el",
-   "fadeIn": 8
-  },
-  {
-   "video": {
-    "from": 112,
-    "to": 117.2
-   },
-   "audio": "sync",
-   "gain": 6,
-   "quien": "ambos",
-   "dialogo": true
-  },
-  {
-   "video": {
-    "from": 120.5,
-    "to": 123.9
-   },
-   "audio": "sync",
-   "gain": 5.5,
-   "quien": "ella",
-   "dialogo": true
-  },
-  {
-   "video": {
-    "from": 132.5,
-    "to": 139.6
-   },
-   "audio": "sync",
-   "gain": 5.5,
-   "quien": "ella",
-   "dialogo": true
-  },
-  {
-   "video": {
-    "from": 139.6,
-    "to": 141.8
+    "from": 8.1,
+    "to": 9.6
    },
    "audio": "sync",
    "gain": 3,
+   "quien": "nadie",
+   "fadeIn": 6,
+   "fadeOut": 6,
+   "nota": "(respiro)"
+  },
+  {
+   "video": {
+    "from": 12.4,
+    "to": 14.85
+   },
+   "audio": "sync",
+   "gain": 3.38,
    "quien": "ambos",
-   "label": "SÍGUENOS 👽",
-   "sub": "@theravecouple.official",
-   "labelPos": "top",
-   "fadeOut": 12
+   "dialogo": true,
+   "fadeIn": 2,
+   "fadeOut": 2,
+   "nota": "Hermosa."
+  },
+  {
+   "video": {
+    "from": 15.6,
+    "to": 23.35
+   },
+   "audio": "sync",
+   "gain": 1.43,
+   "quien": "ambos",
+   "dialogo": true,
+   "fadeIn": 2,
+   "fadeOut": 2,
+   "nota": "Por fin vamos a donde querías venir hace mucho, ¿no? Sí, yo tenía ganas de conoc"
+  },
+  {
+   "video": {
+    "from": 28.87,
+    "to": 30.37
+   },
+   "audio": "sync",
+   "gain": 1.5,
+   "quien": "nadie",
+   "fadeIn": 6,
+   "fadeOut": 6,
+   "nota": "(respiro)"
+  },
+  {
+   "video": {
+    "from": 35.88,
+    "to": 41.35
+   },
+   "audio": "sync",
+   "gain": 0.92,
+   "quien": "ambos",
+   "dialogo": true,
+   "fadeIn": 2,
+   "fadeOut": 2,
+   "nota": "Por fin llegamos a donde querías venir. Está chido, ¿no?"
+  },
+  {
+   "video": {
+    "from": 46.7,
+    "to": 56.15
+   },
+   "audio": "sync",
+   "gain": 0.68,
+   "quien": "ambos",
+   "dialogo": true,
+   "fadeIn": 2,
+   "fadeOut": 2,
+   "nota": "Mira, ahí hay un... venados también, mira. Un unicornio. A ver, póntelo."
+  },
+  {
+   "video": {
+    "from": 56.85,
+    "to": 59.25
+   },
+   "audio": "sync",
+   "gain": 0.99,
+   "quien": "ambos",
+   "dialogo": true,
+   "fadeIn": 2,
+   "fadeOut": 2,
+   "nota": "Me lo quiero probar."
+  },
+  {
+   "video": {
+    "from": 79.05,
+    "to": 80.55
+   },
+   "audio": "sync",
+   "gain": 0.71,
+   "quien": "nadie",
+   "fadeIn": 6,
+   "fadeOut": 6,
+   "nota": "(respiro)"
+  },
+  {
+   "video": {
+    "from": 100.35,
+    "to": 102.35
+   },
+   "audio": "sync",
+   "gain": 1.02,
+   "quien": "ambos",
+   "dialogo": true,
+   "fadeIn": 2,
+   "fadeOut": 2,
+   "nota": "Sí."
+  },
+  {
+   "video": {
+    "from": 116.63,
+    "to": 118.13
+   },
+   "audio": "sync",
+   "gain": 0.7,
+   "quien": "nadie",
+   "fadeIn": 6,
+   "fadeOut": 6,
+   "nota": "(respiro)"
+  },
+  {
+   "video": {
+    "from": 132.4,
+    "to": 138.25
+   },
+   "audio": "sync",
+   "gain": 0.82,
+   "quien": "ambos",
+   "dialogo": true,
+   "fadeIn": 2,
+   "fadeOut": 2,
+   "nota": "¿Te quieres subir? ¿Te quieres subir a uno? No, mi niño."
   }
  ],
  "words": [
   {
-   "text": "A",
-   "start": 2.75,
-   "end": 3.41
+   "text": "Ella",
+   "start": 0.18,
+   "end": 0.64
   },
   {
-   "text": "dónde",
-   "start": 3.44,
-   "end": 4.09
+   "text": "no",
+   "start": 0.67,
+   "end": 1.12
   },
   {
-   "text": "vas?",
-   "start": 4.12,
-   "end": 4.78
+   "text": "sabía",
+   "start": 1.15,
+   "end": 1.61
   },
   {
-   "text": "Solo",
-   "start": 4.81,
-   "end": 5.46
-  },
-  {
-   "text": "a",
-   "start": 5.5,
-   "end": 6.15
-  },
-  {
-   "text": "dar",
-   "start": 6.18,
-   "end": 6.84
-  },
-  {
-   "text": "una",
-   "start": 6.87,
-   "end": 7.52
-  },
-  {
-   "text": "vuelta",
-   "start": 7.55,
-   "end": 8.21
-  },
-  {
-   "text": "A",
-   "start": 52.75,
-   "end": 53.4
-  },
-  {
-   "text": "dónde",
-   "start": 53.43,
-   "end": 54.07
-  },
-  {
-   "text": "mandaste?",
-   "start": 54.1,
-   "end": 54.75
-  },
-  {
-   "text": "A",
-   "start": 54.78,
-   "end": 55.42
-  },
-  {
-   "text": "hacerte",
-   "start": 55.45,
-   "end": 56.1
-  },
-  {
-   "text": "los",
-   "start": 56.13,
-   "end": 56.77
-  },
-  {
-   "text": "mandados!",
-   "start": 56.8,
-   "end": 57.45
-  },
-  {
-   "text": "A",
-   "start": 111.55,
-   "end": 112.17
-  },
-  {
-   "text": "ver",
-   "start": 112.2,
-   "end": 112.82
-  },
-  {
-   "text": "Sí",
-   "start": 112.85,
-   "end": 113.46
-  },
-  {
-   "text": "había",
-   "start": 113.49,
-   "end": 114.11
-  },
-  {
-   "text": "algo?",
-   "start": 114.14,
-   "end": 114.76
-  },
-  {
-   "text": "Sí,",
-   "start": 114.72,
-   "end": 115.76
-  },
-  {
-   "text": "para",
-   "start": 115.79,
-   "end": 116.83
-  },
-  {
-   "text": "ti.",
-   "start": 116.86,
-   "end": 117.91
-  },
-  {
-   "text": "Es",
-   "start": 117.94,
-   "end": 118.98
-  },
-  {
-   "text": "para",
-   "start": 119.01,
-   "end": 120.05
-  },
-  {
-   "text": "ti.",
-   "start": 120.08,
-   "end": 121.12
-  },
-  {
-   "text": "Ahora",
-   "start": 120.74,
-   "end": 121.3
-  },
-  {
-   "text": "sí",
-   "start": 121.33,
-   "end": 121.89
-  },
-  {
-   "text": "quieren",
-   "start": 121.92,
-   "end": 122.48
-  },
-  {
-   "text": "perros,",
-   "start": 122.51,
-   "end": 123.07
-  },
-  {
-   "text": "ahora",
-   "start": 123.1,
-   "end": 123.66
-  },
-  {
-   "text": "sí",
-   "start": 123.69,
-   "end": 124.25
-  },
-  {
-   "text": "Cuando",
-   "start": 123.75,
-   "end": 124.09
-  },
-  {
-   "text": "llegué",
-   "start": 124.12,
-   "end": 124.46
-  },
-  {
-   "text": "a",
-   "start": 124.49,
-   "end": 124.83
+   "text": "que",
+   "start": 1.64,
+   "end": 2.09
   },
   {
    "text": "este",
-   "start": 124.86,
-   "end": 125.19
+   "start": 2.12,
+   "end": 2.58
   },
   {
-   "text": "país",
-   "start": 125.22,
-   "end": 125.56
+   "text": "día",
+   "start": 2.61,
+   "end": 3.07
   },
   {
-   "text": "nadie",
-   "start": 125.59,
-   "end": 125.93
+   "text": "iba",
+   "start": 3.1,
+   "end": 3.55
   },
   {
-   "text": "me",
-   "start": 125.96,
-   "end": 126.3
+   "text": "a",
+   "start": 3.58,
+   "end": 4.04
   },
   {
-   "text": "pelaba",
-   "start": 126.33,
-   "end": 126.67
+   "text": "ser",
+   "start": 4.07,
+   "end": 4.52
   },
   {
-   "text": "Cuando",
-   "start": 130.75,
-   "end": 131.35
+   "text": "especial.",
+   "start": 4.55,
+   "end": 5.01
   },
   {
-   "text": "llegué,",
-   "start": 131.38,
-   "end": 131.99
+   "text": "Hermosa.",
+   "start": 12.65,
+   "end": 14.57
   },
   {
-   "text": "nadie,",
-   "start": 132.02,
-   "end": 132.63
+   "text": "Por",
+   "start": 15.85,
+   "end": 16.21
+  },
+  {
+   "text": "fin",
+   "start": 16.25,
+   "end": 16.61
+  },
+  {
+   "text": "vamos",
+   "start": 16.64,
+   "end": 17
+  },
+  {
+   "text": "a",
+   "start": 17.04,
+   "end": 17.4
+  },
+  {
+   "text": "donde",
+   "start": 17.43,
+   "end": 17.79
+  },
+  {
+   "text": "querías",
+   "start": 17.82,
+   "end": 18.19
+  },
+  {
+   "text": "venir",
+   "start": 18.22,
+   "end": 18.58
+  },
+  {
+   "text": "hace",
+   "start": 18.61,
+   "end": 18.98
+  },
+  {
+   "text": "mucho,",
+   "start": 19.01,
+   "end": 19.37
+  },
+  {
+   "text": "¿no?",
+   "start": 19.4,
+   "end": 19.77
+  },
+  {
+   "text": "Sí,",
+   "start": 20.1,
+   "end": 20.45
   },
   {
    "text": "yo",
-   "start": 132.66,
-   "end": 133.26
+   "start": 20.48,
+   "end": 20.82
   },
   {
-   "text": "pedía",
-   "start": 133.29,
-   "end": 133.9
+   "text": "tenía",
+   "start": 20.85,
+   "end": 21.2
   },
   {
-   "text": "y",
-   "start": 133.93,
-   "end": 134.53
+   "text": "ganas",
+   "start": 21.23,
+   "end": 21.57
   },
   {
-   "text": "nadie",
-   "start": 134.56,
-   "end": 135.16
+   "text": "de",
+   "start": 21.6,
+   "end": 21.95
   },
   {
-   "text": "me",
-   "start": 135.19,
-   "end": 135.8
+   "text": "conocer",
+   "start": 21.98,
+   "end": 22.32
   },
   {
-   "text": "daba",
-   "start": 135.83,
-   "end": 136.44
+   "text": "esta",
+   "start": 22.35,
+   "end": 22.7
   },
   {
-   "text": "nada",
-   "start": 136.47,
-   "end": 137.07
+   "text": "tienda.",
+   "start": 22.73,
+   "end": 23.07
   },
   {
-   "text": "Ya",
-   "start": 136.75,
-   "end": 137.09
+   "text": "Por",
+   "start": 36.13,
+   "end": 36.6
   },
   {
-   "text": "te",
-   "start": 137.12,
-   "end": 137.46
+   "text": "fin",
+   "start": 36.63,
+   "end": 37.09
   },
   {
-   "text": "quieren,",
-   "start": 137.49,
-   "end": 137.83
+   "text": "llegamos",
+   "start": 37.12,
+   "end": 37.59
   },
   {
-   "text": "ya",
-   "start": 137.86,
-   "end": 138.19
+   "text": "a",
+   "start": 37.62,
+   "end": 38.09
   },
   {
-   "text": "te",
-   "start": 138.22,
-   "end": 138.56
+   "text": "donde",
+   "start": 38.12,
+   "end": 38.59
   },
   {
-   "text": "ama",
-   "start": 138.59,
-   "end": 138.93
+   "text": "querías",
+   "start": 38.62,
+   "end": 39.08
   },
   {
-   "text": "el",
-   "start": 138.96,
-   "end": 139.3
+   "text": "venir.",
+   "start": 39.11,
+   "end": 39.58
   },
   {
-   "text": "sistema",
-   "start": 139.33,
-   "end": 139.67
+   "text": "Está",
+   "start": 39.61,
+   "end": 40.08
+  },
+  {
+   "text": "chido,",
+   "start": 40.11,
+   "end": 40.57
+  },
+  {
+   "text": "¿no?",
+   "start": 40.6,
+   "end": 41.07
+  },
+  {
+   "text": "Mira,",
+   "start": 46.95,
+   "end": 47.69
+  },
+  {
+   "text": "ahí",
+   "start": 47.72,
+   "end": 48.46
+  },
+  {
+   "text": "hay",
+   "start": 48.49,
+   "end": 49.24
+  },
+  {
+   "text": "un...",
+   "start": 49.27,
+   "end": 50.01
+  },
+  {
+   "text": "venados",
+   "start": 50.04,
+   "end": 50.78
+  },
+  {
+   "text": "también,",
+   "start": 50.81,
+   "end": 51.55
+  },
+  {
+   "text": "mira.",
+   "start": 51.58,
+   "end": 52.33
+  },
+  {
+   "text": "Un",
+   "start": 52.36,
+   "end": 53.1
+  },
+  {
+   "text": "unicornio.",
+   "start": 53.13,
+   "end": 53.87
+  },
+  {
+   "text": "A",
+   "start": 53.96,
+   "end": 54.58
+  },
+  {
+   "text": "ver,",
+   "start": 54.61,
+   "end": 55.22
+  },
+  {
+   "text": "póntelo.",
+   "start": 55.25,
+   "end": 55.87
+  },
+  {
+   "text": "Me",
+   "start": 57.1,
+   "end": 57.55
+  },
+  {
+   "text": "lo",
+   "start": 57.58,
+   "end": 58.02
+  },
+  {
+   "text": "quiero",
+   "start": 58.05,
+   "end": 58.49
+  },
+  {
+   "text": "probar.",
+   "start": 58.52,
+   "end": 58.97
+  },
+  {
+   "text": "Sí.",
+   "start": 100.6,
+   "end": 102.07
+  },
+  {
+   "text": "¿Te",
+   "start": 132.65,
+   "end": 133.27
+  },
+  {
+   "text": "quieres",
+   "start": 133.3,
+   "end": 133.92
+  },
+  {
+   "text": "subir?",
+   "start": 133.95,
+   "end": 134.57
+  },
+  {
+   "text": "¿Te",
+   "start": 134.25,
+   "end": 134.61
+  },
+  {
+   "text": "quieres",
+   "start": 134.64,
+   "end": 135
+  },
+  {
+   "text": "subir",
+   "start": 135.03,
+   "end": 135.39
+  },
+  {
+   "text": "a",
+   "start": 135.42,
+   "end": 135.78
+  },
+  {
+   "text": "uno?",
+   "start": 135.81,
+   "end": 136.17
+  },
+  {
+   "text": "No,",
+   "start": 136.3,
+   "end": 136.84
+  },
+  {
+   "text": "mi",
+   "start": 136.87,
+   "end": 137.4
+  },
+  {
+   "text": "niño.",
+   "start": 137.43,
+   "end": 137.97
   }
  ],
  "handle": "@theravecouple.official",
