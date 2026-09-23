@@ -46,7 +46,9 @@
     "clips": "node --env-file-if-exists=.env scripts/generar-clips.mjs",
     "traducir": "node --env-file-if-exists=.env scripts/traducir-guion.mjs",
     "bajar": "node scripts/bajar.mjs",
-    "corte-bruto": "node --env-file-if-exists=.env scripts/corte-bruto.mjs"
+    "corte-bruto": "node --env-file-if-exists=.env scripts/corte-bruto.mjs",
+    "virales": "node scripts/buscar-virales.mjs",
+    "clipear": "node --env-file-if-exists=.env scripts/clipear.mjs"
   },
   "sideEffects": [
     "*.css"

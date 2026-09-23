@@ -44,6 +44,18 @@ Opcional:
   para fuentes que no son 9:16, textos narradores en la franja superior, subtítulos abajo.
 - Los videos crudos no se suben a git (usa enlaces de nube); en el repo viven solo las EDL y los guiones.
 
+## Clipear videos virales (ES + EN)
+
+Estrategia completa, nicho recomendado y programas que pagan por vistas: `docs/clipping/estrategia.md`.
+
+- `npm run virales` busca en YouTube los videos largos con más vistas de la semana por nicho
+  (`podcast-es`, `podcast-en`, `negocios-es`, `negocios-en`, `streamers`, `true-crime`, `deportes`, `rave-edm`)
+  o por búsqueda libre. `--periodo hoy|semana|mes`, `--cc` solo Creative Commons. Escribe `out/virales.md`.
+- `npm run clipear -- "URL" --n 5 --subs es --handle @canal` baja el video, lo transcribe con Whisper,
+  Gemini elige los mejores momentos y renderiza clips 9:16 con gancho arriba y subtítulos palabra por palabra
+  (traducidos con `--subs`). Deja en `out/clips/` los .mp4 y un .md con títulos, descripciones y hashtags ES/EN.
+  `--encuadre cuadrado|completo|ancho`, `--dur 45`, `--desde/--hasta` (s), `--sin-render`.
+
 ## Composiciones (`src/Root.tsx`)
 
 | ID | Qué es |
