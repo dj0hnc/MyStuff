@@ -58,6 +58,7 @@ export const RemotionRoot: React.FC = () => {
           segundosPorClip: 3.5,
           clips: [],
           palabrasClave: [],
+          logo: "",
           words: [],
           voiceDuration: 0,
           fondoSegundos: 10,

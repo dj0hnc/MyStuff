@@ -1,210 +1,220 @@
 {
-  "duration": 17.833,
+  "duration": 18.53,
   "words": [
     {
-      "text": "Live",
+      "text": "¿Vives",
       "start": 0,
-      "end": 0.453
+      "end": 0.58
     },
     {
-      "text": "in",
-      "start": 0.511,
-      "end": 0.604
+      "text": "en",
+      "start": 0.673,
+      "end": 0.743
     },
     {
       "text": "Princeton,",
-      "start": 0.685,
-      "end": 1.173
+      "start": 0.813,
+      "end": 1.382
     },
     {
-      "text": "Texas",
-      "start": 1.196,
-      "end": 1.718
+      "text": "Texas,",
+      "start": 1.428,
+      "end": 2.043
     },
     {
-      "text": "and",
-      "start": 1.776,
-      "end": 1.916
+      "text": "y",
+      "start": 2.078,
+      "end": 2.125
     },
     {
-      "text": "want",
-      "start": 1.997,
-      "end": 2.194
+      "text": "quieres",
+      "start": 2.206,
+      "end": 2.461
     },
     {
-      "text": "cute",
-      "start": 2.241,
-      "end": 2.485
-    },
-    {
-      "text": "nails?",
+      "text": "uñas",
       "start": 2.531,
-      "end": 3.077
+      "end": 2.798
     },
     {
-      "text": "I'm",
-      "start": 3.32,
-      "end": 3.495
+      "text": "lindas?",
+      "start": 2.868,
+      "end": 3.518
+    },
+    {
+      "text": "Soy",
+      "start": 3.796,
+      "end": 3.994
     },
     {
       "text": "Karen,",
-      "start": 3.553,
-      "end": 4.063
+      "start": 4.04,
+      "end": 4.563
     },
     {
       "text": "nail",
-      "start": 4.238,
-      "end": 4.481
+      "start": 4.656,
+      "end": 4.923
     },
     {
       "text": "tech.",
-      "start": 4.54,
-      "end": 4.911
+      "start": 4.992,
+      "end": 5.422
     },
     {
-      "text": "Acrylics,",
-      "start": 5.12,
-      "end": 5.793
+      "text": "Acrílicas,",
+      "start": 5.503,
+      "end": 6.316
     },
     {
       "text": "gel,",
-      "start": 5.875,
-      "end": 6.409
+      "start": 6.362,
+      "end": 6.734
     },
     {
-      "text": "French",
-      "start": 6.56,
-      "end": 6.896
-    },
-    {
-      "text": "tips,",
-      "start": 6.943,
-      "end": 7.372
+      "text": "francesas,",
+      "start": 6.78,
+      "end": 7.558
     },
     {
       "text": "nail",
-      "start": 7.454,
-      "end": 7.732
+      "start": 7.651,
+      "end": 7.906
     },
     {
-      "text": "art,",
-      "start": 7.802,
-      "end": 8.104
+      "text": "art",
+      "start": 8.022,
+      "end": 8.255
     },
     {
-      "text": "and",
-      "start": 8.15,
-      "end": 8.336
+      "text": "y",
+      "start": 8.324,
+      "end": 8.417
     },
     {
       "text": "macaron",
-      "start": 8.429,
-      "end": 8.94
+      "start": 8.533,
+      "end": 8.916
     },
     {
       "text": "gel",
-      "start": 9.009,
-      "end": 9.218
+      "start": 8.963,
+      "end": 9.16
     },
     {
       "text": "polish.",
-      "start": 9.276,
-      "end": 9.857
+      "start": 9.23,
+      "end": 9.903
     },
     {
-      "text": "Every",
-      "start": 10.24,
-      "end": 10.623
+      "text": "Cada",
+      "start": 10.228,
+      "end": 10.542
     },
     {
       "text": "set",
-      "start": 10.693,
-      "end": 10.948
+      "start": 10.623,
+      "end": 10.925
     },
     {
-      "text": "customized",
-      "start": 11.029,
-      "end": 11.691
+      "text": "hecho",
+      "start": 10.983,
+      "end": 11.262
     },
     {
-      "text": "for",
-      "start": 11.749,
-      "end": 11.9
+      "text": "a",
+      "start": 11.297,
+      "end": 11.32
     },
     {
-      "text": "you,",
-      "start": 11.981,
-      "end": 12.144
+      "text": "tu",
+      "start": 11.366,
+      "end": 11.436
     },
     {
-      "text": "by",
+      "text": "gusto,",
+      "start": 11.482,
+      "end": 11.935
+    },
+    {
+      "text": "con",
+      "start": 11.97,
+      "end": 12.121
+    },
+    {
+      "text": "cita",
       "start": 12.167,
-      "end": 12.33
+      "end": 12.516
     },
     {
-      "text": "appointment,",
-      "start": 12.388,
-      "end": 12.934
+      "text": "y",
+      "start": 12.585,
+      "end": 12.632
     },
     {
-      "text": "never",
-      "start": 13.015,
-      "end": 13.259
+      "text": "sin",
+      "start": 12.701,
+      "end": 12.852
     },
     {
-      "text": "rushed.",
-      "start": 13.328,
-      "end": 13.769
+      "text": "prisas.",
+      "start": 12.899,
+      "end": 13.526
     },
     {
-      "text": "DM",
-      "start": 14.095,
-      "end": 14.454
+      "text": "Escríbeme",
+      "start": 13.735,
+      "end": 14.327
     },
     {
-      "text": "me",
-      "start": 14.512,
-      "end": 14.582
+      "text": "por",
+      "start": 14.373,
+      "end": 14.547
     },
     {
-      "text": "on",
-      "start": 14.652,
-      "end": 14.745
+      "text": "Instagram,",
+      "start": 14.617,
+      "end": 15.197
     },
     {
-      "text": "Instagram",
-      "start": 14.814,
-      "end": 15.418
+      "text": "arroba",
+      "start": 15.244,
+      "end": 15.697
     },
     {
-      "text": "at",
-      "start": 15.476,
-      "end": 15.557
+      "text": "karena",
+      "start": 15.766,
+      "end": 16.115
     },
     {
-      "text": "karenareyesnails",
-      "start": 15.615,
-      "end": 16.591
+      "text": "reyes",
+      "start": 16.196,
+      "end": 16.498
     },
     {
-      "text": "to",
-      "start": 16.649,
-      "end": 16.707
+      "text": "nails,",
+      "start": 16.579,
+      "end": 17.09
     },
     {
-      "text": "book",
-      "start": 16.776,
-      "end": 16.951
+      "text": "y",
+      "start": 17.264,
+      "end": 17.322
     },
     {
-      "text": "your",
-      "start": 16.997,
-      "end": 17.113
+      "text": "agenda",
+      "start": 17.392,
+      "end": 17.717
     },
     {
-      "text": "spot.",
-      "start": 17.148,
-      "end": 17.833
+      "text": "tu",
+      "start": 17.763,
+      "end": 17.856
+    },
+    {
+      "text": "cita.",
+      "start": 17.903,
+      "end": 18.53
     }
   ],
   "proveedor": "elevenlabs"
