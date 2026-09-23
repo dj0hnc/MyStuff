@@ -84,6 +84,10 @@ export const Promo: React.FC<PromoProps> = (p) => {
   );
 };
 
+// Los AbsoluteFill (fondo, pétalos, marco) son position:absolute y se pintan encima
+// del flujo normal; el contenido va en una capa relativa con z-index para quedar arriba.
+const CAPA: React.CSSProperties = { position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" };
+
 const FondoRosa: React.FC<{ rosa: string; rosaFuerte: string }> = ({ rosa, rosaFuerte }) => (
   <AbsoluteFill style={{ background: `radial-gradient(circle at 50% 35%, #FFFFFF 0%, ${rosa} 45%, ${rosaFuerte}66 100%)` }} />
 );
@@ -99,6 +103,7 @@ const Intro: React.FC<PromoProps> = ({ marca, sub, tagline, logo, rosa, rosaFuer
       <FondoRosa rosa={rosa} rosaFuerte={rosaFuerte} />
       <Petalos rosa={rosa} rosaFuerte={rosaFuerte} cantidad={22} />
       <MarcoOro oro={oro} />
+      <div style={CAPA}>
       <Img src={staticFile(logo)} style={{ width: 640, height: 640, borderRadius: 320, transform: `scale(${interpolate(s, [0, 1], [0.6, 1])})`, opacity: s, boxShadow: `0 40px 100px ${negro}55, 0 0 0 8px ${oro}` }} />
       <div style={{ marginTop: 50, opacity: t, transform: `translateY(${interpolate(t, [0, 1], [30, 0])}px)`, textAlign: "center" }}>
         <div style={{ fontFamily: serif, fontWeight: 700, fontSize: 88, color: negro, letterSpacing: 4 }}>{marca}</div>
@@ -106,6 +111,7 @@ const Intro: React.FC<PromoProps> = ({ marca, sub, tagline, logo, rosa, rosaFuer
       </div>
       <div style={{ marginTop: 26, opacity: tag, transform: `scale(${interpolate(tag, [0, 1], [0.8, 1])})`, fontFamily: script, fontWeight: 700, fontSize: 92, color: rosaFuerte, textShadow: `0 4px 20px ${rosaFuerte}44` }}>
         {tagline}
+      </div>
       </div>
     </AbsoluteFill>
   );
@@ -122,6 +128,7 @@ const Outro: React.FC<PromoProps> = ({ marca, sub, ciudad, cta, handle, logo, ro
       <FondoRosa rosa={rosa} rosaFuerte={rosaFuerte} />
       <Petalos rosa={rosa} rosaFuerte={rosaFuerte} cantidad={22} />
       <MarcoOro oro={oro} />
+      <div style={CAPA}>
       <Img src={staticFile(logo)} style={{ width: 460, height: 460, borderRadius: 230, transform: `scale(${interpolate(s, [0, 1], [0.6, 1])})`, opacity: s, boxShadow: `0 30px 80px ${negro}55, 0 0 0 8px ${oro}` }} />
       <div style={{ marginTop: 34, fontFamily: serif, fontWeight: 700, fontSize: 64, color: negro, letterSpacing: 3, opacity: s }}>{marca}</div>
       <div style={{ fontFamily: montserrat, fontWeight: 700, fontSize: 28, color: negro, letterSpacing: 8, opacity: s }}>{sub} · {ciudad}</div>
@@ -130,6 +137,7 @@ const Outro: React.FC<PromoProps> = ({ marca, sub, ciudad, cta, handle, logo, ro
       </div>
       <div style={{ marginTop: 30, fontFamily: script, fontWeight: 700, fontSize: 64, color: rosaFuerte, opacity: b }}>{tagline}</div>
       <div style={{ marginTop: 10, fontFamily: montserrat, fontWeight: 700, fontSize: 30, color: negro, opacity: b, letterSpacing: 2 }}>{handle}</div>
+      </div>
     </AbsoluteFill>
   );
 };
