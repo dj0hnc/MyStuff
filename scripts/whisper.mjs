@@ -73,3 +73,56 @@ if (process.argv[1] && resolve(process.argv[1]) === new URL(import.meta.url).pat
   await writeFile(dest, JSON.stringify(r, null, 2));
   console.log(`${r.words.length} palabras, ${r.duration.toFixed(1)} s -> ${dest}`);
 }
+
+// Whisper oye mal nombres y marcas ("karenareyesnails" -> "Karen Arrelles Neils").
+// Cuando el texto ya se conoce (guion), se usa solo para los tiempos: se alinean
+// letra por letra (distancia de edición) las palabras del guion con lo que oyó
+// Whisper y cada palabra del guion hereda el tiempo de sus letras.
+const norm = (s) => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9ñ]/g, "");
+export const alinearAlGuion = (texto, words) => {
+  const guion = texto.split(/\s+/).filter(Boolean);
+  const A = [];
+  guion.forEach((w, i) => { for (const c of norm(w)) A.push({ c, i }); });
+  const B = [];
+  for (const w of words) {
+    const n = norm(w.text), d = (w.end - w.start) / Math.max(n.length, 1);
+    [...n].forEach((c, k) => B.push({ c, t0: w.start + k * d, t1: w.start + (k + 1) * d }));
+  }
+  const n = A.length, m = B.length;
+  const D = Array.from({ length: n + 1 }, () => new Float32Array(m + 1));
+  for (let i = 1; i <= n; i++) D[i][0] = i;
+  for (let j = 1; j <= m; j++) D[0][j] = j;
+  for (let i = 1; i <= n; i++) for (let j = 1; j <= m; j++) {
+    D[i][j] = Math.min(D[i - 1][j - 1] + (A[i - 1].c === B[j - 1].c ? 0 : 1), D[i - 1][j] + 1, D[i][j - 1] + 1);
+  }
+  const par = new Array(n).fill(-1);
+  for (let i = n, j = m; i > 0 && j > 0;) {
+    if (D[i][j] === D[i - 1][j - 1] + (A[i - 1].c === B[j - 1].c ? 0 : 1)) { par[i - 1] = j - 1; i--; j--; }
+    else if (D[i][j] === D[i - 1][j] + 1) i--;
+    else j--;
+  }
+  const out = guion.map((text) => ({ text, start: NaN, end: NaN }));
+  A.forEach((a, k) => {
+    if (par[k] < 0) return;
+    const b = B[par[k]], o = out[a.i];
+    o.start = Number.isNaN(o.start) ? b.t0 : Math.min(o.start, b.t0);
+    o.end = Number.isNaN(o.end) ? b.t1 : Math.max(o.end, b.t1);
+  });
+  // Palabras sin letras emparejadas: reparten el hueco entre sus vecinas.
+  const fin = words.length ? words[words.length - 1].end : 0;
+  for (let k = 0; k < out.length; k++) {
+    if (!Number.isNaN(out[k].start)) continue;
+    let e = k;
+    while (e < out.length && Number.isNaN(out[e].start)) e++;
+    const t0 = k > 0 ? out[k - 1].end : 0, t1 = e < out.length ? out[e].start : fin, d = (t1 - t0) / (e - k);
+    for (let q = k; q < e; q++) { out[q].start = t0 + (q - k) * d; out[q].end = t0 + (q - k + 1) * d; }
+    k = e;
+  }
+  for (let k = 0; k < out.length; k++) {
+    const o = out[k];
+    if (k > 0) o.start = Math.max(o.start, out[k - 1].end);
+    o.end = Math.max(o.end, o.start + 0.12);
+    o.start = +o.start.toFixed(3); o.end = +o.end.toFixed(3);
+  }
+  return out;
+};
