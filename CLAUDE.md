@@ -48,6 +48,11 @@ Reeditar material propio:
 - `npm run dev` abre Remotion Studio (solo en la máquina del usuario).
 - `npm run lint` (eslint + tsc) antes de commit. Remotion 4.0.525, fps 30, 1080x1920.
 
+Clips virales para un canal aparte (no para The Rave Couple; guía en `docs/clipping/estrategia.md`):
+- `npm run virales` (lo más visto por nicho) · `npm run clipear -- URL --subs es` (clips 9:16 con gancho,
+  subtítulos y textos ES/EN) · `npm run fabrica` (producción diaria + calendario) · `npm run stats -- @canal`
+  (ganadores y patrón) · `npm run recap -- URL` (escenas de película explicadas con voz IA, sin música).
+
 ## Composiciones (`src/Root.tsx`)
 - `TikTokPro`: gancho (Bebas Neue) → subtítulos palabra a palabra (Montserrat) con visualizador →
   cierre; fondo gradiente/ruido/partículas o `fondoClips` (secuencia) o `fondoImagen` o `fondoVideo`;
