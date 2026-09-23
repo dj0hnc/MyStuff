@@ -1,15 +1,26 @@
 {
- "tema": "anuncio Karen A. Reyes Nails, Princeton TX",
- "idioma": "es",
- "hook": "Uñas lindas en Princeton TX",
- "kicker": "NAIL TECH",
- "cta": "DM @karenareyesnails",
- "frases": [
-  "¿Vives en Princeton, Texas, y quieres uñas lindas?",
-  "Soy Karen, nail tech.",
-  "Acrílicas, gel, francesas, nail art y macaron gel polish.",
-  "Cada set hecho a tu gusto, con cita y sin prisas.",
-  "Escríbeme por Instagram, arroba karena reyes nails, y agenda tu cita."
- ],
- "palabrasClave": ["Princeton", "lindas", "Karen", "Acrílicas", "gel", "francesas", "art", "macaron", "gusto", "cita", "Instagram"]
+  "tema": "anuncio Karen A. Reyes Nails, Princeton TX",
+  "idioma": "en",
+  "hook": "Cute nails in Princeton TX",
+  "kicker": "NAILS",
+  "cta": "DM @karenareyesnails",
+  "frases": [
+    "Live in Princeton, Texas and want cute nails?",
+    "I'm Karen, nail tech.",
+    "Acrylics, gel, French tips, nail art, and macaron gel polish.",
+    "Every set customized for you, by appointment, never rushed.",
+    "DM me on Instagram at karenareyesnails to book your spot."
+  ],
+  "palabrasClave": [
+    "Princeton",
+    "cute",
+    "Karen",
+    "Acrylics",
+    "gel",
+    "macaron",
+    "customized",
+    "appointment",
+    "Instagram"
+  ],
+  "traducidoDe": "es"
 }
