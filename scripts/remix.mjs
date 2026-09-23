@@ -12,6 +12,7 @@
 //   --tag "#..."     hashtag obligatorio que se agrega a cada caption si falta
 //   --handle @x      marca de agua arriba (default: ninguna)
 //   --plan archivo   usa un plan ya escrito ({"edits":[...]}, mismo formato que devuelve Gemini) en vez de pedirlo
+//   --prefijo x      nombre de los archivos de salida (default: la carpeta)
 //   --sin-render     solo escribe las EDL y los captions
 // Crea: out/remix/<carpeta>-<n>.mp4 y out/remix/<carpeta>.md (captions listos para pegar)
 // Los videos fuente deben vivir en public/ (Remotion los lee de ahí) y no van a git.
@@ -25,7 +26,7 @@ import { generateContent, textoDe } from "./gemini.mjs";
 
 const args = process.argv.slice(2);
 const opt = (n, d) => { const i = args.indexOf(`--${n}`); return i >= 0 ? args[i + 1] : d; };
-const conValor = new Set(["--n", "--dur", "--brief", "--tag", "--handle", "--plan", "--idioma"]);
+const conValor = new Set(["--n", "--dur", "--brief", "--tag", "--handle", "--plan", "--idioma", "--prefijo"]);
 const carpeta = (args.find((a, i) => !a.startsWith("--") && !conValor.has(args[i - 1])) ?? "").replace(/\/$/, "");
 if (!carpeta.startsWith("public/") || !existsSync(carpeta)) { console.error("Uso: npm run remix -- public/reedit/<carpeta> [--brief archivo] [--n 5]"); process.exit(1); }
 const N = Number(opt("n", 5));
@@ -34,6 +35,7 @@ const TAG = opt("tag", "");
 const HANDLE = opt("handle", "");
 const brief = opt("brief", null) ? await readFile(opt("brief"), "utf8") : "";
 const nombre = basename(carpeta);
+const prefijo = opt("prefijo", nombre); // nombre de los archivos de salida (otra tanda sin pisar la anterior)
 
 const require = createRequire(import.meta.url);
 const comp = dirname(require.resolve("@remotion/compositor-linux-x64-gnu/package.json"));
@@ -110,10 +112,10 @@ for (const [k, e] of edits.slice(0, N).entries()) {
   }));
   const total = segs.reduce((a, s) => a + s.to - s.from, 0);
   const n = k + 1;
-  const edlPath = `reedit/remix-${nombre}-${n}.json`;
+  const edlPath = `reedit/remix-${prefijo}-${n}.json`;
   await writeFile(`public/${edlPath}`, JSON.stringify({ src: segs[0].c.src, audioSrc: segs[0].c.src, bloques, words: [], handle: HANDLE, colores: { el: "#FFFFFF", ella: "#FFFFFF" } }, null, 1));
   const caption = TAG && !String(e.caption).includes(TAG) ? `${e.caption} ${TAG}` : e.caption;
-  const salida = `out/remix/${nombre}-${n}.mp4`;
+  const salida = `out/remix/${prefijo}-${n}.mp4`;
   md.push(`## ${n}. ${e.titulo} · ${total.toFixed(0)} s`, `\`${salida}\` · ${segs.map((s) => `${s.c.id} ${s.from}-${s.to}`).join(" · ")}`, `> ${e.angulo}`, "", "```", caption, "```", "");
   console.log(`\nEdit ${n}: ${e.titulo} (${total.toFixed(0)} s, ${segs.length} segmentos de ${new Set(segs.map((s) => s.c.id)).size} clips)\n  Hook: ${e.hook}`);
   if (total < 15) console.warn(`  Aviso: dura ${total.toFixed(1)} s, la campaña pide 15 s o más.`);
@@ -125,5 +127,5 @@ for (const [k, e] of edits.slice(0, N).entries()) {
     execFileSync("mv", [tmp, salida]);
   }
 }
-await writeFile(`out/remix/${nombre}.md`, md.join("\n"));
-console.log(`\nListo: out/remix/ y captions en out/remix/${nombre}.md`);
+await writeFile(`out/remix/${prefijo}.md`, md.join("\n"));
+console.log(`\nListo: out/remix/ y captions en out/remix/${prefijo}.md`);
