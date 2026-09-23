@@ -53,7 +53,29 @@ YouTube → tu foto → Configuración → *Agregar o administrar canales* → *
 Queda como cuenta de marca y cambias entre canales desde tu foto. Haz lo mismo en
 TikTok (una cuenta por idioma) e Instagram.
 
-## 3. La rutina diaria (30 minutos tuyos)
+### Carril C · escenas de película explicadas (sin narrar tú)
+
+Las escenas fuertes enganchan y son eternas, pero subirlas tal cual es la vía más rápida a
+perder el canal: los estudios tienen todo en Content ID (el dinero se va para ellos) y
+algunos mandan strikes (3 = canal borrado). El formato que sí sobrevive es la escena
+**explicada**: tomas cortas + narración con contexto, dato oculto o teoría.
+
+```bash
+npm run recap -- "https://www.youtube.com/watch?v=TRAILER" --handle @tucanal
+npm run recap -- "URL" --idioma en --handle @tucanal_en      # versión en inglés
+```
+
+Gemini ve el video y escribe; la voz de IA narra; no se usa el audio original ni música.
+
+Fuentes, de menos a más riesgo:
+1. **Dominio público** (riesgo cero): *La noche de los muertos vivientes* (1968), *Nosferatu*,
+   *Metrópolis*, *El gabinete del Dr. Caligari*, películas de Chaplin y Buster Keaton.
+   Completas en archive.org; baja la película y usa `--desde/--hasta` con la escena.
+2. **Tráilers y clips oficiales** que los estudios suben para promocionar.
+3. Escenas de estrenos: aun narradas pueden recibir reclamos. Hazlo en un canal aparte,
+   nunca en la cuenta de The Rave Couple.
+
+
 
 ```bash
 # Una vez por semana: espía a 2 o 3 canales que ya crecieron en tu nicho y revisa el tuyo
@@ -97,6 +119,7 @@ repite el patrón de los ganadores (2x la mediana) y deja lo que no pegó.
 | `npm run virales` (este repo) | Encontrar videos largos con más vistas del día, la semana o el mes por nicho | Gratis |
 | `npm run fabrica` (este repo) | Producción diaria completa y calendario de publicación | Gratis |
 | `npm run stats` (este repo) | Ganadores de tu canal y de la competencia, patrón y próximas ideas | Gratis |
+| `npm run recap` (este repo) | Escenas de película explicadas con voz de IA, sin narrar tú | Gratis (Gemini + voz de Gemini o ElevenLabs) |
 | `npm run clipear` (este repo) | Transcribir, elegir momentos, traducir, cortar a 9:16 con subtítulos y textos ES/EN | Gratis (Gemini gratis + Whisper local) |
 | CapCut | Retoques manuales, sin marca de agua | Gratis |
 | Klap / Opus Clip / Submagic | Alternativas de pago si quieres otra opinión de IA o subtítulos animados | Suscripción; cobran por minuto de video |

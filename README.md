@@ -61,6 +61,14 @@ Estrategia completa, nicho recomendado y programas que pagan por vistas: `docs/c
 - `npm run stats -- @tucanal @competidor` lee los Shorts y videos públicos, marca los ganadores (2x la mediana)
   y con Gemini explica el patrón y propone los próximos 10 clips. Escribe `out/stats-<canal>.md`.
 
+## Escenas de película explicadas (sin narrar tú)
+
+- `npm run recap -- "URL del tráiler o escena"` (o `public/reedit/pelicula.mp4 --desde 1800 --hasta 2400`):
+  Gemini ve el video, escribe un guion con gancho y elige 8 a 12 tomas; la voz de IA lo narra
+  (`npm run voz`) y `TikTokPro` corta las tomas debajo de la voz, sin el audio original ni música.
+  `--tema "el final que nadie entendió"`, `--idioma en`, `--palabras 85`, `--handle @canal`.
+  Deja `out/recap-<nombre>.mp4` y un .md con títulos, descripción y hashtags ES/EN.
+
 ## Composiciones (`src/Root.tsx`)
 
 | ID | Qué es |

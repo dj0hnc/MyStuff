@@ -33,7 +33,7 @@ export const tiktokProSchema = z.object({
   words: z.array(z.object({ text: z.string(), start: z.number(), end: z.number() })).default([]),
   voiceDuration: z.number().default(0),
   fondoSegundos: z.number().default(10),
-  clips: z.array(z.object({ archivo: z.string(), duracion: z.number() })).default([]),
+  clips: z.array(z.object({ archivo: z.string(), duracion: z.number(), inicio: z.number().optional() })).default([]),
 });
 
 export type TikTokProProps = z.infer<typeof tiktokProSchema>;

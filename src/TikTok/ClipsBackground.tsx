@@ -1,6 +1,7 @@
 import { AbsoluteFill, OffthreadVideo, Sequence, interpolate, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 
-export type Clip = { archivo: string; duracion: number };
+// inicio: segundo del archivo donde empieza la toma (para usar tramos de un video largo).
+export type Clip = { archivo: string; duracion: number; inicio?: number };
 
 type Props = {
   readonly clips: Clip[];
@@ -33,7 +34,7 @@ export const ClipsBackground: React.FC<Props> = ({ clips, segundosPorClip = 3.5,
         const offset = Math.min(maxOffset, vuelta * segundosPorClip) % Math.max(0.1, maxOffset + 0.1);
         return (
           <Sequence key={i} from={start} durationInFrames={cutF + fadeF} layout="none">
-            <ClipShot src={clip.archivo} startFrom={Math.round(offset * fps)} fadeF={fadeF} cutF={cutF} width={width} height={height} zoomIn={i % 2 === 0} />
+            <ClipShot src={clip.archivo} startFrom={Math.round(((clip.inicio ?? 0) + offset) * fps)} fadeF={fadeF} cutF={cutF} width={width} height={height} zoomIn={i % 2 === 0} />
           </Sequence>
         );
       })}
