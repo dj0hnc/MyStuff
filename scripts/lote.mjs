@@ -65,6 +65,7 @@ try {
     for (const f of v.fuentes ?? []) {
       try { fuentes.push(await bajarFuente(f)); } catch (e) { console.warn(`  Fuente saltada (${f}): ${e.message}`); }
     }
+    fuentes.sort((a, b) => esFoto(a) - esFoto(b)); // los primeros 2 s deciden: abre con video, no con foto
     if (fuentes.length) await writeFile("public/clips.json", JSON.stringify({ fuente: v.id, clips: tomas(fuentes) }, null, 1));
     else correr("scripts/buscar-fondo.mjs", v.fondos);
     console.log(fuentes.length ? `Fondo: ${fuentes.length} fuentes reales` : "Fondo: Pexels");
