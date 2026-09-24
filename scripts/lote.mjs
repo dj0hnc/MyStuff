@@ -9,16 +9,19 @@
 // Uso:  npm run lote -- docs/clipping/propios/historias-1.json
 //       npm run lote -- archivo.json 03-airbnb        (solo ese video)
 // Crea: out/lote/<id>.mp4 y out/lote/<archivo>.md con los captions.
+// "voz": {"proveedor":"gemini","voice":"Charon","estilo":"..."} elige la voz del lote (default: la de .env).
+// Cada voz se guarda en out/lote/voz/<id>.* y se reusa mientras el guion no cambie (no gasta cuota al re-renderizar).
 // Sin música y sin efectos: solo la voz. Deja public/guion*, voz*, clips.json como estaban.
 
-import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
+import { existsSync } from "node:fs";
+import { copyFile, mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
 import { basename } from "node:path";
 import { ytdlp } from "./ytdlp.mjs";
 
 const [archivo, solo] = process.argv.slice(2);
 if (!archivo) { console.error("Uso: npm run lote -- archivo.json [id]"); process.exit(1); }
-const { cuenta = "", idioma = "en", videos } = JSON.parse(await readFile(archivo, "utf8"));
+const { cuenta = "", idioma = "en", textoAbajo = false, voz = {}, videos } = JSON.parse(await readFile(archivo, "utf8"));
 const correr = (script, args, env = {}) => execFileSync("node", ["--env-file-if-exists=.env", script, ...args], { stdio: "inherit", env: { ...process.env, ...env } });
 const nombre = basename(archivo, ".json");
 const ffprobe = "node_modules/@remotion/compositor-linux-x64-gnu/ffprobe";
@@ -54,7 +57,8 @@ const tomas = (fuentes, n = 12) => Array.from({ length: n }, (_, i) => {
   const inicio = tramo ? a + (d - 3.5) * (k + 0.5) / por : d * (0.1 + (0.8 * (k + 0.5)) / por);
   return { archivo: f.replace(/^public\//, ""), inicio: +Math.max(a, Math.min(b - 3.6, inicio)).toFixed(2), duracion: 3.5 };
 });
-await mkdir("out/lote", { recursive: true });
+await mkdir("out/lote/voz", { recursive: true });
+const envVoz = Object.fromEntries(Object.entries({ VOZ_PROVEEDOR: voz.proveedor, GEMINI_VOICE: voz.voice, GEMINI_VOICE_STYLE: voz.estilo }).filter(([, x]) => x));
 
 const md = [`# ${nombre} · ${cuenta}`, ""];
 try {
@@ -72,9 +76,19 @@ try {
     if (fuentes.length) await writeFile("public/clips.json", JSON.stringify({ fuente: v.id, clips: tomas(fuentes) }, null, 1));
     else correr("scripts/buscar-fondo.mjs", v.fondos);
     console.log(fuentes.length ? `Fondo: ${fuentes.length} fuentes reales` : "Fondo: Pexels");
-    correr("scripts/generar-voz.mjs", [], { WHISPER_IDIOMA: idioma });
+    const cache = `out/lote/voz/${v.id}`, texto = JSON.stringify([v.frases, voz]);
+    if (existsSync(`${cache}.mp3`) && (await readFile(`${cache}.txt`, "utf8").catch(() => "")) === texto) {
+      await copyFile(`${cache}.mp3`, "public/voz.mp3");
+      await copyFile(`${cache}.json`, "public/voz.json");
+      console.log("Voz: reusada de la caché");
+    } else {
+      correr("scripts/generar-voz.mjs", [], { WHISPER_IDIOMA: idioma, ...envVoz });
+      await copyFile("public/voz.mp3", `${cache}.mp3`);
+      await copyFile("public/voz.json", `${cache}.json`);
+      await writeFile(`${cache}.txt`, texto);
+    }
     const salida = `out/lote/${v.id}.mp4`;
-    correr("scripts/render.mjs", [salida, JSON.stringify({ fondoClips: true, segundosPorClip: 3.5, musica: false, efectos: false, bgFrom: "#050505", bgTo: "#0A0A0A", ...(cuenta ? { handle: cuenta } : {}) })]);
+    correr("scripts/render.mjs", [salida, JSON.stringify({ fondoClips: true, segundosPorClip: 3.5, musica: false, efectos: false, bgFrom: "#050505", bgTo: "#0A0A0A", textoAbajo, ...(cuenta ? { handle: cuenta } : {}) })]);
     // Voz a loudness de TikTok (-14 LUFS) con picos a -1.5 dB.
     const tmp = salida.replace(/\.mp4$/, ".tmp.mp4");
     execFileSync("node_modules/@remotion/compositor-linux-x64-gnu/ffmpeg", ["-y", "-loglevel", "error", "-i", salida, "-c:v", "copy", "-af", "loudnorm=I=-14:TP=-1.5:LRA=11", "-ar", "48000", "-c:a", "aac", "-b:a", "192k", tmp]);

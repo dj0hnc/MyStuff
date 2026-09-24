@@ -1,4 +1,5 @@
-{"cuenta":"@dj0hnclipper","videos":[
+{"cuenta":"@dj0hnclipper","textoAbajo":true,
+ "voz":{"proveedor":"gemini","voice":"Charon","estilo":"Speak in American English like a calm, serious documentary narrator revealing classified files. Low, steady, a little mysterious, clear pacing."},"videos":[
  {"id":"ovni-01-tictac","hook":"The Navy filmed this in 2004","kicker":"DECLASSIFIED","cta":"Follow for part 2",
   "frases":["In 2004, a Navy F/A-18 Super Hornet filmed this off the coast of San Diego.","Pilots called it the Tic Tac.","The video leaked in 2017.","In 2020, the Pentagon officially released it.","It is still labeled unidentified.","What do you think it is?"],
   "palabrasClave":["2004","Navy","Tic","Tac","secret","Pentagon","unidentified"],
