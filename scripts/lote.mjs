@@ -3,6 +3,7 @@
 // hook, kicker, cta, frases, palabrasClave, fondos (búsquedas de Pexels) y caption.
 // Con "fuentes" usa imagen conocida de fondo en vez de stock: "commons:Archivo.jpg" (foto o video
 // libre de Wikimedia Commons) o una URL que yt-dlp baje (Dailymotion, archive.org, TikTok).
+// Un "#4-13" al final usa solo ese tramo en segundos (para saltar negros o créditos).
 // Se guardan en public/reedit/propios/ (no va a git). Si ninguna baja, cae a Pexels.
 //
 // Uso:  npm run lote -- docs/clipping/propios/historias-1.json
@@ -45,12 +46,13 @@ const bajarFuente = async (f) => {
   }
   throw new Error(`Commons sigue limitando: ${nombreArchivo}`);
 };
-// ponytail: tomas de 3.5 s repartidas parejo en cada fuente (sin mirar el contenido); si alguna sale mal, subir n o cambiar de fuente.
+// ponytail: tomas de 3.5 s repartidas parejo en cada fuente (sin mirar el contenido); si alguna sale mal, acota el tramo con #a-b.
 const tomas = (fuentes, n = 12) => Array.from({ length: n }, (_, i) => {
-  const f = fuentes[i % fuentes.length], k = Math.floor(i / fuentes.length), por = Math.ceil(n / fuentes.length);
+  const { f, tramo } = fuentes[i % fuentes.length], k = Math.floor(i / fuentes.length), por = Math.ceil(n / fuentes.length);
   if (esFoto(f)) return { archivo: f.replace(/^public\//, ""), duracion: 3.5 };
-  const d = duracion(f);
-  return { archivo: f.replace(/^public\//, ""), inicio: +Math.max(0, Math.min(d - 3.6, d * (0.1 + (0.8 * (k + 0.5)) / por))).toFixed(2), duracion: 3.5 };
+  const [a, b] = tramo ?? [0, duracion(f)], d = b - a;
+  const inicio = tramo ? a + (d - 3.5) * (k + 0.5) / por : d * (0.1 + (0.8 * (k + 0.5)) / por);
+  return { archivo: f.replace(/^public\//, ""), inicio: +Math.max(a, Math.min(b - 3.6, inicio)).toFixed(2), duracion: 3.5 };
 });
 await mkdir("out/lote", { recursive: true });
 
@@ -63,9 +65,10 @@ try {
     await mkdir(DIR, { recursive: true });
     const fuentes = [];
     for (const f of v.fuentes ?? []) {
-      try { fuentes.push(await bajarFuente(f)); } catch (e) { console.warn(`  Fuente saltada (${f}): ${e.message}`); }
+      const [src, t] = f.split("#");
+      try { fuentes.push({ f: await bajarFuente(src), tramo: t?.split("-").map(Number) }); } catch (e) { console.warn(`  Fuente saltada (${f}): ${e.message}`); }
     }
-    fuentes.sort((a, b) => esFoto(a) - esFoto(b)); // los primeros 2 s deciden: abre con video, no con foto
+    fuentes.sort((a, b) => esFoto(a.f) - esFoto(b.f)); // los primeros 2 s deciden: abre con video, no con foto
     if (fuentes.length) await writeFile("public/clips.json", JSON.stringify({ fuente: v.id, clips: tomas(fuentes) }, null, 1));
     else correr("scripts/buscar-fondo.mjs", v.fondos);
     console.log(fuentes.length ? `Fondo: ${fuentes.length} fuentes reales` : "Fondo: Pexels");
