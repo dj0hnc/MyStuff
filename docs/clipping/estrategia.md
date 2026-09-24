@@ -34,6 +34,18 @@ Cómo:
 
 Referencia: 100K vistas al día a ~$1 por 1K = ~$100 al día. Un clip que pega hace eso solo.
 
+### Cómo elegir campañas (Vyro, Whop)
+
+Acepta solo si cumple casi todo:
+- **7 días o más por delante.** Solo cuentan las vistas antes del cierre y cada post necesita un mínimo (Vyro: 5,000).
+- **Poco pagado todavía** (menos de 50%): queda presupuesto.
+- **Mismo tema que la cuenta** (hoy @dj0hnclipper: negocios, Shark Tank, podcasts, suplementos, apps), para que el algoritmo no se confunda.
+- **Reglas que podemos cumplir:** duración mínima, texto obligatorio, hashtags, música solo de la biblioteca comercial de TikTok.
+- **Ojo con cláusulas de IA:** si prohíben herramientas que entrenen con lo que subes, no se usa Gemini gratis (solo Whisper local y el plan a mano con `npm run remix -- --plan`).
+
+Rechazada: FX "Adults S2" (terminaba en 1 día, mínimo 30 s, tema distinto, cláusula de IA).
+Activa: Ketone-IQ (`docs/clipping/campanas/ketone-iq.md`), 10 edits listos (planes `ketone-iq-plan*.json`).
+
 ### Carril B · tu canal propio (el activo que crece)
 
 **Nicho recomendado: los mejores momentos de podcasts en inglés, con subtítulos en español.**
