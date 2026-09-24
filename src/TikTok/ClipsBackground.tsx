@@ -1,6 +1,7 @@
-import { AbsoluteFill, OffthreadVideo, Sequence, interpolate, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
+import { AbsoluteFill, Img, OffthreadVideo, Sequence, interpolate, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 
 // inicio: segundo del archivo donde empieza la toma (para usar tramos de un video largo).
+// archivo puede ser una foto (.jpg/.png/.webp): se ve completa sobre una copia desenfocada.
 export type Clip = { archivo: string; duracion: number; inicio?: number };
 
 type Props = {
@@ -59,7 +60,14 @@ const ClipShot: React.FC<{ src: string; startFrom: number; fadeF: number; cutF: 
   const zoom = interpolate(f, [0, cutF + fadeF], zoomIn ? [1.0, 1.12] : [1.12, 1.0]);
   return (
     <AbsoluteFill style={{ opacity, transform: `scale(${zoom})` }}>
-      <OffthreadVideo src={staticFile(src)} muted startFrom={startFrom} style={{ width, height, objectFit: "cover" }} />
+      {/\.(jpe?g|png|webp)$/i.test(src) ? (
+        <>
+          <Img src={staticFile(src)} style={{ position: "absolute", width, height, objectFit: "cover", filter: "blur(40px) brightness(0.55)", transform: "scale(1.15)" }} />
+          <Img src={staticFile(src)} style={{ position: "absolute", width, height, objectFit: "contain" }} />
+        </>
+      ) : (
+        <OffthreadVideo src={staticFile(src)} muted startFrom={startFrom} style={{ width, height, objectFit: "cover" }} />
+      )}
     </AbsoluteFill>
   );
 };
