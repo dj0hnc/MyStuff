@@ -53,7 +53,8 @@
     "fabrica": "node --env-file-if-exists=.env scripts/fabrica.mjs",
     "recap": "node --env-file-if-exists=.env scripts/recap.mjs",
     "pack-nails": "node --env-file-if-exists=.env scripts/pack-nails.mjs",
-    "remix": "node --env-file-if-exists=.env scripts/remix.mjs"
+    "remix": "node --env-file-if-exists=.env scripts/remix.mjs",
+    "lote": "node --env-file-if-exists=.env scripts/lote.mjs"
   },
   "sideEffects": [
     "*.css"
