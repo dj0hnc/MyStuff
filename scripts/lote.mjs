@@ -54,7 +54,8 @@ const tomas = (fuentes, n = 12) => Array.from({ length: n }, (_, i) => {
   const { f, tramo } = fuentes[i % fuentes.length], k = Math.floor(i / fuentes.length), por = Math.ceil(n / fuentes.length);
   if (esFoto(f)) return { archivo: f.replace(/^public\//, ""), duracion: 3.5 };
   const [a, b] = tramo ?? [0, duracion(f)], d = b - a;
-  const inicio = tramo ? a + (d - 3.5) * (k + 0.5) / por : d * (0.1 + (0.8 * (k + 0.5)) / por);
+  // Con tramo: tomas seguidas (se ve la acción completa, en loop si la voz dura más); sin tramo: repartidas en todo el video.
+  const inicio = tramo ? a + ((k * 3.5) % Math.max(0.1, d - 3.5)) : d * (0.1 + (0.8 * (k + 0.5)) / por);
   return { archivo: f.replace(/^public\//, ""), inicio: +Math.max(a, Math.min(b - 3.6, inicio)).toFixed(2), duracion: 3.5 };
 });
 await mkdir("out/lote/voz", { recursive: true });

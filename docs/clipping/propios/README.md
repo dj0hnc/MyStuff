@@ -10,6 +10,7 @@ con stock genérico se va. Cada video del JSON trae `"fuentes"` y el lote las ba
 
 - `commons:Archivo.jpg` o `.webm`: fotos y videos libres de Wikimedia Commons (busca en
   commons.wikimedia.org y copia el nombre del archivo). Las fotos se ven completas sobre una copia desenfocada.
+- DVIDS (dvidshub.net/video/<id>): el archivo de video del Pentágono, incluidos los 169 archivos OVNI/UAP de war.gov/UFO (war.gov bloquea la nube, DVIDS no).
 - Una URL que yt-dlp baje desde la nube: archive.org (muchos videos de YouTube están ahí como
   `archive.org/details/youtube-<id>`), Dailymotion, TikTok.
 - YouTube directo NO: bloquea las descargas desde la nube (403).
