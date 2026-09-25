@@ -3,7 +3,7 @@
 // hook, kicker, cta, frases, palabrasClave, fondos (búsquedas de Pexels) y caption.
 // Con "fuentes" usa imagen conocida de fondo en vez de stock: "commons:Archivo.jpg" (foto o video
 // libre de Wikimedia Commons) o una URL que yt-dlp baje (Dailymotion, archive.org, TikTok).
-// Un "#4-13" al final usa solo ese tramo en segundos (para saltar negros o créditos).
+// También acepta una ruta local "public/...". Un "#4-13" al final usa solo ese tramo en segundos (para saltar negros o créditos).
 // Se guardan en public/reedit/propios/ (no va a git). Si ninguna baja, cae a Pexels.
 //
 // Uso:  npm run lote -- docs/clipping/propios/historias-1.json
@@ -29,6 +29,7 @@ const duracion = (f) => Number(execFileSync(ffprobe, ["-v", "error", "-show_entr
 const esFoto = (f) => /\.(jpe?g|png|webp)$/i.test(f);
 const DIR = "public/reedit/propios";
 const bajarFuente = async (f) => {
+  if (f.startsWith("public/")) return f; // archivo local (recortes de documentos, etc.)
   const slug = f.replace(/^commons:/, "").replace(/\.\w+$/, "").replace(/[^\w-]+/g, "_").slice(0, 80);
   const hecho = (await readdir(DIR)).find((x) => x.startsWith(`${slug}.`));
   if (hecho) return `${DIR}/${hecho}`;

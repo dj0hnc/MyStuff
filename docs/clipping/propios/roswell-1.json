@@ -1,0 +1,10 @@
+{"cuenta":"@dj0hnclipper","textoAbajo":true,
+ "voz":{"proveedor":"gemini","voice":"Charon","estilo":"Speak in American English like a calm, serious documentary narrator revealing classified files. Low, steady, a little mysterious, clear pacing."},
+ "videos":[
+ {"id":"roswell-1-fbi","hook":"The FBI's Roswell telex","kicker":"FBI FILE","cta":"Follow for part 2",
+  "frases":["July 8, 1947. 6:17 PM. The FBI office in Dallas sends an urgent teletype to the Director.","Subject: flying disc.","The Eighth Air Force reports an object purporting to be a flying disc, recovered near Roswell, New Mexico.","Hexagonal in shape. Hanging from a balloon about twenty feet wide.","It looks like a weather balloon with a radar reflector. But Wright Field did not confirm that.","It is flown to Wright Field by special plane, while the press tries to break the story.","The last line says: no further investigation being conducted.","What was it?"],
+  "palabrasClave":["urgent","flying","disc","Roswell","Hexagonal","balloon","Wright","investigation"],
+  "fondos":["old documents desk"],
+  "fuentes":["public/reedit/propios/roswell/1-encabezado.jpg","public/reedit/propios/roswell/1-encabezado.jpg","public/reedit/propios/roswell/2-disco.jpg","public/reedit/propios/roswell/3-hexagonal.jpg","public/reedit/propios/roswell/4-globo.jpg","public/reedit/propios/roswell/5-wright.jpg","public/reedit/propios/roswell/6-prensa.jpg","public/reedit/propios/roswell/7-final.jpg","public/reedit/propios/roswell/0-completo.jpg"],
+  "caption":"The real FBI teletype about Roswell, July 8, 1947. Read the last line. #roswell #ufo #fbi #declassified #history"}
+]}
