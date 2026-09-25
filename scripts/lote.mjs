@@ -74,7 +74,9 @@ try {
       const [src, t] = f.split("#");
       try { fuentes.push({ f: await bajarFuente(src), tramo: t?.split("-").map(Number) }); } catch (e) { console.warn(`  Fuente saltada (${f}): ${e.message}`); }
     }
-    fuentes.sort((a, b) => esFoto(a.f) - esFoto(b.f)); // los primeros 2 s deciden: abre con video, no con foto
+    // Una fuente por frase + una para el gancho: cada toma dura lo que su frase (se corta al ritmo de la voz, en ese orden).
+    const alRitmo = fuentes.length === v.frases.length + 1;
+    if (!alRitmo) fuentes.sort((a, b) => esFoto(a.f) - esFoto(b.f)); // los primeros 2 s deciden: abre con video, no con foto
     if (fuentes.length) await writeFile("public/clips.json", JSON.stringify({ fuente: v.id, clips: tomas(fuentes) }, null, 1));
     else correr("scripts/buscar-fondo.mjs", v.fondos);
     console.log(fuentes.length ? `Fondo: ${fuentes.length} fuentes reales` : "Fondo: Pexels");
@@ -88,6 +90,16 @@ try {
       await copyFile("public/voz.mp3", `${cache}.mp3`);
       await copyFile("public/voz.json", `${cache}.json`);
       await writeFile(`${cache}.txt`, texto);
+    }
+    if (alRitmo) {
+      // Inicio de cada frase en la voz (por conteo de palabras) + 2 s del gancho antes de que arranque la voz (ver TikTokPro).
+      const { words } = JSON.parse(await readFile("public/voz.json", "utf8"));
+      let k = 0;
+      const inicios = v.frases.map((f) => { const w = words[Math.min(k, words.length - 1)]; k += f.split(/\s+/).filter(Boolean).length; return w.start + 2; });
+      const cortes = [inicios[0], ...inicios.slice(1).map((x, i) => x - inicios[i]), 3.5];
+      const clips = fuentes.map(({ f, tramo }, i) => ({ archivo: f.replace(/^public\//, ""), duracion: esFoto(f) ? cortes[i] : duracion(f), inicio: tramo?.[0] ?? 0, corte: +cortes[i].toFixed(2) }));
+      await writeFile("public/clips.json", JSON.stringify({ fuente: v.id, clips }, null, 1));
+      console.log(`Tomas al ritmo de la voz: ${cortes.map((c) => c.toFixed(1)).join(" / ")} s`);
     }
     const salida = `out/lote/${v.id}.mp4`;
     correr("scripts/render.mjs", [salida, JSON.stringify({ fondoClips: true, segundosPorClip: 3.5, musica: false, efectos: false, bgFrom: "#050505", bgTo: "#0A0A0A", textoAbajo, handle: marca })]);

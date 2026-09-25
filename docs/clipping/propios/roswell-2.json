@@ -37,9 +37,10 @@
    "fuentes": [
     "public/reedit/propios/roswell/r2-titular.jpg",
     "public/reedit/propios/roswell/r2-articulo.jpg",
+    "public/reedit/propios/roswell/r2-radar.jpg",
     "public/reedit/propios/roswell/z2-disco.jpg",
     "public/reedit/propios/roswell/r2-marcel.jpg",
-    "public/reedit/propios/roswell/r2-radar.jpg",
+    "public/reedit/propios/roswell/z5-globo.jpg",
     "public/reedit/propios/roswell/r2-titular.jpg",
     "public/reedit/propios/roswell/r2-marcel.jpg"
    ],
@@ -73,13 +74,14 @@
     "desert balloon"
    ],
    "fuentes": [
+    "public/reedit/propios/roswell/r3-dummy2.jpg",
     "public/reedit/propios/roswell/r3-mogul.jpg",
     "public/reedit/propios/roswell/r2-radar.jpg",
     "public/reedit/propios/roswell/r3-moore.jpg",
-    "public/reedit/propios/roswell/r3-dummy2.jpg",
-    "public/reedit/propios/roswell/r2-marcel.jpg",
     "public/reedit/propios/roswell/r3-dummy1.jpg",
-    "public/reedit/propios/roswell/r3-dummy3.jpg"
+    "public/reedit/propios/roswell/r2-articulo.jpg",
+    "public/reedit/propios/roswell/r3-dummy3.jpg",
+    "public/reedit/propios/roswell/r3-dummy2.jpg"
    ],
    "caption": "The Air Force's official answer to Roswell: Project Mogul and crash test dummies. Do you buy it? #roswell #ufo #airforce #declassified #history"
   }
