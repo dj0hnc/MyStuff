@@ -80,14 +80,24 @@ const conElevenLabs = async () => {
 const conGemini = async () => {
   const { generateContent, imagenDe } = await import("./gemini.mjs");
   const { palabrasDe, alinearAlGuion } = await import("./whisper.mjs");
-  const model = process.env.GEMINI_TTS_MODEL ?? "gemini-3.1-flash-tts-preview";
   const voice = process.env.GEMINI_VOICE ?? "Puck";
   const estilo = process.env.GEMINI_VOICE_STYLE ?? "Habla en español neutro, con energía y ritmo de creador de TikTok, claro y natural";
-  console.log(`Generando voz con Gemini (${model}, voz ${voice}, ${nPalabras} palabras)...`);
-  const out = await generateContent(model, {
-    contents: [{ parts: [{ text: `${estilo}:\n\n${texto}` }] }],
-    generationConfig: { responseModalities: ["AUDIO"], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } } },
-  });
+  // Cada modelo TTS tiene su propia cuota diaria gratis: si uno se agota, se prueba el siguiente.
+  const modelos = [...new Set([process.env.GEMINI_TTS_MODEL || "gemini-3.1-flash-tts-preview", "gemini-2.5-flash-preview-tts"])];
+  let out;
+  for (const model of modelos) {
+    console.log(`Generando voz con Gemini (${model}, voz ${voice}, ${nPalabras} palabras)...`);
+    try {
+      out = await generateContent(model, {
+        contents: [{ parts: [{ text: `${estilo}:\n\n${texto}` }] }],
+        generationConfig: { responseModalities: ["AUDIO"], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } } },
+      });
+      break;
+    } catch (e) {
+      if (!/cuota/i.test(e.message) || model === modelos.at(-1)) throw e;
+      console.warn(`  ${model} sin cuota, pruebo el siguiente modelo.`);
+    }
+  }
   const audio = imagenDe(out); // misma forma: parte con inlineData
   if (!audio) throw new Error("Gemini no devolvió audio");
   const rate = /rate=(\d+)/.exec(audio.inlineData.mimeType)?.[1] ?? "24000";
