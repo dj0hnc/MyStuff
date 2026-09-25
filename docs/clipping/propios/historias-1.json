@@ -1,4 +1,6 @@
-{"cuenta":"@dj0hnclipper","videos":[
+{"cuenta":"@dj0hnclipper",
+ "voz":{"proveedor":"gemini","voice":"Orus","estilo":"Speak in American English like an engaging storyteller on TikTok: confident, warm, clear, with natural energy."},
+ "videos":[
  {"id":"01-ring","hook":"Rejected on Shark Tank","kicker":"TRUE STORY","cta":"Follow for more",
   "frases":["In 2013, Jamie Siminoff walked into Shark Tank with a video doorbell called Doorbot.","The Sharks were not impressed.","He walked out with no deal.","He kept building anyway and renamed it Ring.","Five years later, Amazon bought Ring for about one billion dollars.","Sometimes a no is just the beginning."],
   "palabrasClave":["Shark","Tank","no","deal","Ring","Amazon","billion"],
