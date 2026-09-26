@@ -8,7 +8,7 @@ async function firma(pin) {
   return [...new Uint8Array(h)].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
-const PUERTA = (error) => `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#05080f"><title>Puente de Mando · Acceso</title>
+const PUERTA = (error) => `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#05080f"><title>Puente de Mando · Acceso</title><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icono-192.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Puente">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@800&family=Rajdhani:wght@600&family=Share+Tech+Mono&display=swap">
 <style>
 *{box-sizing:border-box}html,body{margin:0;height:100%}
@@ -45,6 +45,9 @@ async function conRango(request, res) {
 export async function onRequest({ request, env, next }) {
   if (!env.PIN) return next(); // ponytail: sin PIN tampoco hay cortes por rango; hoy siempre hay PIN
   const url = new URL(request.url);
+
+  if (/^\/(manifest\.webmanifest|icono-\d+\.png|apple-touch-icon\.png)$/.test(url.pathname)) return next(); // el cel los pide para instalar la app, sin cookie
+  if (url.pathname === "/__salir") return new Response(null, { status: 302, headers: { Location: "/", "Set-Cookie": "puente=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax" } });
 
   if (url.pathname === "/__entrar" && request.method === "POST") {
     const pin = String((await request.formData()).get("pin") || "");

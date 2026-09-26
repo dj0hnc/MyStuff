@@ -5,6 +5,7 @@
 //   PUT    /api/crudos/parte?key&id&n  (cuerpo = pedazo) -> {n, etag}
 //   POST   /api/crudos/terminar  {key, id, partes:[{n,etag}], p, nota, quien} -> crea el pedido "Editar crudo" en el panel
 //   POST   /api/crudos/cancelar  {key, id}
+//   POST   /api/crudos/enlace    {p, url, nota, quien}  -> link de Dropbox/Drive/WeTransfer/TikTok/lo que sea: queda como pedido (funciona aun sin R2)
 //   GET    /api/crudos/bajar?key (acepta Range: se puede ver en el panel y bajar con curl)
 //   DELETE /api/crudos?key
 // El PIN lo cuida _middleware.js.
@@ -13,9 +14,33 @@ import { clave, PROYECTOS } from "../estado.js";
 const json = (d, s = 200) => new Response(JSON.stringify(d), { status: s, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
 const keyOk = (k) => typeof k === "string" && PROYECTOS.some((p) => k.startsWith(p + "/")) && !k.includes("..") && k.length < 300;
 
+// Links directos donde se pueda (así la rutina baja el archivo con curl sin página intermedia).
+function directo(u) {
+  if (/(^|\.)dropbox\.com$/.test(u.hostname)) { u.searchParams.set("dl", "1"); return u.toString(); }
+  const drive = /drive\.google\.com\/file\/d\/([\w-]+)/.exec(u.toString());
+  if (drive) return `https://drive.usercontent.google.com/download?id=${drive[1]}&export=download&confirm=t`;
+  return u.toString();
+}
+async function pedido(env, p, texto, quien, extra = {}) {
+  if (!env.ESTADO) return;
+  const e = JSON.parse((await env.ESTADO.get(clave(p))) || "{}"), ahora = new Date().toISOString();
+  e.pedidos = [{ id: crypto.randomUUID().slice(0, 8), texto, quien, at: ahora, estado: "nuevo", ...extra }, ...(e.pedidos || [])].slice(0, 200);
+  e.bitacora = [{ quien, que: texto.split("\n")[0].slice(0, 80), at: ahora }, ...(e.bitacora || [])].slice(0, 150);
+  await env.ESTADO.put(clave(p), JSON.stringify(e));
+}
+
 export async function onRequest({ request, env, params }) {
-  if (!env.CRUDOS) return json({ error: "sin_r2", mensaje: "Falta activar el almacenamiento R2 en Cloudflare." }, 503);
   const url = new URL(request.url), ruta = (params.ruta || []).join("/"), m = request.method;
+  if (ruta === "enlace" && m === "POST") {
+    const b = await request.json().catch(() => ({})), p = PROYECTOS.includes(b.p) ? b.p : null;
+    let u; try { u = new URL(String(b.url || "").trim()); } catch {}
+    if (!p || !u || !/^https?:$/.test(u.protocol)) return json({ error: "enlace", mensaje: "Pega un link completo (https://…)." }, 400);
+    const bajar = directo(u), quien = String(b.quien || "Alguien").slice(0, 24), nota = String(b.nota || "").slice(0, 400);
+    await pedido(env, p, `Editar crudo desde link${nota ? ": " + nota : ""}\nLink: ${u}\nBajar: yt-dlp o curl -L "${bajar}" -o public/reedit/<nombre>`, quien, { enlace: u.toString() });
+    if (env.CRUDOS) await env.CRUDOS.put(`${p}/${new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-")}-enlace.url`, u.toString(), { httpMetadata: { contentType: "text/uri-list" }, customMetadata: { nombre: u.hostname + u.pathname.slice(0, 60), nota, quien, enlace: u.toString() } });
+    return json({ ok: true, bajar });
+  }
+  if (!env.CRUDOS) return json({ error: "sin_r2", mensaje: "Falta activar el almacenamiento R2 en Cloudflare." }, 503);
   try {
     if (ruta === "" && m === "GET") {
       const p = PROYECTOS.includes(url.searchParams.get("p")) ? url.searchParams.get("p") : "clipper";
@@ -40,15 +65,10 @@ export async function onRequest({ request, env, params }) {
       const b = await request.json();
       if (!keyOk(b.key) || !Array.isArray(b.partes)) return json({ error: "terminar" }, 400);
       const obj = await env.CRUDOS.resumeMultipartUpload(b.key, b.id).complete(b.partes.map((x) => ({ partNumber: Number(x.n), etag: String(x.etag) })).sort((a, c) => a.partNumber - c.partNumber));
-      const p = b.key.split("/")[0], quien = String(b.quien || "Alguien").slice(0, 24), ahora = new Date().toISOString();
+      const p = b.key.split("/")[0], quien = String(b.quien || "Alguien").slice(0, 24);
       const mb = (obj.size / 1048576).toFixed(0), nombre = b.key.split("/").pop();
-      if (env.ESTADO) { // queda como pedido para la rutina, con el comando para bajarlo
-        const e = JSON.parse((await env.ESTADO.get(clave(p))) || "{}");
-        const texto = `Editar crudo "${nombre}" (${mb} MB)${b.nota ? ": " + String(b.nota).slice(0, 400) : ""}\nBajar: curl -H "x-pin: $PANEL_PIN" "${url.origin}/api/crudos/bajar?key=${encodeURIComponent(b.key)}" -o public/reedit/${nombre}`;
-        e.pedidos = [{ id: crypto.randomUUID().slice(0, 8), texto, quien, at: ahora, estado: "nuevo", crudo: b.key }, ...(e.pedidos || [])].slice(0, 200);
-        e.bitacora = [{ quien, que: `subió un crudo (${mb} MB): ${nombre}`, at: ahora }, ...(e.bitacora || [])].slice(0, 150);
-        await env.ESTADO.put(clave(p), JSON.stringify(e));
-      }
+      // queda como pedido para la rutina, con el comando para bajarlo
+      await pedido(env, p, `Editar crudo "${nombre}" (${mb} MB)${b.nota ? ": " + String(b.nota).slice(0, 400) : ""}\nBajar: curl -H "x-pin: $PANEL_PIN" "${url.origin}/api/crudos/bajar?key=${encodeURIComponent(b.key)}" -o public/reedit/${nombre}`, quien, { crudo: b.key });
       return json({ key: b.key, tam: obj.size });
     }
     if (ruta === "cancelar" && m === "POST") {

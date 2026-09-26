@@ -55,7 +55,8 @@
     "pack-nails": "node --env-file-if-exists=.env scripts/pack-nails.mjs",
     "remix": "node --env-file-if-exists=.env scripts/remix.mjs",
     "lote": "node --env-file-if-exists=.env scripts/lote.mjs",
-    "panel": "sh -c 'set -a; . ./.env; set +a; npx -y wrangler@4 pages deploy panel --project-name puente-fabrica --branch main --commit-dirty=true'"
+    "panel": "sh -c 'set -a; . ./.env; set +a; npx -y wrangler@4 pages deploy panel --project-name puente-fabrica --branch main --commit-dirty=true'",
+    "check-panel": "node scripts/check-panel.mjs"
   },
   "sideEffects": [
     "*.css"

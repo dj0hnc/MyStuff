@@ -1,7 +1,8 @@
 // Publicar en 1 toque (lo usan los 3 paneles). En el cel manda el archivo al menú Compartir del sistema,
 // de donde TikTok, YouTube e Instagram lo abren directo en su editor; el texto va copiado para pegarlo.
 // En compu baja el video y abre la página de subida. Publicar.abrir({titulo, video, textos:{tiktok,youtube,instagram}, redes, nota, hecho:{red:bool}, onHecho(red),
-//   vyro?: {link, registrado, onLink(link), onRegistrado()}}) agrega los pasos 2 y 3 de Vyro: pegar el link del post y registrarlo.
+//   links:{red:url}, onLink(red, url)   -> links de los posts ya publicados (se piden al confirmar y se comparten desde aquí)
+//   vyro?: {registrado, onRegistrado()}}) agrega los pasos 2 y 3 de Vyro: pegar el link del post de TikTok y registrarlo.
 // ponytail: no hay API directa; TikTok/Meta piden app auditada y YouTube deja privado lo subido por apps sin verificar. El menú Compartir no pide permisos.
 (() => {
   const REDES = {
@@ -30,11 +31,24 @@
   .pub :focus-visible{outline:2px solid #ffc857;outline-offset:2px}
   .pub-paso{display:grid;gap:8px;padding:12px;border-radius:14px;border:1px solid #2a2f45;background:#151827}
   .pub-paso b{font-size:15px}.pub-paso.hecho{border-color:#35d07f}
+  .pub-links{display:grid;gap:8px;padding:12px;border-radius:14px;border:1px solid #35d07f;background:rgba(53,208,127,.07)}
+  .pub-links .pub-fila{align-items:center}.pub-links span{flex:1;min-width:120px;font-size:14px}
+  .pub-fila input{flex:1;min-width:0;padding:11px;border-radius:10px;border:1px solid #2a2f45;background:#0e0f16;color:#f2f4ff;font:600 16px system-ui,sans-serif}
   .pub-paso input{width:100%;padding:11px;border-radius:10px;border:1px solid #2a2f45;background:#0e0f16;color:#f2f4ff;font:600 16px system-ui,sans-serif}`;
   const st = document.createElement("style"); st.textContent = css; document.head.append(st);
   const h = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
   const copiar = (t) => (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).catch(() => {});
   const movil = matchMedia("(pointer: coarse)").matches;
+  const RE = { tiktok: /^https:\/\/([\w-]+\.)*tiktok\.com\//, youtube: /^https:\/\/(([\w-]+\.)*youtube\.com|youtu\.be)\//, instagram: /^https:\/\/([\w-]+\.)*instagram\.com\// };
+  // Campo para pegar el link de un post: valida que sea de esa red y avisa con onOk(url).
+  function campoLink(red, valor, onOk) {
+    const caja = h("div", "pub-fila"), inp = h("input"), pegar = h("button", "pub-btn", "Pegar"), ok = h("button", "pub-btn si", "Guardar link");
+    inp.type = "url"; inp.inputMode = "url"; inp.value = valor || ""; inp.placeholder = `Link del post en ${REDES[red].n}`; inp.setAttribute("aria-label", inp.placeholder); inp.style.flexBasis = "100%";
+    pegar.type = ok.type = "button";
+    pegar.onclick = async () => { try { inp.value = (await navigator.clipboard.readText()).trim(); } catch { inp.focus(); } };
+    ok.onclick = () => { const l = inp.value.trim(); if (!RE[red].test(l)) { inp.setCustomValidity(`Pega el link de ${REDES[red].n} (Compartir → Copiar enlace)`); inp.reportValidity(); return; } inp.setCustomValidity(""); ok.textContent = "✓ Guardado"; onOk(l); };
+    caja.append(inp, pegar, ok); return caja;
+  }
 
   function abrir(o) {
     const redes = o.redes || ["tiktok", "youtube", "instagram"];
@@ -50,6 +64,20 @@
     const top = h("div", "pub-top"); top.append(vid, tt, x);
     const estado = h("small", null, movil ? "Preparando el video…" : ""); estado.setAttribute("aria-live", "polite");
     hoja.append(top); if (o.nota) hoja.append(h("div", "pub-aviso", o.nota)); hoja.append(estado);
+    const links = { ...(o.links || {}) }, cajaLinks = h("div", "pub-links");
+    const pintaLinks = () => { // links de los posts: copiar, compartir o abrir
+      const hay = Object.entries(links).filter(([, u]) => u); cajaLinks.hidden = !hay.length; cajaLinks.replaceChildren(h("b", null, "Links para compartir"));
+      hay.forEach(([red, u]) => {
+        const f = h("div", "pub-fila"), c = h("button", "pub-btn", "Copiar"), sh = h("button", "pub-btn si", "Compartir"), ab = h("a", "pub-btn", "Abrir");
+        c.type = sh.type = "button"; ab.href = u; ab.target = "_blank"; ab.rel = "noopener";
+        c.onclick = () => { copiar(u); c.textContent = "¡Copiado!"; };
+        sh.onclick = async () => { try { await navigator.share({ title: o.titulo, url: u }); } catch (e) { if (e.name !== "AbortError") { copiar(u); sh.textContent = "Copiado"; } } };
+        f.append(h("span", null, REDES[red]?.n || red), c, sh, ab); cajaLinks.append(f);
+      });
+      if (hay.length > 1) { const todos = h("button", "pub-btn", "Compartir todos"); todos.type = "button"; const txt = `${o.titulo}\n` + hay.map(([r, u]) => `${REDES[r]?.n || r}: ${u}`).join("\n"); todos.onclick = async () => { try { await navigator.share({ title: o.titulo, text: txt }); } catch { copiar(txt); todos.textContent = "Copiados"; } }; cajaLinks.append(todos); }
+    };
+    const guardarLink = (red, u) => { links[red] = u; o.onLink?.(red, u); pintaLinks(); };
+    pintaLinks(); hoja.append(cajaLinks);
 
     // Se baja al abrir para que el toque siguiente pueda compartir sin perder el permiso del gesto.
     if (movil && navigator.canShare) fetch(o.video).then((r) => r.blob()).then((b) => {
@@ -60,7 +88,9 @@
 
     const confirmar = (red) => {
       const c = h("div", "pub-fila"), si = h("button", "pub-btn si", `Sí, ya quedó en ${REDES[red].n}`), no = h("button", "pub-btn", "Todavía no");
-      si.type = no.type = "button"; si.onclick = () => { o.onHecho?.(red); btns[red].classList.add("hecho"); c.remove(); }; no.onclick = () => c.remove();
+      si.type = no.type = "button";
+      si.onclick = () => { o.onHecho?.(red); btns[red].classList.add("hecho"); c.replaceChildren(h("small", null, `¿Tienes el link del post? Pégalo para compartirlo después (opcional).`), campoLink(red, links[red], (u) => guardarLink(red, u))); };
+      no.onclick = () => c.remove();
       c.append(si, no); hoja.append(c); c.scrollIntoView({ block: "nearest" });
     };
     const btns = {};
@@ -80,15 +110,11 @@
     });
     if (o.vyro) { // Vyro: 2) link del post de TikTok, 3) registrarlo en app.vyro.com
       const V = o.vyro;
-      const p2 = h("div", "pub-paso" + (V.link ? " hecho" : "")), inp = h("input"); inp.type = "url"; inp.inputMode = "url"; inp.placeholder = "https://www.tiktok.com/@dj0hnclipper/video/…"; inp.value = V.link || ""; inp.setAttribute("aria-label", "Link del post de TikTok");
-      const f2 = h("div", "pub-fila"), pegar = h("button", "pub-btn", "Pegar"), guardar = h("button", "pub-btn si", "Guardar link");
-      pegar.type = guardar.type = "button";
-      pegar.onclick = async () => { try { inp.value = (await navigator.clipboard.readText()).trim(); } catch { inp.focus(); } };
-      guardar.onclick = () => { const l = inp.value.trim(); if (!/^https:\/\/([\w-]+\.)*tiktok\.com\//.test(l)) { inp.setCustomValidity("Pega el link de TikTok (Compartir → Copiar enlace)"); inp.reportValidity(); return; } inp.setCustomValidity(""); V.link = l; V.onLink?.(l); p2.classList.add("hecho"); guardar.textContent = "✓ Guardado"; };
-      f2.append(pegar, guardar); p2.append(h("b", null, "Paso 2 · Pega el link del post"), h("small", null, "En TikTok: tu video → Compartir → Copiar enlace."), inp, f2);
+      const p2 = h("div", "pub-paso" + (links.tiktok ? " hecho" : ""));
+      p2.append(h("b", null, "Paso 2 · Pega el link del post"), h("small", null, "En TikTok: tu video → Compartir → Copiar enlace."), campoLink("tiktok", links.tiktok, (u) => { guardarLink("tiktok", u); p2.classList.add("hecho"); }));
       const p3 = h("div", "pub-paso" + (V.registrado ? " hecho" : "")), ir = h("button", "pub-btn si", V.registrado ? "✓ Ya está en Vyro" : "Registrar en Vyro →"); ir.type = "button";
       ir.onclick = () => {
-        const l = inp.value.trim() || V.link; if (!l) { inp.focus(); return; }
+        const l = links.tiktok; if (!l) { p2.querySelector("input").focus(); return; }
         copiar(l); window.open("https://app.vyro.com", "_blank", "noopener");
         const c = h("div", "pub-fila"), si = h("button", "pub-btn si", "Sí, ya lo registré"), no = h("button", "pub-btn", "Todavía no"); si.type = no.type = "button";
         si.onclick = () => { V.onRegistrado?.(); p3.classList.add("hecho"); ir.textContent = "✓ Ya está en Vyro"; c.remove(); }; no.onclick = () => c.remove();

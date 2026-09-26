@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
+<link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icono-192.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Puente">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#05080f">
 <title>Fábrica de Clips · Puente de Mando</title>
@@ -193,6 +194,8 @@
   .cuenta-red { background: var(--panel); border: 1px solid var(--linea); border-left: 4px solid var(--c); border-radius: 12px; padding: 12px; display: grid; gap: 8px; }
   .cuenta-red b { font: 800 14px var(--hud); letter-spacing: .06em; }
   .cuenta-red small { color: var(--cian-suave); }
+  .engrane { font-size: 18px; padding: 4px 10px; }
+  .vt .redes span.ln { background: var(--ambar); color: var(--casco); border-color: var(--ambar); }
   .tira { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; scroll-snap-type: x mandatory; }
   .tira .vt { flex: 0 0 136px; scroll-snap-align: start; }
   .card.siguiente { border-color: var(--ambar); box-shadow: 0 0 22px rgba(255,176,32,.25); }
@@ -214,7 +217,7 @@
   <section class="cabina" aria-label="Estado general">
     <div class="top">
       <h1><a href="/" style="color:var(--cian-suave);text-decoration:none" aria-label="Volver a paneles">‹</a> Fábrica de <span>Clips</span></h1>
-      <div class="fila" style="align-items:center"><span class="enlace" id="enlace"><i></i><span>CONECTANDO…</span></span><div class="reloj-tx" id="reloj">--:-- TEXAS</div></div>
+      <div class="fila" style="align-items:center"><span class="enlace" id="enlace"><i></i><span>CONECTANDO…</span></span><div class="reloj-tx" id="reloj">--:-- TEXAS</div><button class="btn mini engrane" id="engrane" type="button" aria-label="Ajustes">⚙</button></div>
     </div>
     <div class="tripu" id="tripu"></div>
     <div class="lecturas" id="lecturas"></div>
@@ -247,12 +250,17 @@
 
 <script src="/publicar.js"></script>
 <script src="/crudos.js"></script>
+<script src="/ajustes.js"></script>
 <script>
 const SERIES = {
   ovni: { n: "OVNI", c: "var(--ovni)" }, roswell: { n: "Roswell", c: "var(--archivo)" }, apolo: { n: "NASA", c: "var(--archivo)" },
   poli: { n: "Persecución", c: "var(--poli)" }, historia: { n: "Historia", c: "var(--historia)" }, ketone: { n: "Ketone-IQ", c: "var(--ketone)" },
 };
-const TRIPULACION = ["Juan", "Karen"];
+// Ajustes compartidos (⚙): si no hay nada guardado, quedan los de siempre.
+const AJ = () => srv.ajustes || {};
+const tripulacion = () => (AJ().tripulacion?.length ? AJ().tripulacion : ["Juan", "Karen"]);
+const redesOn = () => (AJ().redes?.length ? AJ().redes : ["tiktok", "youtube", "instagram"]);
+const cuenta = (red, def) => (AJ().cuentas?.[red] ?? def);
 const LUZ = { ok: "var(--verde)", aviso: "var(--ambar)", off: "var(--rojo)" };
 const DIAS = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
 const $ = (s) => document.querySelector(s);
@@ -301,6 +309,7 @@ async function enviar(cuerpo) {
   const body = { ...cuerpo, quien, pin };
   if (!enLinea) { // modo local: se aplica solo en este celular
     if (body.tipo === "video") { const v = (srv.videos[body.id] ||= {}), at = new Date().toISOString(); Object.assign(v, body.cambios, { por: quien, at }); for (const k in body.cambios) if (typeof body.cambios[k] === "boolean") v[k + "At"] = body.cambios[k] ? at : null; }
+    if (body.tipo === "ajustes") srv.ajustes = body.ajustes;
     if (body.tipo === "pedido") srv.pedidos.unshift({ id: Math.random().toString(36).slice(2, 10), texto: body.texto, quien, at: new Date().toISOString(), estado: "nuevo" });
     ls.set("puente-local", srv); render(); return true;
   }
@@ -316,7 +325,7 @@ function pedirPin() { location.reload(); } // la puerta del sitio vuelve a pedir
 // --- tripulación ---
 function barraTripu() {
   const b = $("#tripu"); b.replaceChildren(el("span", "por", "TRIPULANTE:"));
-  TRIPULACION.forEach((n) => { const x = el("button", "btn", n); x.setAttribute("aria-pressed", String(quien === n)); x.onclick = () => { quien = n; ls.set("puente-quien", n); barraTripu(); toast(`Hola, ${n}`); }; b.append(x); });
+  tripulacion().forEach((n) => { const x = el("button", "btn", n); x.setAttribute("aria-pressed", String(quien === n)); x.onclick = () => { quien = n; ls.set("puente-quien", n); barraTripu(); toast(`Hola, ${n}`); }; b.append(x); });
 }
 
 // --- tarjeta de video ---
@@ -335,7 +344,7 @@ function tarjeta(v) {
   const dl = el("a", "btn", "Guardar"); dl.href = v.video; dl.download = v.id + ".mp4"; fila.append(pb, dl); b.append(fila);
   const checks = el("div", "checks");
   const chk = (k, lbl) => { const l = el("label"), i = el("input"); i.type = "checkbox"; i.checked = !!val(v, k); i.onchange = async () => { if (!(await enviar({ tipo: "video", id: v.id, cambios: { [k]: i.checked } }))) i.checked = !i.checked; }; l.append(i, document.createTextNode(lbl)); return l; };
-  checks.append(chk("tiktok", "TikTok"), ...(v.serie === "ketone" ? [chk("vyro", "Registrado en Vyro")] : [chk("youtube", "YouTube"), chk("instagram", "Instagram")]));
+  checks.append(chk("tiktok", "TikTok"), ...(v.serie === "ketone" ? [chk("vyro", "Registrado en Vyro")] : [["youtube", "YouTube"], ["instagram", "Instagram"]].filter(([k]) => redesOn().includes(k)).map(([k, n]) => chk(k, n))));
   b.append(checks);
   const num = el("div", "num");
   const campoN = (k, lbl) => { const l = el("label", null, lbl), i = el("input"); i.type = "number"; i.inputMode = "numeric"; i.min = "0"; i.placeholder = "0"; i.className = "vistas-n"; i.value = val(v, k) || ""; i.onchange = () => enviar({ tipo: "video", id: v.id, cambios: { [k]: i.value } }); l.append(i); return l; };
@@ -357,7 +366,9 @@ function grupoDias(lista) {
 
 // --- vistas ---
 // --- cola viva: los pendientes toman los siguientes horarios libres desde AHORA; publicar cualquiera reacomoda todo ---
-const SLOTS = [["12:00 PM", "12:30 PM"], ["3:00 PM", "3:30 PM"], ["6:00 PM", "6:30 PM"], ["9:30 PM", "10:00 PM"]];
+const HORARIOS = ["12:00 PM", "3:00 PM", "6:00 PM", "9:30 PM"];
+const masMin = (h, n) => { const m = (aMin(h) + n) % 1440; return `${Math.floor(m / 60) % 12 || 12}:${String(m % 60).padStart(2, "0")} ${m < 720 ? "AM" : "PM"}`; };
+const slots = () => (AJ().horarios?.length ? AJ().horarios : HORARIOS).map((h) => [h, masMin(h, AJ().ytMin ?? 30)]);
 const diaTx = (iso) => (iso ? new Intl.DateTimeFormat("en-CA", { timeZone: "America/Chicago" }).format(new Date(iso)) : "");
 const sumaDia = (d) => new Date(Date.parse(d + "T12:00:00Z") + 864e5).toISOString().slice(0, 10);
 const esCola = (v) => v.serie !== "ketone";
@@ -365,6 +376,7 @@ const recientes = () => data.videos.filter(hecho).sort((a, b) => String(val(b, "
 const cola = () => data.videos.filter((v) => esCola(v) && !hecho(v)).sort((a, b) => a._k.localeCompare(b._k));
 function reprogramar() {
   const t = texas(), pubHoy = data.videos.filter((v) => esCola(v) && hecho(v) && diaTx(val(v, "tiktokAt")) === t.fecha).length;
+  const SLOTS = slots();
   let dia = t.fecha, libres = SLOTS.filter(([h]) => aMin(h) > t.min - 20).slice(0, Math.max(0, SLOTS.length - pubHoy)), i = 0; // 20 min de gracia
   cola().forEach((v) => {
     while (i >= libres.length) { dia = sumaDia(dia); libres = SLOTS; i = 0; }
@@ -427,8 +439,9 @@ function vistaCalendario() {
 function publicar(v) {
   const ket = v.serie === "ketone";
   Publicar.abrir({ titulo: v.titulo, video: v.video, textos: { tiktok: v.caption, youtube: v.ytTitle || v.caption, instagram: v.caption },
-    redes: ket ? ["tiktok"] : ["tiktok", "youtube", "instagram"], nota: ket ? "Ketone-IQ: en TikTok activa Branded content y agrega un sonido de la Commercial Music Library." : (!hecho(v) && v.hora ? `En la cola le toca: ${fmtDia(v.fecha)}, TikTok ${v.hora} · YouTube ${v.horaYT}. Si lo publicas ya, la cola se reacomoda.` : ""),
-    vyro: ket ? { link: val(v, "link") || "", registrado: !!val(v, "vyro"), onLink: (link) => enviar({ tipo: "video", id: v.id, cambios: { link } }), onRegistrado: () => enviar({ tipo: "video", id: v.id, cambios: { vyro: true } }) } : null,
+    redes: ket ? ["tiktok"] : redesOn(),
+    links: val(v, "links") || (val(v, "link") ? { tiktok: val(v, "link") } : {}), onLink: (red, u) => enviar({ tipo: "video", id: v.id, cambios: { links: { [red]: u } } }), nota: ket ? "Ketone-IQ: en TikTok activa Branded content y agrega un sonido de la Commercial Music Library." : (!hecho(v) && v.hora ? `En la cola le toca: ${fmtDia(v.fecha)}, TikTok ${v.hora} · YouTube ${v.horaYT}. Si lo publicas ya, la cola se reacomoda.` : ""),
+    vyro: ket ? { registrado: !!val(v, "vyro"), onRegistrado: () => enviar({ tipo: "video", id: v.id, cambios: { vyro: true } }) } : null,
     hecho: { tiktok: !!val(v, "tiktok"), youtube: !!val(v, "youtube"), instagram: !!val(v, "instagram") },
     onHecho: (red) => enviar({ tipo: "video", id: v.id, cambios: { [red]: true } }) });
 }
@@ -457,23 +470,27 @@ function miniatura(v) {
   const s = SERIES[v.serie] || { n: v.serie, c: "var(--linea)" }, b = el("button", "vt"); b.type = "button"; b.style.setProperty("--c", s.c); b.setAttribute("aria-label", `Publicar ${v.titulo}`);
   const vid = el("video"); vid.src = v.video + "#t=1"; vid.preload = "metadata"; vid.muted = true; vid.playsInline = true;
   const pie = el("div", "pie"), redes = el("div", "redes");
-  (v.serie === "ketone" ? [["tiktok", "TT"], ["vyro", "VYRO"]] : [["tiktok", "TT"], ["youtube", "YT"], ["instagram", "IG"]]).forEach(([k, n]) => redes.append(el("span", val(v, k) ? "si" : "", n)));
+  (v.serie === "ketone" ? [["tiktok", "TT"], ["vyro", "VYRO"]] : [["tiktok", "TT"], ["youtube", "YT"], ["instagram", "IG"]].filter(([k]) => redesOn().includes(k))).forEach(([k, n]) => redes.append(el("span", val(v, k) ? "si" : "", n)));
+  if (Object.values(val(v, "links") || {}).some(Boolean)) { const l = el("span", "ln", "🔗"); l.title = "Tiene links para compartir"; redes.append(l); }
   pie.append(el("span", "chip", s.n), el("b", null, v.titulo), redes);
   b.append(vid, pie); if (v.fecha) b.append(el("span", "cuando", `${v.fecha.slice(5)} ${v.hora || ""}`));
   b.onclick = () => publicar(v); return b;
 }
 
 // Centro de redes: cada botón abre el lugar exacto (perfil, subir, estadísticas, comentarios).
-const CUENTAS = [
-  { n: "TikTok · @dj0hnclipper", c: "#ff2d55", d: "Clips en inglés + Ketone-IQ", l: [["Perfil", "https://www.tiktok.com/@dj0hnclipper"], ["Subir", "https://www.tiktok.com/upload"], ["Estadísticas", "https://www.tiktok.com/tiktokstudio/analytics"], ["Comentarios", "https://www.tiktok.com/tiktokstudio/comment"]] },
-  { n: "YouTube · @j0_clip1", c: "#ff0000", d: "Shorts (todo menos Ketone)", l: [["Canal", "https://www.youtube.com/@j0_clip1/shorts"], ["Subir", "https://www.youtube.com/upload"], ["Estadísticas", "https://studio.youtube.com/channel/analytics"], ["Comentarios", "https://studio.youtube.com/channel/comments"]] },
-  { n: "Instagram", c: "#c13584", d: "Reels: mismo video, más alcance", l: [["Abrir", "https://www.instagram.com/"], ["Estadísticas", "https://www.instagram.com/accounts/insights/"]] },
-  { n: "Vyro · Ketone-IQ", c: "#6fc3ff", d: "Registrar posts y ver pagos", l: [["Abrir Vyro", "https://vyro.com"]] },
-  { n: "Ideas y tendencias", c: "#ffd60a", d: "Qué se está moviendo hoy", l: [["TikTok Creative Center", "https://ads.tiktok.com/business/creativecenter/inspiration/popular/hashtag/pc/en"], ["Google Trends", "https://trends.google.com/trending?geo=US"], ["DVIDS · UAP", "https://www.dvidshub.net/search/?q=UAP&filter%5Btype%5D=video"]] },
-];
+const CUENTAS = () => {
+  const tt = cuenta("tiktok", "dj0hnclipper"), yt = cuenta("youtube", "j0_clip1"), ig = cuenta("instagram", "");
+  return [
+    { n: `TikTok${tt ? " · @" + tt : ""}`, c: "#ff2d55", d: "Clips en inglés + Ketone-IQ", l: [...(tt ? [["Perfil", `https://www.tiktok.com/@${tt}`]] : []), ["Subir", "https://www.tiktok.com/upload"], ["Estadísticas", "https://www.tiktok.com/tiktokstudio/analytics"], ["Comentarios", "https://www.tiktok.com/tiktokstudio/comment"]] },
+    { n: `YouTube${yt ? " · @" + yt : ""}`, c: "#ff0000", d: "Shorts (todo menos Ketone)", l: [...(yt ? [["Canal", `https://www.youtube.com/@${yt}/shorts`]] : []), ["Subir", "https://www.youtube.com/upload"], ["Estadísticas", "https://studio.youtube.com/channel/analytics"], ["Comentarios", "https://studio.youtube.com/channel/comments"]] },
+    { n: `Instagram${ig ? " · @" + ig : ""}`, c: "#c13584", d: ig ? "Reels: mismo video, más alcance" : "Pon tu cuenta en ⚙ Ajustes", l: [["Abrir", ig ? `https://www.instagram.com/${ig}/` : "https://www.instagram.com/"], ["Estadísticas", "https://www.instagram.com/accounts/insights/"]] },
+    { n: "Vyro · Ketone-IQ", c: "#6fc3ff", d: "Registrar posts y ver pagos", l: [["Abrir Vyro", "https://app.vyro.com"]] },
+    { n: "Ideas y tendencias", c: "#ffd60a", d: "Qué se está moviendo hoy", l: [["TikTok Creative Center", "https://ads.tiktok.com/business/creativecenter/inspiration/popular/hashtag/pc/en"], ["Google Trends", "https://trends.google.com/trending?geo=US"], ["DVIDS · UAP", "https://www.dvidshub.net/search/?q=UAP&filter%5Btype%5D=video"]] },
+  ];
+};
 function hubRedes() {
   const g = el("div", "hub");
-  CUENTAS.forEach((c) => { const d = el("div", "cuenta-red"), fila = el("div", "fila"); d.style.setProperty("--c", c.c); c.l.forEach(([n, u]) => { const a = el("a", "btn mini", n); a.href = u; a.target = "_blank"; a.rel = "noopener"; fila.append(a); }); d.append(el("b", null, c.n), el("small", null, c.d), fila); g.append(d); });
+  CUENTAS().forEach((c) => { const d = el("div", "cuenta-red"), fila = el("div", "fila"); d.style.setProperty("--c", c.c); c.l.forEach(([n, u]) => { const a = el("a", "btn mini", n); a.href = u; a.target = "_blank"; a.rel = "noopener"; fila.append(a); }); d.append(el("b", null, c.n), el("small", null, c.d), fila); g.append(d); });
   return g;
 }
 let nodoCrudos; // se crea una vez: si el panel se redibuja, la subida en curso sigue y no se pierde su barra
@@ -507,6 +524,32 @@ function vistaRadar() {
   return f;
 }
 
+
+// --- ⚙ Ajustes ---
+function abrirAjustes() {
+  const a = AJ();
+  Ajustes.abrir({
+    titulo: "Ajustes · Fábrica de Clips",
+    valores: { tripulacion: tripulacion(), horarios: a.horarios?.length ? a.horarios : HORARIOS, ytMin: a.ytMin ?? 30, redes: redesOn(), tt: cuenta("tiktok", "dj0hnclipper"), yt: cuenta("youtube", "j0_clip1"), ig: cuenta("instagram", "") },
+    secciones: [
+      { t: "Equipo", campos: [{ k: "tripulacion", n: "Tripulación", tipo: "lista", ph: "Nombre", max: 8, ayuda: "Quién puede marcar cosas en el panel." }] },
+      { t: "Publicación", campos: [
+        { k: "horarios", n: "Horarios del día (Texas)", tipo: "horas", ayuda: "Un video por horario. La cola se reacomoda sola con estos." },
+        { k: "ytMin", n: "Minutos entre TikTok y YouTube", tipo: "numero", min: 0, max: 240 },
+        { k: "redes", n: "Redes donde publicas", tipo: "redes" } ] },
+      { t: "Cuentas", ayuda: "Sin @. Sirven para los botones de Redes.", campos: [{ k: "tt", n: "TikTok", tipo: "texto", ph: "dj0hnclipper" }, { k: "yt", n: "YouTube", tipo: "texto", ph: "j0_clip1" }, { k: "ig", n: "Instagram", tipo: "texto", ph: "tu_cuenta" }] },
+      { t: "Este dispositivo", campos: [
+        { local: true, n: "Soy", tipo: "opciones", opciones: tripulacion().map((n) => [n, n]), valor: quien || tripulacion()[0], onCambio: (n) => { quien = n; ls.set("puente-quien", n); barraTripu(); } },
+        { local: true, n: "Tamaño de letra", tipo: "opciones", opciones: [["chica", "Chica"], ["normal", "Normal"], ["grande", "Grande"], ["enorme", "Enorme"]], valor: Ajustes.letra(), onCambio: (x) => Ajustes.letra(x) } ] },
+    ],
+    extra: [Ajustes.seccion("App y sesión", [
+      el("small", null, "Instálalo como app: en iPhone/iPad, Safari → Compartir → Agregar a inicio. En Android, Chrome → ⋮ → Instalar app."),
+      Ajustes.enlace("Ir al lobby", "/"), Ajustes.enlace("Cerrar sesión en este dispositivo", "/__salir", "peligro"),
+      el("small", null, `Videos: ${data.videos.length} · Datos de Claude: ${data.actualizado || "-"} · Memoria: ${enLinea ? "compartida" : "local"}`)])],
+    onGuardar: (v) => enviar({ tipo: "ajustes", ajustes: { tripulacion: v.tripulacion, horarios: v.horarios, ytMin: v.ytMin, redes: v.redes, cuentas: { tiktok: v.tt, youtube: v.yt, instagram: v.ig } } }).then((ok) => { if (ok) { barraTripu(); toast("Ajustes guardados"); } return ok; }),
+  });
+}
+$("#engrane").onclick = abrirAjustes;
 
 // --- Consola de la Fábrica (chat a pantalla completa) ---
 let chat = []; try { chat = JSON.parse(localStorage.getItem("puente-chat") || "[]"); } catch {}
@@ -661,7 +704,7 @@ document.querySelectorAll(".tab").forEach((x) => x.setAttribute("aria-selected",
   barraTripu();
   try { data = await (await fetch("data.json", { cache: "no-store" })).json(); data.videos.forEach((v, i) => { v._fecha0 = v.fecha; v._k = (v.fecha || "9999") + String(v.orden || 0).padStart(3, "0") + String(i).padStart(3, "0"); }); }
   catch { $("#vista").replaceChildren(el("div", "vacio", "No se pudo cargar la lista. Revisa tu conexión y recarga.")); return; }
-  await traer(); render(); reloj(); setInterval(reloj, 1000);
+  await traer(); barraTripu(); render(); reloj(); setInterval(reloj, 1000);
   // Sincroniza con la tripulación cada 15 s (y al volver a la pestaña).
   const sync = async () => { if (document.visibilityState !== "visible") return; const antes = JSON.stringify(srv); await traer(); if (JSON.stringify(srv) !== antes) render(); }; // solo redibuja si hubo cambios
   setInterval(sync, 15000); document.addEventListener("visibilitychange", sync);

@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
+<link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icono-192.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Puente">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0c0710">
 <title>Panel</title>
@@ -124,7 +125,7 @@
 <div class="wrap">
   <header class="top">
     <div><a class="volver" href="/">← Paneles</a><h1 id="titulo"></h1><p class="lema" id="lema"></p></div>
-    <div class="tripu" id="tripu"></div>
+    <div class="fila" style="align-items:center"><div class="tripu" id="tripu"></div><button class="btn mini" id="engrane" type="button" aria-label="Ajustes" style="font-size:18px;padding:4px 11px">⚙</button></div>
   </header>
   <main id="vista"><div class="vacio">Cargando…</div></main>
 </div>
@@ -145,6 +146,7 @@
 
 <script src="/publicar.js"></script>
 <script src="/crudos.js"></script>
+<script src="/ajustes.js"></script>
 <script>
 // Un solo archivo para los paneles de proyecto (/karen, /rave). La configuración vive en /proyectos/<id>.json
 // y el cerebro del chat en /cerebro/<id>.md. El estado compartido va aparte por proyecto (/api/estado?p=<id>).
@@ -160,12 +162,20 @@ const EST = { nuevo: "Idea", produccion: "En proceso", listo: "Listo" };
 
 async function traer() {
   try { const r = await fetch(`/api/estado?p=${P}`, { cache: "no-store" }); if (r.status === 401) return location.reload(); if (r.ok) srv = await r.json(); } catch {}
+  aplicar();
+}
+// Ajustes compartidos del proyecto (⚙) encima de la configuración base del .json
+function aplicar() {
+  const a = srv.ajustes || {};
+  cfg.tripulacion = a.tripulacion?.length ? a.tripulacion : cfg._base.tripulacion;
+  cfg.redes = a.redes?.length ? a.redes : cfg._base.redes;
+  cfg.ig = a.cuentas?.instagram || "";
 }
 async function enviar(cuerpo) {
   try {
     const r = await fetch(`/api/estado?p=${P}`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ ...cuerpo, quien }) });
     if (r.status === 401) { location.reload(); return false; }
-    if (!r.ok) throw 0; srv = await r.json(); render(); return true;
+    if (!r.ok) throw 0; srv = await r.json(); aplicar(); render(); return true;
   } catch { toast("No se guardó. Revisa la señal."); return false; }
 }
 
@@ -204,7 +214,7 @@ function vistaInicio() {
 function ir(destino) { if (/^https?:/.test(destino)) window.open(destino, "_blank", "noopener"); else irTab(destino.replace("#", "")); }
 function hub() { // cada botón abre el lugar exacto de la red
   const g = el("div", "hub");
-  cfg.cuentas.forEach((c) => { const d = el("div", "cuenta-red"), fila = el("div", "fila"); if (c.c) d.style.setProperty("--c", c.c); c.l.forEach(([n, u]) => { const a = el("a", "btn mini", n); a.href = u; a.target = "_blank"; a.rel = "noopener"; fila.append(a); }); const t = el("b", null, c.n); d.append(t, el("small", null, c.d), fila); g.append(d); });
+  cfg.cuentas.map((c) => (cfg.ig && /^Instagram/.test(c.n) ? { ...c, n: "Instagram · @" + cfg.ig, l: [["Perfil", `https://www.instagram.com/${cfg.ig}/`], ...c.l.slice(1)] } : c)).forEach((c) => { const d = el("div", "cuenta-red"), fila = el("div", "fila"); if (c.c) d.style.setProperty("--c", c.c); c.l.forEach(([n, u]) => { const a = el("a", "btn mini", n); a.href = u; a.target = "_blank"; a.rel = "noopener"; fila.append(a); }); const t = el("b", null, c.n); d.append(t, el("small", null, c.d), fila); g.append(d); });
   return g;
 }
 function listos() {
@@ -212,7 +222,11 @@ function listos() {
   (cfg.videos || []).slice().reverse().forEach((v) => {
     const fig = el("figure"), vid = el("video"); vid.src = v.video + "#t=1"; vid.preload = "metadata"; vid.muted = true; vid.playsInline = true;
     const b = el("button", "btn mini a", "Publicar ▶"); b.type = "button";
-    b.onclick = () => Publicar.abrir({ titulo: v.titulo, video: v.video, textos: { tiktok: v.caption, youtube: v.ytTitle || v.titulo, instagram: v.caption }, redes: v.redes || cfg.redes });
+    const id = (v.id || v.video.split("/").pop().replace(/\.\w+$/, "")).replace(/[^\w-]/g, "-"), sv = () => srv.videos?.[id] || {};
+    b.onclick = () => Publicar.abrir({ titulo: v.titulo, video: v.video, textos: { tiktok: v.caption, youtube: v.ytTitle || v.titulo, instagram: v.caption }, redes: v.redes || cfg.redes,
+      hecho: { tiktok: !!sv().tiktok, youtube: !!sv().youtube, instagram: !!sv().instagram }, links: sv().links || {},
+      onHecho: (red) => enviar({ tipo: "video", id, cambios: { [red]: true } }), onLink: (red, u) => enviar({ tipo: "video", id, cambios: { links: { [red]: u } } }) });
+    if (Object.values(sv()).some((x) => x === true)) b.textContent = "Publicado ✓ · otra red";
     fig.append(vid, el("figcaption", null, v.titulo), b); g.append(fig);
   });
   return g;
@@ -230,6 +244,25 @@ function vistaVideos() {
   f.append(el("h2", null, "Subir crudos"), el("p", "sub", "Sube tus videos o fotos originales (del tamaño que sea) y di qué quieres. La Fábrica los edita en su siguiente vuelta y aparecen aquí arriba."), crudos(),
     el("h2", null, "…o pega un enlace"), el("p", "sub", "Si ya está en Google Drive, Dropbox o TikTok."), form);
   return f;
+}
+
+function abrirAjustes() {
+  const a = srv.ajustes || {};
+  Ajustes.abrir({
+    titulo: "Ajustes · " + cfg.nombre,
+    valores: { tripulacion: cfg.tripulacion, redes: cfg.redes, ig: cfg.ig },
+    secciones: [
+      { t: "Equipo", campos: [{ k: "tripulacion", n: "Quién usa este panel", tipo: "lista", ph: "Nombre", max: 8 }] },
+      { t: "Publicación", campos: [{ k: "redes", n: "Redes donde publicas", tipo: "redes" }, { k: "ig", n: "Tu Instagram (sin @)", tipo: "texto", ph: "tu_cuenta" }] },
+      { t: "Este dispositivo", campos: [
+        { local: true, n: "Soy", tipo: "opciones", opciones: cfg.tripulacion.map((n) => [n, n]), valor: quien || cfg.tripulacion[0], onCambio: (n) => { quien = n; ls.set(`quien-${P}`, n); barraTripu(); } },
+        { local: true, n: "Tamaño de letra", tipo: "opciones", opciones: [["chica", "Chica"], ["normal", "Normal"], ["grande", "Grande"], ["enorme", "Enorme"]], valor: Ajustes.letra(), onCambio: (x) => Ajustes.letra(x) } ] },
+    ],
+    extra: [Ajustes.seccion("App y sesión", [
+      el("small", null, "Instálalo como app: en iPhone/iPad, Safari → Compartir → Agregar a inicio. En Android, Chrome → ⋮ → Instalar app."),
+      Ajustes.enlace("Ir al lobby", "/"), Ajustes.enlace("Cerrar sesión en este dispositivo", "/__salir", "peligro")])],
+    onGuardar: (v) => enviar({ tipo: "ajustes", ajustes: { ...a, tripulacion: v.tripulacion, redes: v.redes, cuentas: { ...(a.cuentas || {}), instagram: v.ig } } }).then((ok) => { if (ok) { barraTripu(); toast("Ajustes guardados"); } return ok; }),
+  });
 }
 
 function vistaTemas() {
@@ -335,8 +368,8 @@ document.querySelectorAll(".tab").forEach((x) => x.setAttribute("aria-selected",
   for (const [k, v] of Object.entries(cfg.colores || {})) document.documentElement.style.setProperty(k, v);
   $("#titulo").innerHTML = cfg.titulo; $("#lema").textContent = cfg.lema;
   $("#salaNombre").textContent = cfg.chatNombre; $("#salaSub").textContent = cfg.chatSub; $("#fabTxt").textContent = cfg.fab || "Platicar";
-  quien = ls.get(`quien-${P}`, cfg.tripulacion[0]); barraTripu();
-  await traer(); render();
+  cfg._base = { tripulacion: cfg.tripulacion, redes: cfg.redes || ["tiktok", "instagram", "youtube"] }; $("#engrane").onclick = abrirAjustes;
+  await traer(); quien = ls.get(`quien-${P}`, cfg.tripulacion[0]); barraTripu(); render();
   setInterval(async () => { if (document.visibilityState !== "visible") return; const antes = JSON.stringify(srv); await traer(); if (JSON.stringify(srv) !== antes) render(); }, 15000);
 })();
 </script>
