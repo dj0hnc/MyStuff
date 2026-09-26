@@ -5,6 +5,8 @@ import { onRequest as puerta } from "../functions/_middleware.js";
 import { onRequestGet as yoGet, onRequestPost as yoPost } from "../functions/api/yo.js";
 import { onRequest as chats, guardarHilo } from "../functions/api/chats.js";
 import { onRequest as taller } from "../functions/api/taller/[[ruta]].js";
+import { cifrar } from "../lib/push.js";
+import { calcularAgenda } from "../panel/agenda.mjs";
 const kv = new Map(), env = { ESTADO: { get: async (k) => kv.get(k) ?? null, put: async (k, v) => kv.set(k, v) } };
 const post = async (url, body) => (await onRequestPost({ request: new Request(url, { method: "POST", body: JSON.stringify(body) }), env }));
 let fallas = 0; const ok = (c, m) => { console.log((c ? "✓ " : "✗ ") + m); if (!c) fallas++; };
@@ -82,4 +84,25 @@ await tpost({ id: "prueba-1", titulo: "Video", estado: "renderizando", pct: 10 }
 let tt = (await (await taller({ request: new Request("https://x/api/taller"), env: envP, params: {} })).json()).trabajos[0];
 ok(tt.pct === 100 && tt.restante === 30 && tt.estado === "renderizando" && tt.titulo === "Video", "taller: avance acotado a 100%");
 ok((await tpost({ id: "../x" })).status === 400, "taller: id raro rechazado");
+// avisos push: el mensaje cifrado se descifra como lo haría el teléfono (RFC 8291)
+{
+  const ua = await crypto.subtle.generateKey({ name: "ECDH", namedCurve: "P-256" }, true, ["deriveBits"]), auth = crypto.getRandomValues(new Uint8Array(16));
+  const uaPub = new Uint8Array(await crypto.subtle.exportKey("raw", ua.publicKey)), b64 = (u) => Buffer.from(u).toString("base64url");
+  const cuerpo = await cifrar({ keys: { p256dh: b64(uaPub), auth: b64(auth) } }, JSON.stringify({ titulo: "⏰ Hola" }));
+  const salt = cuerpo.slice(0, 16), n = cuerpo[20], asPub = cuerpo.slice(21, 21 + n), ct = cuerpo.slice(21 + n);
+  const hk = async (ikm, sal, info, bits) => new Uint8Array(await crypto.subtle.deriveBits({ name: "HKDF", hash: "SHA-256", salt: sal, info }, await crypto.subtle.importKey("raw", ikm, "HKDF", false, ["deriveBits"]), bits));
+  const sec = new Uint8Array(await crypto.subtle.deriveBits({ name: "ECDH", public: await crypto.subtle.importKey("raw", asPub, { name: "ECDH", namedCurve: "P-256" }, false, []) }, ua.privateKey, 256));
+  const te = new TextEncoder(), ikm = await hk(sec, auth, new Uint8Array([...te.encode("WebPush: info\0"), ...uaPub, ...asPub]), 256);
+  const cek = await hk(ikm, salt, te.encode("Content-Encoding: aes128gcm\0"), 128), iv = await hk(ikm, salt, te.encode("Content-Encoding: nonce\0"), 96);
+  const plano = new Uint8Array(await crypto.subtle.decrypt({ name: "AES-GCM", iv }, await crypto.subtle.importKey("raw", cek, "AES-GCM", false, ["decrypt"]), ct));
+  ok(plano.at(-1) === 2 && JSON.parse(new TextDecoder().decode(plano.slice(0, -1))).titulo === "⏰ Hola", "aviso push: cifrado correcto (el teléfono lo puede abrir)");
+}
+// cola: lo vencido no se pierde, queda "tarde"; "pásalo" lo manda al siguiente horario
+{
+  const S = [["12:00 PM", "12:30 PM"], ["3:00 PM", "3:30 PM"], ["6:00 PM", "6:30 PM"], ["9:30 PM", "10:00 PM"]], P = [{ id: "a" }, { id: "b" }];
+  const tarde = calcularAgenda(P, 0, S, { fecha: "2026-09-26", min: 18 * 60 + 35 });
+  ok(tarde[0].hora === "6:00 PM" && tarde[0].tarde === 35 && tarde[1].hora === "9:30 PM", "cola: el de las 6 sigue ahí, 35 min tarde");
+  const pasado = calcularAgenda(P, 0, S, { fecha: "2026-09-26", min: 18 * 60 + 35 }, ["6:00 PM"]);
+  ok(pasado[0].hora === "9:30 PM" && !pasado[0].tarde && pasado[1].fecha === "2026-09-27", "cola: pasarlo lo manda al siguiente horario");
+}
 process.exit(fallas ? 1 : 0);

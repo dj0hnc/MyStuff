@@ -255,6 +255,7 @@
 <script src="/ajustes.js"></script>
 <script src="/historial.js"></script>
 <script src="/taller.js"></script>
+<script src="/avisos.js"></script>
 <script>
 const SERIES = {
   ovni: { n: "OVNI", c: "var(--ovni)" }, roswell: { n: "Roswell", c: "var(--archivo)" }, apolo: { n: "NASA", c: "var(--archivo)" },
@@ -317,6 +318,7 @@ async function enviar(cuerpo) {
   if (!enLinea) { // modo local: se aplica solo en este celular
     if (body.tipo === "video") { const v = (srv.videos[body.id] ||= {}), at = new Date().toISOString(); Object.assign(v, body.cambios, { por: quien, at }); for (const k in body.cambios) if (typeof body.cambios[k] === "boolean") v[k + "At"] = body.cambios[k] ? at : null; }
     if (body.tipo === "ajustes") srv.ajustes = body.ajustes;
+    if (body.tipo === "omitir-horario") (srv.omitidos ||= []).push({ fecha: body.fecha, hora: body.hora });
     if (body.tipo === "pedido") srv.pedidos.unshift({ id: Math.random().toString(36).slice(2, 10), texto: body.texto, quien, at: new Date().toISOString(), estado: "nuevo" });
     ls.set("puente-local", srv); render(); return true;
   }
@@ -381,19 +383,26 @@ const sumaDia = (d) => new Date(Date.parse(d + "T12:00:00Z") + 864e5).toISOStrin
 const esCola = (v) => v.serie !== "ketone";
 const recientes = () => data.videos.filter(hecho).sort((a, b) => String(val(b, "tiktokAt") || "").localeCompare(String(val(a, "tiktokAt") || "")));
 const cola = () => data.videos.filter((v) => esCola(v) && !hecho(v)).sort((a, b) => a._k.localeCompare(b._k));
-function reprogramar() {
+function reprogramar() { // horarios de la cola (panel/agenda.mjs, el mismo cálculo que usan los avisos): nada se pierde, lo vencido queda "tarde"
   const t = texas(), pubHoy = data.videos.filter((v) => esCola(v) && hecho(v) && diaTx(val(v, "tiktokAt")) === t.fecha).length;
-  const SLOTS = slots();
-  let dia = t.fecha, libres = SLOTS.filter(([h]) => aMin(h) > t.min - 20).slice(0, Math.max(0, SLOTS.length - pubHoy)), i = 0; // 20 min de gracia
-  cola().forEach((v) => {
-    while (i >= libres.length) { dia = sumaDia(dia); libres = SLOTS; i = 0; }
-    [v.hora, v.horaYT] = libres[i]; v.fecha = dia; v.orden = i++;
-  });
+  const omitidos = (srv.omitidos || []).filter((x) => x.fecha === t.fecha).map((x) => x.hora), c = cola();
+  calcularAgenda(c, pubHoy, slots(), t, omitidos).forEach((a, i) => Object.assign(c[i], { fecha: a.fecha, hora: a.hora, horaYT: a.horaYT, tarde: a.tarde, orden: i }));
   data.videos.filter(hecho).forEach((v) => { v.fecha = diaTx(val(v, "tiktokAt")) || v._fecha0; });
+}
+
+// El video no se pierde: se queda aquí hasta que lo publiques o lo pases al siguiente horario. Sugerencia según qué tan tarde vas.
+function bandaTarde(v) {
+  const sig = slots().find(([h]) => aMin(h) > texas().min), b = el("div", "aviso-banda"), fila = el("div", "fila"); fila.style.marginTop = "8px";
+  const tarde = v.tarde < 60 ? `${v.tarde} min` : `${Math.floor(v.tarde / 60)} h ${v.tarde % 60} min`;
+  b.append(document.createTextNode(`Tocaba a las ${v.hora} y vas ${tarde} tarde. ${v.tarde <= 90 ? "Publícalo ya: todavía estás en buena hora." : sig ? `Ya se fue la hora buena: mejor pásalo a las ${sig[0]}.` : "Ya es tarde para hoy: pásalo a mañana 12:00 PM."}`));
+  const ya = el("button", "btn pub", "Publicar ahora"), pasa = el("button", "btn", sig ? `Pasarlo a las ${sig[0]}` : "Pasarlo a mañana"); ya.type = pasa.type = "button";
+  ya.onclick = () => publicar(v); pasa.onclick = () => enviar({ tipo: "omitir-horario", fecha: texas().fecha, hora: v.hora }).then((ok) => ok && toast("Listo: sigue en la cola, en el siguiente horario"));
+  fila.append(ya, pasa); b.append(fila); return b;
 }
 
 function vistaMision() {
   const f = document.createDocumentFragment(), c = cola(), rec = recientes();
+  if (Avisos.soporta) { const av = el("div"); f.append(av); Avisos.suscrito().then((ok) => { if (!ok) { const b = el("div", "aviso-banda"), btn = el("button", "btn mini", "🔔 Activar avisos"); btn.type = "button"; btn.style.marginLeft = "8px"; btn.onclick = async () => { try { await Avisos.activar({ horarios: true, listos: true }); b.remove(); toast("Avisos activados"); } catch (e) { toast(e.message); } }; b.append(document.createTextNode("Activa los avisos para que no se te pase la hora de publicar."), btn); av.append(b); } }).catch(() => {}); }
   if (!enLinea) f.append(el("div", "aviso-banda", "Modo local: lo que marques se queda en este celular. En cuanto se conecte la memoria compartida, se sincroniza para todos."));
   if (rec.length) {
     const falta = rec.filter((v) => esCola(v) && (!val(v, "youtube") || !val(v, "instagram"))).length;
@@ -401,7 +410,8 @@ function vistaMision() {
     const tira = el("div", "tira"); rec.slice(0, 12).forEach((v) => tira.append(miniatura(v))); f.append(tira);
   }
   if (c.length) {
-    f.append(el("h2", null, "Siguiente"));
+    f.append(el("h2", null, c[0].tarde ? "⏰ Vas tarde" : "Siguiente"));
+    if (c[0].tarde) f.append(bandaTarde(c[0]));
     const t1 = tarjeta(c[0]); t1.classList.add("siguiente"); f.append(t1);
     if (c.length > 1) {
       f.append(el("h2", null, `En cola · ${c.length - 1}`), el("p", "sub", "¿Quieres publicar otro antes? Tócalo y dale Publicar: sale de la cola y los horarios se reacomodan solos."));
@@ -702,6 +712,8 @@ function lecturas() {
 
 function reloj() {
   const t = texas(); $("#reloj").textContent = `${t.hhmm} TEXAS`;
+  const tardeV = cola().find((v) => v.tarde);
+  if (tardeV) { const box = $("#lanzamiento"); $("#cuenta").textContent = "TARDE"; $("#que").textContent = `${tardeV.hora} · ${tardeV.titulo} · no se pierde: publícalo o pásalo`; box.onclick = () => irA("mision"); box.hidden = false; return; }
   const prox = data.videos.filter((v) => v.fecha === t.fecha && !val(v, "tiktok") && aMin(v.hora) != null && aMin(v.hora) >= t.min).sort((a, b) => aMin(a.hora) - aMin(b.hora))[0];
   const box = $("#lanzamiento");
   if (!prox) { box.hidden = true; return; }
@@ -734,6 +746,7 @@ document.querySelectorAll(".tab").forEach((x) => x.setAttribute("aria-selected",
 
 (async () => {
   barraTripu();
+  ({ calcularAgenda: window.calcularAgenda } = await import("/agenda.mjs")); // mismo cálculo de la cola que usa el servidor para los avisos
   try { data = await (await fetch("data.json", { cache: "no-store" })).json(); data.videos.forEach((v, i) => { v._fecha0 = v.fecha; v._k = (v.fecha || "9999") + String(v.orden || 0).padStart(3, "0") + String(i).padStart(3, "0"); }); }
   catch { $("#vista").replaceChildren(el("div", "vacio", "No se pudo cargar la lista. Revisa tu conexión y recarga.")); return; }
   const yo = await fetch("/api/yo").then((r) => r.json()).catch(() => ({})); // quien entró con su PIN

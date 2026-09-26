@@ -5,6 +5,7 @@
 //   {tipo:"pedido", texto, estado?:"idea"}   (flujo: idea -> nuevo (aprobado, la rutina lo produce) -> produccion -> listo)
 //   {tipo:"pedido-editar", pid, texto} · {tipo:"pedido-borrar", pid}
 //   {tipo:"biblioteca", video:{id, titulo, hd, caption, seccion}} · {tipo:"biblioteca-borrar", id}  (videos terminados que suben ustedes; hd = finales/<p>/…)
+//   {tipo:"omitir-horario", fecha, hora}  ("pásalo al siguiente horario": ese horario vencido ya no cuenta como tarde)
 //   {tipo:"ajustes", ajustes:{tripulacion, horarios, porDia, ytMin, redes, cuentas:{tiktok,youtube,instagram}}}  (ajustes del proyecto, compartidos)
 //   cambios.links:{tiktok,youtube,instagram} = links de los posts ya publicados (para compartir)
 //   {tipo:"pedido-estado", pid, estado:"idea"|"nuevo"|"produccion"|"listo", nota?}  (nota = respuesta de Claude, se ve bajo el pedido)
@@ -13,6 +14,8 @@
 
 export const PROYECTOS = ["clipper", "rave", "karen"];
 export const clave = (p) => (p && p !== "clipper" && PROYECTOS.includes(p) ? `v1:${p}` : "v1"); // clips se queda en "v1" (la rutina ya lo lee)
+import { enviar as avisar } from "../../lib/push.js";
+
 const deUrl = (request) => clave(new URL(request.url).searchParams.get("p"));
 const LINK = { tiktok: /^https:\/\/([\w-]+\.)*tiktok\.com\//, youtube: /^https:\/\/(([\w-]+\.)*youtube\.com|youtu\.be)\//, instagram: /^https:\/\/([\w-]+\.)*instagram\.com\// };
 const HORA = /^(1[0-2]|[1-9]):[0-5]\d (AM|PM)$/, HANDLE = /^[\w.]{1,40}$/;
@@ -38,7 +41,7 @@ export async function onRequestGet({ request, env }) {
   return json(await leer(env, deUrl(request)));
 }
 
-export async function onRequestPost({ request, env }) {
+export async function onRequestPost({ request, env, waitUntil }) {
   if (!env.ESTADO) return json({ error: "sin_kv" }, 503);
   let b;
   try { b = await request.json(); } catch { return json({ error: "json_invalido" }, 400); }
@@ -74,6 +77,8 @@ export async function onRequestPost({ request, env }) {
     if (!p || !["idea", "nuevo", "produccion", "listo"].includes(b.estado)) return json({ error: "pedido" }, 400);
     que = p.estado === "idea" && b.estado === "nuevo" ? `aprobó y mandó a producir: ${p.texto.slice(0, 50)}` : `marcó pedido como ${b.estado}`; p.estado = b.estado;
     if (b.nota) { p.nota = texto(b.nota, 1500); que = `respondió: ${p.nota.slice(0, 60)}`; }
+    const u = String(p.quien || "").toLowerCase(); // aviso al cel de quien lo pidió
+    if (b.estado === "listo" && /^[a-z]+$/.test(u) && waitUntil) waitUntil(avisar(env, u, { titulo: "✅ Ya quedó", cuerpo: p.texto.split("\n")[0].slice(0, 120), url: new URL(request.url).searchParams.get("p") === "karen" ? "/karen#ideas" : new URL(request.url).searchParams.get("p") === "rave" ? "/rave#ideas" : "/clipper#fabrica", tag: "pedido-" + p.id }).catch(() => {}));
   } else if (b.tipo === "pedido-editar" || b.tipo === "pedido-borrar") {
     const i = e.pedidos.findIndex((x) => x.id === b.pid); if (i < 0) return json({ error: "pedido" }, 400);
     if (b.tipo === "pedido-borrar") { que = `borró el pedido: ${e.pedidos[i].texto.slice(0, 50)}`; e.pedidos.splice(i, 1); }
@@ -85,6 +90,9 @@ export async function onRequestPost({ request, env }) {
     que = `subió el video "${texto(v.titulo, 60) || id}"`;
   } else if (b.tipo === "biblioteca-borrar") {
     e.biblioteca = (e.biblioteca || []).filter((x) => x.id !== b.id); que = `quitó un video de la biblioteca`;
+  } else if (b.tipo === "omitir-horario") {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(b.fecha || "") || !HORA.test(String(b.hora || ""))) return json({ error: "horario" }, 400);
+    e.omitidos = [...(e.omitidos || []).filter((x) => x.fecha >= b.fecha), { fecha: b.fecha, hora: b.hora }].slice(-20); que = `pasó el video de las ${b.hora} al siguiente horario`;
   } else if (b.tipo === "ajustes") {
     e.ajustes = limpiarAjustes(b.ajustes); que = "cambió los ajustes";
   } else return json({ error: "tipo" }, 400);

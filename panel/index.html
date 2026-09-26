@@ -64,6 +64,7 @@
   </header>
   <section id="hoySec" hidden><h2 id="hoyTit">LO TUYO HOY</h2><div class="hoy" id="hoy"></div></section>
   <section><h2>TUS PROYECTOS</h2><nav class="puertas" id="puertas" aria-label="Proyectos"></nav></section>
+  <section class="cuenta" id="avisos" aria-label="Avisos"><h2 style="margin:0">🔔 AVISOS EN ESTE DISPOSITIVO</h2><div id="avisosCaja"><p class="nota">Cargando…</p></div></section>
   <section class="cuenta" aria-label="Mi cuenta">
     <h2 style="margin:0">MI CUENTA</h2>
     <p class="nota" id="pinInfo">Cambia tu PIN de entrada. Solo cambia el tuyo.</p>
@@ -74,6 +75,7 @@
   </section>
 </div>
 <script src="/taller.js"></script>
+<script src="/avisos.js"></script>
 <script>
 // Inicio personal: quién eres (/api/yo), tus proyectos en tu orden con sus números en vivo, y lo tuyo de hoy.
 const PROY = {
@@ -89,6 +91,7 @@ const saludo = () => { const h = +new Intl.DateTimeFormat("en-US", { timeZone: "
 (async () => {
   const yo = (await get("/api/yo")) || {};
   const orden = yo.proyectos || ["clipper", "rave", "karen"];
+  Avisos.tarjeta(document.getElementById("avisosCaja"), { usuario: yo.usuario });
   if (yo.nombre) {
     document.documentElement.style.setProperty("--yo", yo.color);
     $("#avatar").textContent = yo.nombre[0]; $("#saludo").innerHTML = `${saludo()}, <span></span>`; $("#saludo span").textContent = yo.nombre;

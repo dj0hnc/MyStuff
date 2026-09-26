@@ -68,7 +68,11 @@ export async function onRequest({ request, env, next, data }) {
   if (!env.PIN) return next(); // ponytail: sin PIN tampoco hay cortes por rango; hoy siempre hay PIN
   const url = new URL(request.url);
 
-  if (/^\/(manifest\.webmanifest|icono-\d+\.png|apple-touch-icon\.png)$/.test(url.pathname)) return next(); // el cel los pide para instalar la app, sin cookie
+  if (/^\/(manifest\.webmanifest|icono-\d+\.png|apple-touch-icon\.png|sw\.js)$/.test(url.pathname)) return next(); // el cel los pide para instalar la app y recibir avisos, sin cookie
+  if (url.pathname === "/api/avisos/tick") { // el Worker de avisos entra con la llave que ambos leen de KV
+    const llave = await env.ESTADO?.get("avisos-token"), h = request.headers.get("x-aviso") || "";
+    return llave && h.length >= 32 && h === llave ? next() : new Response("no", { status: 401 });
+  }
   if (url.pathname === "/__salir") return new Response(null, { status: 302, headers: [["Location", "/"], ["Set-Cookie", "puente=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax"]] });
 
   if (url.pathname === "/__entrar" && request.method === "POST") {
