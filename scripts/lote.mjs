@@ -59,6 +59,30 @@ const tomas = (fuentes, n = 12) => Array.from({ length: n }, (_, i) => {
   const inicio = tramo ? a + ((k * 3.5) % Math.max(0.1, d - 3.5)) : d * (0.1 + (0.8 * (k + 0.5)) / por);
   return { archivo: f.replace(/^public\//, ""), inicio: +Math.max(a, Math.min(b - 3.6, inicio)).toFixed(2), duracion: 3.5 };
 });
+// "audioReal": {"src":"public/...mp4","desde":17,"hasta":31,"despuesDe":1} mete ese tramo de audio real (un astronauta,
+// un testigo) en la voz después de la frase N, con sus subtítulos (Whisper). La voz y el tramo quedan a -16 LUFS.
+const FF = "node_modules/@remotion/compositor-linux-x64-gnu/ffmpeg";
+const insertarAudioReal = async (v) => {
+  const { src, desde, hasta, despuesDe } = v.audioReal;
+  const voz = JSON.parse(await readFile("public/voz.json", "utf8"));
+  const n = v.frases.slice(0, despuesDe).join(" ").split(/\s+/).filter(Boolean).length;
+  const corte = n >= voz.words.length ? voz.duration : (voz.words[n - 1].end + voz.words[n].start) / 2;
+  const tmp = `out/lote/voz/${v.id}-real`;
+  const wav = (args, out) => execFileSync(FF, ["-y", "-loglevel", "error", ...args, "-af", "loudnorm=I=-16:TP=-2", "-ar", "44100", "-ac", "1", out]);
+  wav(["-i", "public/voz.mp3", "-t", String(corte)], `${tmp}-a.wav`);
+  wav(["-ss", String(desde), "-to", String(hasta), "-i", src], `${tmp}-r.wav`);
+  wav(["-ss", String(corte), "-i", "public/voz.mp3"], `${tmp}-b.wav`);
+  await writeFile(`${tmp}.txt`, ["a", "r", "b"].map((x) => `file '${basename(tmp)}-${x}.wav'`).join("\n"));
+  execFileSync(FF, ["-y", "-loglevel", "error", "-f", "concat", "-safe", "0", "-i", `${tmp}.txt`, "-q:a", "2", "public/voz.mp3"]);
+  const dur = hasta - desde;
+  process.env.WHISPER_IDIOMA = idioma;
+  const { palabrasDe } = await import("./whisper.mjs");
+  const real = (await palabrasDe(`${tmp}-r.wav`)).words.filter((w) => !/^\[.*\]$/.test(w.text));
+  const mover = (ws, dt) => ws.map((w) => ({ ...w, start: +(w.start + dt).toFixed(2), end: +(w.end + dt).toFixed(2) }));
+  const words = [...voz.words.slice(0, n), ...mover(real, corte), ...mover(voz.words.slice(n), dur)];
+  await writeFile("public/voz.json", JSON.stringify({ ...voz, duration: voz.duration + dur, words }, null, 2));
+  console.log(`Audio real: ${dur.toFixed(1)} s de ${basename(src)} en el segundo ${corte.toFixed(1)}`);
+};
 await mkdir("out/lote/voz", { recursive: true });
 const envVoz = Object.fromEntries(Object.entries({ VOZ_PROVEEDOR: voz.proveedor, GEMINI_VOICE: voz.voice, GEMINI_VOICE_STYLE: voz.estilo }).filter(([, x]) => x));
 
@@ -75,7 +99,7 @@ try {
       try { fuentes.push({ f: await bajarFuente(src), tramo: t?.split("-").map(Number) }); } catch (e) { console.warn(`  Fuente saltada (${f}): ${e.message}`); }
     }
     // Una fuente por frase + una para el gancho: cada toma dura lo que su frase (se corta al ritmo de la voz, en ese orden).
-    const alRitmo = fuentes.length === v.frases.length + 1;
+    const alRitmo = !v.audioReal && fuentes.length === v.frases.length + 1;
     if (!alRitmo) fuentes.sort((a, b) => esFoto(a.f) - esFoto(b.f)); // los primeros 2 s deciden: abre con video, no con foto
     if (fuentes.length) await writeFile("public/clips.json", JSON.stringify({ fuente: v.id, clips: tomas(fuentes) }, null, 1));
     else correr("scripts/buscar-fondo.mjs", v.fondos);
@@ -101,6 +125,7 @@ try {
       await writeFile("public/clips.json", JSON.stringify({ fuente: v.id, clips }, null, 1));
       console.log(`Tomas al ritmo de la voz: ${cortes.map((c) => c.toFixed(1)).join(" / ")} s`);
     }
+    if (v.audioReal) await insertarAudioReal(v);
     const salida = `out/lote/${v.id}.mp4`;
     correr("scripts/render.mjs", [salida, JSON.stringify({ fondoClips: true, segundosPorClip: 3.5, musica: false, efectos: false, bgFrom: "#050505", bgTo: "#0A0A0A", textoAbajo, handle: marca })]);
     // Voz a loudness de TikTok (-14 LUFS) con picos a -1.5 dB.
