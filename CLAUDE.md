@@ -58,6 +58,11 @@ Clips virales para un canal aparte (no para The Rave Couple; guía en `docs/clip
   subtítulos y textos ES/EN) · `npm run fabrica` (producción diaria + calendario) · `npm run stats -- @canal`
   (ganadores y patrón) · `npm run recap -- URL` (escenas de película explicadas con voz IA, sin música).
 
+Tablero de publicación (`panel/`, sitio estático en Cloudflare Pages, se publica solo con cada push a main):
+- `panel/data.json` es la fuente: cada video con serie, fecha/hora de Texas, textos TikTok/YouTube y estado reportado.
+- `panel/videos/` guarda los finales comprimidos (720x1280, crf 26). Para agregar un video: comprimirlo ahí y sumar su fila en `data.json`.
+- Palomitas y vistas se guardan en el celular de quien lo usa (localStorage); los pedidos llegan como issues con la etiqueta `pedido`.
+
 ## Composiciones (`src/Root.tsx`)
 - `TikTokPro`: gancho (Bebas Neue) → subtítulos palabra a palabra (Montserrat) con visualizador →
   cierre; fondo gradiente/ruido/partículas o `fondoClips` (secuencia) o `fondoImagen` o `fondoVideo`;
