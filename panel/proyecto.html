@@ -87,7 +87,7 @@
   .paso .n { font: 400 28px/1 var(--tit); color: var(--a); text-align: center; }
   .paso p { margin: 0; }
   .tabs-bar { position: fixed; left: 0; right: 0; bottom: 0; padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px)); background: color-mix(in srgb, var(--fondo) 94%, transparent); border-top: 1px solid var(--linea); backdrop-filter: blur(8px); z-index: 10; }
-  .tabs { max-width: 980px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .tabs { max-width: 980px; margin: 0 auto; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 8px; }
   .tab { appearance: none; background: var(--panel); color: var(--suave); border: 1px solid var(--linea); border-radius: 12px; padding: 11px 4px; font: 800 13px var(--leer); letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; }
   .tab[aria-selected="true"] { background: var(--a); color: #16080f; border-color: var(--a); }
   .fab { position: fixed; right: 16px; bottom: calc(80px + env(safe-area-inset-bottom, 0px)); z-index: 20; display: inline-flex; align-items: center; gap: 8px; padding: 13px 18px; border-radius: 999px; border: 0; background: var(--a); color: #16080f; font: 800 14px var(--leer); cursor: pointer; box-shadow: 0 8px 28px color-mix(in srgb, var(--a) 45%, transparent); }
@@ -203,7 +203,7 @@ function vistaInicio() {
   const L = el("div", "lecturas");
   cfg.lecturas.forEach(([x, n, destino]) => { const d = el("div", "lectura"); d.append(el("b", null, x), el("span", null, n)); if (destino) { d.tabIndex = 0; d.setAttribute("role", "link"); d.onclick = () => ir(destino); d.onkeydown = (e) => e.key === "Enter" && ir(destino); } L.append(d); });
   f.append(L);
-  if (cfg.videos?.length) f.append(el("h2", null, "Listos para subir"), listos());
+  if (todos("").length) f.append(el("h2", null, "Listos para subir"), listos(todos("")));
   f.append(grande(cfg.botonGrande[0], cfg.botonGrande[1], () => abrirSala(cfg.botonGrande[2])));
   const ideas = (srv.pedidos || []).filter((p) => p.estado === "idea"), enFila = (srv.pedidos || []).filter((p) => p.estado === "nuevo" || p.estado === "produccion");
   f.append(el("h2", null, `💡 Ideas por aprobar · ${ideas.length}`));
@@ -222,9 +222,12 @@ function hub() { // cada botón abre el lugar exacto de la red
   cfg.cuentas.map((c) => (cfg.ig && /^Instagram/.test(c.n) ? { ...c, n: "Instagram · @" + cfg.ig, l: [["Perfil", `https://www.instagram.com/${cfg.ig}/`], ...c.l.slice(1)] } : c)).forEach((c) => { const d = el("div", "cuenta-red"), fila = el("div", "fila"); if (c.c) d.style.setProperty("--c", c.c); c.l.forEach(([n, u]) => { const a = el("a", "btn mini", n); a.href = u; a.target = "_blank"; a.rel = "noopener"; fila.append(a); }); const t = el("b", null, c.n); d.append(t, el("small", null, c.d), fila); g.append(d); });
   return g;
 }
-function listos() {
+// Videos: los del .json (los pone Claude) + la biblioteca (los que suben ustedes ya terminados, en R2). seccion "" = general, "nails" = Karen Nails.
+const biblio = () => (srv.biblioteca || []).map((b) => ({ ...b, video: `/api/crudos/bajar?key=${encodeURIComponent(b.hd)}`, deBiblio: true }));
+const todos = (seccion) => [...(cfg.videos || []), ...biblio()].filter((v) => seccion == null || (v.seccion || "") === seccion);
+function listos(lista) {
   const g = el("div", "listos");
-  (cfg.videos || []).slice().reverse().forEach((v) => {
+  lista.slice().reverse().forEach((v) => {
     const fig = el("figure"), vid = el("video"); vid.src = v.video + "#t=1"; vid.preload = "metadata"; vid.muted = true; vid.playsInline = true;
     const b = el("button", "btn mini a", "Publicar ▶"); b.type = "button";
     const id = (v.id || v.video.split("/").pop().replace(/\.\w+$/, "")).replace(/[^\w-]/g, "-"), sv = () => srv.videos?.[id] || {};
@@ -232,16 +235,54 @@ function listos() {
       hecho: { tiktok: !!sv().tiktok, youtube: !!sv().youtube, instagram: !!sv().instagram }, links: sv().links || {},
       onHecho: (red) => enviar({ tipo: "video", id, cambios: { [red]: true } }), onLink: (red, u) => enviar({ tipo: "video", id, cambios: { links: { [red]: u } } }) });
     if (Object.values(sv()).some((x) => x === true)) b.textContent = "Publicado ✓ · otra red";
-    fig.append(vid, el("figcaption", null, v.titulo), b); g.append(fig);
+    fig.append(vid, el("figcaption", null, v.titulo), b);
+    if (v.deBiblio) { const q = el("button", "btn mini", "🗑 Quitar"); q.type = "button"; q.onclick = async () => { if (!confirm(`¿Quitar "${v.titulo}" y borrar el archivo? No se puede deshacer.`)) return; await fetch(`/api/crudos?key=${encodeURIComponent(v.hd)}`, { method: "DELETE" }).catch(() => {}); enviar({ tipo: "biblioteca-borrar", id: v.id }); }; fig.append(q); }
+    g.append(fig);
   });
   return g;
 }
 let nodoCrudos; // se crea una vez: la subida sigue aunque cambies de pestaña
 const crudos = () => nodoCrudos ||= (() => { const d = el("div"); d.style.setProperty("--cr-a", "var(--a)"); Crudos.montar(d, { p: P, quien: () => quien || cfg.tripulacion[0], toast }); return d; })();
+// Subir un video ya terminado (del cel, del tamaño que sea) directo a la biblioteca de una sección
+const nodosFinal = {};
+function subirTerminado(seccion, titulo, id0) {
+  const k = seccion + (id0 || "");
+  return nodosFinal[k] ||= (() => {
+    const d = el("div"); d.style.setProperty("--cr-a", "var(--a)");
+    Crudos.montar(d, { p: P, final: true, titulo, quien: () => quien || cfg.tripulacion[0], toast,
+      idNuevo: () => id0 || `${seccion || "video"}-${Date.now().toString(36)}`,
+      onSubido: ({ key, tam, nota }) => enviar({ tipo: "biblioteca", video: { id: key.split("/").pop().replace(/\.mp4$/, ""), titulo: nota.split("\n")[0].slice(0, 80) || titulo.replace(/^Subir /, ""), caption: nota, hd: key, seccion, mb: +(tam / 1048576).toFixed(1) } }) });
+    return d;
+  })();
+}
+
+function vistaUnas() { // Karen Nails: su negocio. Promos, formatos que venden y subir lo que ya tiene hecho.
+  const n = cfg.nails, f = document.createDocumentFragment(), mios = todos("nails");
+  const cab = el("section", "meta"); cab.append(el("div", "lbl", n.lugar), el("div", "num", n.nombre), el("p", "sub", n.reglas));
+  const fila = el("div", "fila"); n.enlaces.forEach(([t, u]) => { const a = el("a", "btn mini", t); a.href = u; a.target = "_blank"; a.rel = "noopener"; fila.append(a); }); cab.append(fila); f.append(cab);
+  f.append(grande("Idea para el negocio", "Toca y te doy 3 videos para tus uñas: gancho, tomas, texto y hashtags. Sin precios.", () => abrirSala(n.pregunta)));
+  f.append(el("h2", null, `Tus videos del negocio · ${mios.length}`));
+  if (mios.length) f.append(listos(mios)); else f.append(el("div", "vacio", "Todavía no hay videos aquí. Sube abajo los que ya tienes hechos."));
+  f.append(el("h2", null, "Las 5 promos que ya hicimos"), el("p", "sub", "Se hicieron con tus clips del estudio. Si las tienes en tu cel, súbelas aquí y quedan listas para publicar cuando quieras."));
+  const g = el("div", "temas");
+  n.promos.forEach((p) => {
+    const ya = mios.find((v) => v.id === "nails-" + p.id), c = el("article", "tema");
+    c.append(el("h3", null, p.titulo), el("p", null, p.de));
+    if (ya) c.append(el("p", null, "✓ Ya está en tus videos"));
+    else { const b = el("button", "btn mini", "Subir esta promo"); b.type = "button"; b.onclick = () => { c.append(subirTerminado("nails", `Subir "${p.titulo}"`, "nails-" + p.id)); b.remove(); }; c.append(b); }
+    g.append(c);
+  });
+  f.append(g, el("h2", null, "Videos que venden"), el("p", "sub", "Formatos para historias y comerciales. Toca uno y el chat te arma el guion."));
+  const g2 = el("div", "temas");
+  n.formatos.forEach((t) => { const c = el("article", "tema"), ul = el("ul"); t.ejemplos.forEach((x) => ul.append(el("li", null, x))); const b = el("button", "btn mini", "Dame ideas de esto"); b.type = "button"; b.onclick = () => abrirSala(`Para mi negocio de uñas (@karenareyesnails): dame 3 ideas de "${t.n}" que pueda grabar esta semana, con gancho, tomas, texto y hashtags. Sin precios.`); c.append(el("h3", null, t.n), el("p", null, t.por), ul, b); g2.append(c); });
+  f.append(g2, el("h2", null, "Subir un video terminado"), subirTerminado("nails", "Subir video del negocio"));
+  return f;
+}
+
 function vistaVideos() {
-  const f = document.createDocumentFragment(), n = (cfg.videos || []).length;
+  const f = document.createDocumentFragment(), n = todos("").length;
   f.append(el("h2", null, `Videos · ${n}`));
-  if (n) f.append(el("p", "sub", "Toca Publicar: en el cel se abre tu menú Compartir con el video y el texto ya va copiado."), listos());
+  if (n) f.append(el("p", "sub", "Toca Publicar: en el cel se abre tu menú Compartir con el video y el texto ya va copiado."), listos(todos("")));
   else f.append(el("div", "vacio", cfg.videosVacio));
   const form = el("form", "fila"), inp = el("input", "campo"); inp.placeholder = "Pega aquí el enlace de tu clip (Drive, Dropbox, TikTok)…"; inp.setAttribute("aria-label", "Enlace del clip"); inp.maxLength = 500;
   const bt = el("button", "btn a", "Mandar a editar"); bt.type = "submit"; form.append(inp, bt);
@@ -249,7 +290,7 @@ function vistaVideos() {
   const ta = el("button", "btn", "🎬 Taller: ver lo que se está renderizando"); ta.type = "button"; ta.onclick = () => Taller.abrir();
   const esp = el("div"), idDe = (v) => (v.id || v.video.split("/").pop().replace(/\.\w+$/, "")).replace(/[^\w-]/g, "-");
   Crudos.espacio(esp, { p: P, toast,
-    publicados: () => (cfg.videos || []).filter((v) => { const s = srv.videos?.[idDe(v)] || {}; return v.hd && !s.sinHd && cfg.redes.every((r) => s[r]); }).map((v) => ({ id: idDe(v), titulo: v.titulo, hd: v.hd })),
+    publicados: () => todos(null).filter((v) => { const s = srv.videos?.[idDe(v)] || {}; return v.hd && !s.sinHd && cfg.redes.every((r) => s[r]); }).map((v) => ({ id: idDe(v), titulo: v.titulo, hd: v.hd })),
     editados: () => new Set((srv.pedidos || []).filter((x) => x.estado === "listo" && x.crudo).map((x) => x.crudo)),
     onLiberado: (id) => enviar({ tipo: "video", id, cambios: { sinHd: true } }) });
   f.append(ta, el("h2", null, "Espacio"), esp, el("h2", null, "Subir crudos"), el("p", "sub", "Sube tus videos o fotos originales (del tamaño que sea) y di qué quieres. La Fábrica los edita en su siguiente vuelta y aparecen aquí arriba."), crudos(),
@@ -384,7 +425,7 @@ function render() {
   const act = document.activeElement; if (act && act.classList.contains("campo")) return; // no pisar lo que se escribe
   const y = scrollY; $("#vista").replaceChildren((VISTAS[tab] || vistaInicio)()); scrollTo({ top: y });
 }
-const VISTAS = { inicio: vistaInicio, videos: vistaVideos, temas: vistaTemas, ideas: vistaIdeas };
+const VISTAS = { inicio: vistaInicio, videos: vistaVideos, unas: vistaUnas, temas: vistaTemas, ideas: vistaIdeas };
 function irTab(t) {
   tab = VISTAS[t] ? t : "inicio"; history.replaceState(null, "", "#" + tab);
   document.querySelectorAll(".tab").forEach((x) => x.setAttribute("aria-selected", String(x.dataset.t === tab)));
@@ -403,6 +444,10 @@ document.querySelectorAll(".tab").forEach((x) => x.setAttribute("aria-selected",
   $("#titulo").innerHTML = cfg.titulo; $("#lema").textContent = cfg.lema;
   $("#salaNombre").textContent = cfg.chatNombre; $("#salaSub").textContent = cfg.chatSub; $("#fabTxt").textContent = cfg.fab || "Platicar";
   cfg._base = { tripulacion: cfg.tripulacion, redes: cfg.redes || ["tiktok", "instagram", "youtube"] }; $("#engrane").onclick = abrirAjustes;
+  if (cfg.nails) { // pestaña del negocio (solo en el panel que la trae en su .json)
+    const t = el("button", "tab", "Uñas"); t.type = "button"; t.setAttribute("role", "tab"); t.dataset.t = "unas"; t.setAttribute("aria-selected", String(tab === "unas"));
+    t.addEventListener("click", () => irTab("unas")); document.querySelector('.tab[data-t="videos"]').after(t);
+  } else if (tab === "unas") tab = "inicio";
   await traer(); quien = ls.get(`quien-${P}`, cfg.tripulacion[0]);
   const yo = await fetch("/api/yo").then((r) => r.json()).catch(() => ({})); // quien entró con su PIN
   if (yo.nombre) { quien = yo.nombre; ls.set(`quien-${P}`, quien); }

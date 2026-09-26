@@ -2,6 +2,7 @@
 // Cada archivo se parte en pedazos de 25 MB y se suben de 3 en 3 a R2 (/api/crudos). Si se va la señal, espera a que regrese;
 // si se cierra la página, al volver a elegir el mismo archivo retoma desde el último pedazo (R2 guarda la subida 7 días).
 // Crudos.montar(nodo, {p, quien: () => "Juan", toast})
+//   con {final: true, idNuevo: () => "nails-x", titulo, onSubido({key, tam, nota})} sube un VIDEO TERMINADO a finales/<p>/ (listo para publicar, sin pedido)
 // Crudos.espacio(nodo, {p, publicados: () => [{id, titulo, hd}], editados: () => Set(keys de crudos ya editados), onLiberado(id), toast})
 (() => {
   const PARTE = 25 * 1024 * 1024, A_LA_VEZ = 3, INTENTOS = 10;
@@ -38,10 +39,12 @@
   function montar(nodo, o) {
     const raiz = h("div", "cr"), zona = h("label", "cr-zona"), inp = h("input"), nota = h("textarea"), cola = h("div", "cr-acc"), lista = h("div", "cr-acc"), aviso = h("div", "cr-aviso"); aviso.hidden = true;
     inp.type = "file"; inp.multiple = true; inp.accept = "video/*,image/*"; inp.hidden = true;
-    zona.append(inp, h("b", null, "＋ Subir crudos"), h("small", null, "Videos o fotos del tamaño que sea. Si se corta la señal, sigue solo."));
+    if (o.final) inp.accept = "video/*";
+    zona.append(inp, h("b", null, o.final ? `＋ ${o.titulo || "Subir video terminado"}` : "＋ Subir crudos"), h("small", null, o.final ? "El video ya listo, del tamaño que sea. Queda listo para publicar." : "Videos o fotos del tamaño que sea. Si se corta la señal, sigue solo."));
     const fl = h("form", "cr-link"), url = h("input"), bl = h("button", "cr-b si", "Mandar link"); url.type = "url"; url.inputMode = "url"; url.placeholder = "Pega un link: Dropbox, Drive, WeTransfer, TikTok, iCloud…"; url.setAttribute("aria-label", "Link del crudo"); bl.type = "submit"; fl.append(url, bl);
     nota.placeholder = "¿Qué quieres que haga la Fábrica? (ej. corta lo mejor en 15 s, subtítulos, para TikTok)"; nota.maxLength = 500; nota.setAttribute("aria-label", "Instrucciones para la Fábrica");
-    raiz.append(aviso, nota, zona, h("div", "cr-o", "o"), fl, cola, h("b", null, "Crudos guardados"), lista); nodo.replaceChildren(raiz);
+    if (o.final) nota.placeholder = "Texto para TikTok (opcional): descripción y hashtags";
+    raiz.append(aviso, nota, zona, ...(o.final ? [cola] : [h("div", "cr-o", "o"), fl, cola, h("b", null, "Crudos guardados"), lista])); nodo.replaceChildren(raiz);
     ["dragenter", "dragover"].forEach((ev) => zona.addEventListener(ev, (e) => { e.preventDefault(); zona.classList.add("encima"); }));
     ["dragleave", "drop"].forEach((ev) => zona.addEventListener(ev, (e) => { e.preventDefault(); zona.classList.remove("encima"); }));
     zona.addEventListener("drop", (e) => subirTodos([...e.dataTransfer.files]));
@@ -68,7 +71,7 @@
       subiendo++; let lock = null; try { lock = await navigator.wakeLock?.request("screen"); } catch {} // que no se apague la pantalla a media subida
       let ini = previo;
       try {
-        if (!ini) { ini = { ...(await postJ("/iniciar", { p: o.p, nombre: f.name, tipo: f.type, tam: f.size, nota: nota.value.trim(), quien: o.quien() })), partes: [] }; ls.set(huella, ini); }
+        if (!ini) { ini = { ...(await postJ("/iniciar", { p: o.p, ...(o.final ? { carpeta: "finales", nombre: `${o.idNuevo()}.mp4` } : { nombre: f.name }), tipo: f.type, tam: f.size, nota: nota.value.trim(), quien: o.quien() })), partes: [] }; ls.set(huella, ini); }
         const total = Math.max(1, Math.ceil(f.size / PARTE)), hechas = new Set(ini.partes.map((x) => x.n)), t0 = Date.now(), base = hechas.size;
         const pendientes = Array.from({ length: total }, (_, k) => k + 1).filter((n) => !hechas.has(n));
         const pinta = () => { const sub = Math.min(f.size, hechas.size * PARTE), vel = ((hechas.size - base) * PARTE) / Math.max(1, (Date.now() - t0) / 1000); i.style.width = (hechas.size / total) * 100 + "%"; info.textContent = `${mb(sub)} de ${mb(f.size)}${hechas.size > base ? ` · ${mb(vel)}/s` : ""}`; };
@@ -87,7 +90,9 @@
         await Promise.all(Array.from({ length: Math.min(A_LA_VEZ, pendientes.length || 1) }, trabajador));
         if (parar) throw Object.assign(new Error("cancelado"), { cancelado: true });
         await postJ("/terminar", { key: ini.key, id: ini.id, partes: ini.partes, nota: nota.value.trim(), quien: o.quien() });
-        ls.set(huella, null); info.textContent = `✓ Subido (${mb(f.size)}). Quedó como pedido para la Fábrica.`; i.style.width = "100%"; acc.replaceChildren(); o.toast?.("Crudo subido");
+        ls.set(huella, null); i.style.width = "100%"; acc.replaceChildren();
+        if (o.final) { await o.onSubido?.({ key: ini.key, tam: f.size, nota: nota.value.trim() }); info.textContent = `✓ Listo (${mb(f.size)}). Ya está en tus videos para publicar.`; o.toast?.("Video listo"); nota.value = ""; }
+        else { info.textContent = `✓ Subido (${mb(f.size)}). Quedó como pedido para la Fábrica.`; o.toast?.("Crudo subido"); }
       } catch (e) {
         if (e.status === 503) { aviso.textContent = AVISO_R2; aviso.hidden = false; it.remove(); ls.set(huella, null); }
         else if (e.cancelado) { if (ini) postJ("/cancelar", { key: ini.key, id: ini.id }).catch(() => {}); ls.set(huella, null); info.textContent = "Cancelado."; acc.replaceChildren(); }
@@ -118,7 +123,7 @@
       borrar.onclick = async () => { if (!confirm(`¿Borrar ${c.nombre || "este crudo"}? No se puede deshacer.`)) return; await api(`?key=${encodeURIComponent(c.key)}`, { method: "DELETE" }).catch(() => {}); cargar(); };
       acc.append(ver, borrar); it.append(prev, t, acc); return it;
     }
-    cargar();
+    if (!o.final) cargar();
   }
   // --- Espacio: cuánto se usa del plan gratis (10 GB) y qué se puede liberar sin perder nada importante ---
   const cssE = `.es{display:grid;gap:10px}.es-barra{height:14px;border-radius:99px;background:rgba(127,127,160,.25);overflow:hidden}.es-barra i{display:block;height:100%;border-radius:99px}

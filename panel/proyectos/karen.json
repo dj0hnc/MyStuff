@@ -217,5 +217,102 @@
         ]
       ]
     }
-  ]
+  ],
+  "nails": {
+    "nombre": "Karen A. Reyes Nails",
+    "lugar": "Tu estudio · Princeton, TX",
+    "reglas": "Reglas de la marca: solo español, sin precios, voz tapatía. Todo va a @karenareyesnails.",
+    "pregunta": "Para mi negocio de uñas (@karenareyesnails): dame 3 ideas de videos que pueda grabar esta semana en el estudio, con gancho, tomas, texto en pantalla y hashtags. Sin precios.",
+    "enlaces": [
+      [
+        "TikTok @karenareyesnails",
+        "https://www.tiktok.com/@karenareyesnails"
+      ],
+      [
+        "Subir a TikTok",
+        "https://www.tiktok.com/upload"
+      ],
+      [
+        "Estadísticas",
+        "https://www.tiktok.com/tiktokstudio/analytics"
+      ]
+    ],
+    "promos": [
+      {
+        "id": "01-marca",
+        "titulo": "Uñas lindas en Princeton TX",
+        "de": "La marca: quién eres y dónde está tu estudio."
+      },
+      {
+        "id": "02-tamanos",
+        "titulo": "Tú eliges el tamaño",
+        "de": "Los largos y formas que ofreces."
+      },
+      {
+        "id": "03-disenos",
+        "titulo": "Diseños y extras",
+        "de": "Arte, piedras y detalles."
+      },
+      {
+        "id": "04-gel",
+        "titulo": "Gel polish con manicura",
+        "de": "El servicio de gel con manicura."
+      },
+      {
+        "id": "05-estudio",
+        "titulo": "Mi estudio en Princeton TX",
+        "de": "Privado, limpio, con cita y sin prisas."
+      }
+    ],
+    "formatos": [
+      {
+        "n": "Antes y después",
+        "por": "El formato que más detiene el scroll en belleza.",
+        "ejemplos": [
+          "Mano natural → set terminado en 10 s",
+          "Uñas mordidas → uñas de ensueño"
+        ]
+      },
+      {
+        "n": "Proceso en cámara rápida",
+        "por": "Hipnótico: la gente se queda hasta ver el final.",
+        "ejemplos": [
+          "Del limado al brillo en 15 s",
+          "Así se hace un diseño de flores"
+        ]
+      },
+      {
+        "n": "Historia de clienta",
+        "por": "Confianza: gente real, con su permiso.",
+        "ejemplos": [
+          "\"Vino por su boda y mira\"",
+          "La reacción al ver sus uñas"
+        ]
+      },
+      {
+        "n": "Temporada",
+        "por": "Lo que la gente busca esta semana.",
+        "ejemplos": [
+          "Halloween y Día de Muertos",
+          "Navidad, San Valentín, graduaciones"
+        ]
+      },
+      {
+        "n": "Detrás del estudio",
+        "por": "Que te conozcan a ti: la gente regresa por la persona.",
+        "ejemplos": [
+          "Un día en mi estudio",
+          "Así preparo todo antes de cada cita"
+        ]
+      },
+      {
+        "n": "Comercial de 15 s",
+        "por": "Para anunciar el estudio con voz y textos.",
+        "ejemplos": [
+          "\"Uñas lindas en Princeton, TX\"",
+          "Agenda tu cita por Instagram"
+        ]
+      }
+    ]
+  }
 }

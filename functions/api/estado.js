@@ -4,6 +4,7 @@
 //   {tipo:"video", id, cambios:{tiktok,youtube,instagram,vyro,vtt,vyt,nota,link,sinHd}}
 //   {tipo:"pedido", texto, estado?:"idea"}   (flujo: idea -> nuevo (aprobado, la rutina lo produce) -> produccion -> listo)
 //   {tipo:"pedido-editar", pid, texto} · {tipo:"pedido-borrar", pid}
+//   {tipo:"biblioteca", video:{id, titulo, hd, caption, seccion}} · {tipo:"biblioteca-borrar", id}  (videos terminados que suben ustedes; hd = finales/<p>/…)
 //   {tipo:"ajustes", ajustes:{tripulacion, horarios, porDia, ytMin, redes, cuentas:{tiktok,youtube,instagram}}}  (ajustes del proyecto, compartidos)
 //   cambios.links:{tiktok,youtube,instagram} = links de los posts ya publicados (para compartir)
 //   {tipo:"pedido-estado", pid, estado:"idea"|"nuevo"|"produccion"|"listo", nota?}  (nota = respuesta de Claude, se ve bajo el pedido)
@@ -77,6 +78,13 @@ export async function onRequestPost({ request, env }) {
     const i = e.pedidos.findIndex((x) => x.id === b.pid); if (i < 0) return json({ error: "pedido" }, 400);
     if (b.tipo === "pedido-borrar") { que = `borró el pedido: ${e.pedidos[i].texto.slice(0, 50)}`; e.pedidos.splice(i, 1); }
     else { const t = texto(b.texto, 1500).trim(); if (!t) return json({ error: "vacio" }, 400); e.pedidos[i].texto = t; e.pedidos[i].editado = ahora; que = `editó un pedido: ${t.slice(0, 50)}`; }
+  } else if (b.tipo === "biblioteca") {
+    const v = b.video || {}, id = texto(v.id, 80), p = new URL(request.url).searchParams.get("p") || "clipper";
+    if (!/^[\w-]+$/.test(id) || !String(v.hd || "").startsWith(`finales/${p}/`)) return json({ error: "video" }, 400);
+    e.biblioteca = [{ id, titulo: texto(v.titulo, 120) || id, hd: texto(v.hd, 200), caption: texto(v.caption, 1500), seccion: texto(v.seccion, 20), mb: Number(v.mb) || undefined, quien, at: ahora }, ...(e.biblioteca || []).filter((x) => x.id !== id)].slice(0, 300);
+    que = `subió el video "${texto(v.titulo, 60) || id}"`;
+  } else if (b.tipo === "biblioteca-borrar") {
+    e.biblioteca = (e.biblioteca || []).filter((x) => x.id !== b.id); que = `quitó un video de la biblioteca`;
   } else if (b.tipo === "ajustes") {
     e.ajustes = limpiarAjustes(b.ajustes); que = "cambió los ajustes";
   } else return json({ error: "tipo" }, 400);

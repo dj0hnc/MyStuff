@@ -72,6 +72,10 @@ const lleno = await crudos({ request: new Request("https://x/api/crudos/iniciar"
 ok(lleno.status === 507, "no deja empezar una subida que no cabe");
 await crudos({ request: new Request("https://x/api/crudos?key=finales/clipper/x.mp4", { method: "DELETE" }), env: envE, params: {} });
 ok(JSON.parse(kvE.get("espacio")).total === 8e9, "liberar un 1080 descuenta el espacio");
+// biblioteca: videos terminados que suben ustedes (solo de su carpeta finales/<proyecto>/)
+est = await (await post("https://x/api/estado?p=karen", { tipo: "biblioteca", quien: "Karen", video: { id: "nails-01-marca", titulo: "Uñas lindas", hd: "finales/karen/nails-01-marca.mp4", seccion: "nails" } })).json();
+ok(est.biblioteca?.[0]?.seccion === "nails", "biblioteca: promo de uñas guardada");
+ok((await post("https://x/api/estado?p=karen", { tipo: "biblioteca", quien: "Karen", video: { id: "x", hd: "finales/clipper/x.mp4" } })).status === 400, "biblioteca: no acepta archivos de otro proyecto");
 // taller: crear, avanzar, terminar
 const tpost = (b) => taller({ request: new Request("https://x/api/taller", { method: "POST", body: JSON.stringify(b) }), env: envP, params: {} });
 await tpost({ id: "prueba-1", titulo: "Video", estado: "renderizando", pct: 10 }); await tpost({ id: "prueba-1", pct: 250, restante: 30 });
