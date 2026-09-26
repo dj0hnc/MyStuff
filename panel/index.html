@@ -43,7 +43,7 @@
 <body>
 <div class="wrap">
   <header><h1>Puente de <span>Mando</span></h1><p>Tres proyectos, cada uno con su panel y su chat. No se mezclan.</p></header>
-  <section class="hoy" id="hoy" aria-label="Lo de hoy" hidden></section>
+  <section class="hoy" id="hoy" aria-label="Siguientes a publicar" hidden></section>
   <nav class="puertas" aria-label="Paneles">
     <a class="puerta" href="/clipper" style="--c:#29e7ff"><span class="quien">JUAN · DINERO RÁPIDO</span><b>Fábrica de Clips</b><small>@dj0hnclipper y @j0_clip1. OVNIs, Roswell, NASA, persecuciones, historias y Ketone-IQ.</small><span class="cifras" id="cifras"></span><span class="ir">Entrar →</span></a>
     <a class="puerta" href="/rave" style="--c:#39ff14"><span class="quien">JUAN + KAREN</span><b>The Rave Couple</b><small>@theravecouple.official. El regreso de Juan, Karen protagonista, Old School. Episodios y series.</small><span class="ir">Entrar →</span></a>
@@ -56,16 +56,16 @@
 (async () => {
   try {
     const [d, e] = await Promise.all([fetch("/data.json", { cache: "no-store" }).then((r) => r.json()), fetch("/api/estado", { cache: "no-store" }).then((r) => (r.ok ? r.json() : { videos: {} })).catch(() => ({ videos: {} }))]);
-    const hoy = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Chicago" }).format(new Date());
     const sub = (v) => { const s = e.videos?.[v.id] || {}; return "tiktok" in s ? s.tiktok : v.tiktok; };
-    const pend = d.videos.filter((v) => !sub(v)).length;
-    document.getElementById("cifras").textContent = `${d.videos.length} videos en la videoteca · ${pend} por publicar`;
-    const hoyL = d.videos.filter((v) => v.fecha === hoy && !sub(v)).sort((a, b) => (a.orden || 0) - (b.orden || 0));
-    const box = document.getElementById("hoy");
-    hoyL.slice(0, 4).forEach((v) => {
+    const vy = (v) => { const s = e.videos?.[v.id] || {}; return "vyro" in s ? s.vyro : v.vyro; };
+    const cola = d.videos.map((v, i) => ({ v, k: (v.fecha || "9999") + String(v.orden || 0).padStart(3, "0") + String(i).padStart(3, "0") })).filter(({ v }) => v.serie !== "ketone" && !sub(v)).sort((a, b) => a.k.localeCompare(b.k)).map((x) => x.v);
+    const vyro = d.videos.filter((v) => v.serie === "ketone" && !vy(v)).length;
+    document.getElementById("cifras").textContent = `${d.videos.length} videos · ${cola.length} en cola${vyro ? ` · ${vyro} para Vyro` : ""}`;
+    const box = document.getElementById("hoy"), hoyL = cola.slice(0, 3);
+    hoyL.forEach((v, i) => {
       const a = document.createElement("a"); a.href = "/clipper#mision";
-      const b = document.createElement("b"); b.textContent = v.hora || "Hoy";
-      const t = document.createElement("div"); t.textContent = v.titulo; const sm = document.createElement("small"); sm.textContent = "Fábrica de Clips · toca para publicar"; t.append(sm);
+      const b = document.createElement("b"); b.textContent = i ? `#${i + 1}` : "YA";
+      const t = document.createElement("div"); t.textContent = v.titulo; const sm = document.createElement("small"); sm.textContent = i ? "En cola · Fábrica de Clips" : "Siguiente a publicar · toca para ir"; t.append(sm);
       const ir = document.createElement("span"); ir.textContent = "▶"; a.append(b, t, ir); box.append(a);
     });
     box.hidden = !hoyL.length;

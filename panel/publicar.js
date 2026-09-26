@@ -1,6 +1,7 @@
 // Publicar en 1 toque (lo usan los 3 paneles). En el cel manda el archivo al menú Compartir del sistema,
 // de donde TikTok, YouTube e Instagram lo abren directo en su editor; el texto va copiado para pegarlo.
-// En compu baja el video y abre la página de subida. Publicar.abrir({titulo, video, textos:{tiktok,youtube,instagram}, redes, nota, hecho:{red:bool}, onHecho(red)})
+// En compu baja el video y abre la página de subida. Publicar.abrir({titulo, video, textos:{tiktok,youtube,instagram}, redes, nota, hecho:{red:bool}, onHecho(red),
+//   vyro?: {link, registrado, onLink(link), onRegistrado()}}) agrega los pasos 2 y 3 de Vyro: pegar el link del post y registrarlo.
 // ponytail: no hay API directa; TikTok/Meta piden app auditada y YouTube deja privado lo subido por apps sin verificar. El menú Compartir no pide permisos.
 (() => {
   const REDES = {
@@ -26,7 +27,10 @@
   .pub-btn{appearance:none;flex:1;min-width:130px;padding:12px;border-radius:12px;border:1px solid #2a2f45;background:#1b1f30;color:#f2f4ff;font:800 14px system-ui,sans-serif;cursor:pointer;text-align:center;text-decoration:none}
   .pub-btn.si{background:#35d07f;border-color:#35d07f;color:#04120a}
   .pub-aviso{font-size:14px;color:#ffc857}
-  .pub :focus-visible{outline:2px solid #ffc857;outline-offset:2px}`;
+  .pub :focus-visible{outline:2px solid #ffc857;outline-offset:2px}
+  .pub-paso{display:grid;gap:8px;padding:12px;border-radius:14px;border:1px solid #2a2f45;background:#151827}
+  .pub-paso b{font-size:15px}.pub-paso.hecho{border-color:#35d07f}
+  .pub-paso input{width:100%;padding:11px;border-radius:10px;border:1px solid #2a2f45;background:#0e0f16;color:#f2f4ff;font:600 16px system-ui,sans-serif}`;
   const st = document.createElement("style"); st.textContent = css; document.head.append(st);
   const h = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
   const copiar = (t) => (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).catch(() => {});
@@ -74,6 +78,26 @@
       };
       btns[red] = b; hoja.append(b);
     });
+    if (o.vyro) { // Vyro: 2) link del post de TikTok, 3) registrarlo en app.vyro.com
+      const V = o.vyro;
+      const p2 = h("div", "pub-paso" + (V.link ? " hecho" : "")), inp = h("input"); inp.type = "url"; inp.inputMode = "url"; inp.placeholder = "https://www.tiktok.com/@dj0hnclipper/video/…"; inp.value = V.link || ""; inp.setAttribute("aria-label", "Link del post de TikTok");
+      const f2 = h("div", "pub-fila"), pegar = h("button", "pub-btn", "Pegar"), guardar = h("button", "pub-btn si", "Guardar link");
+      pegar.type = guardar.type = "button";
+      pegar.onclick = async () => { try { inp.value = (await navigator.clipboard.readText()).trim(); } catch { inp.focus(); } };
+      guardar.onclick = () => { const l = inp.value.trim(); if (!/^https:\/\/([\w-]+\.)*tiktok\.com\//.test(l)) { inp.setCustomValidity("Pega el link de TikTok (Compartir → Copiar enlace)"); inp.reportValidity(); return; } inp.setCustomValidity(""); V.link = l; V.onLink?.(l); p2.classList.add("hecho"); guardar.textContent = "✓ Guardado"; };
+      f2.append(pegar, guardar); p2.append(h("b", null, "Paso 2 · Pega el link del post"), h("small", null, "En TikTok: tu video → Compartir → Copiar enlace."), inp, f2);
+      const p3 = h("div", "pub-paso" + (V.registrado ? " hecho" : "")), ir = h("button", "pub-btn si", V.registrado ? "✓ Ya está en Vyro" : "Registrar en Vyro →"); ir.type = "button";
+      ir.onclick = () => {
+        const l = inp.value.trim() || V.link; if (!l) { inp.focus(); return; }
+        copiar(l); window.open("https://app.vyro.com", "_blank", "noopener");
+        const c = h("div", "pub-fila"), si = h("button", "pub-btn si", "Sí, ya lo registré"), no = h("button", "pub-btn", "Todavía no"); si.type = no.type = "button";
+        si.onclick = () => { V.onRegistrado?.(); p3.classList.add("hecho"); ir.textContent = "✓ Ya está en Vyro"; c.remove(); }; no.onclick = () => c.remove();
+        c.append(si, no); p3.append(c);
+      };
+      p3.append(h("b", null, "Paso 3 · Regístralo en Vyro"), h("small", null, "Se copia el link y se abre Vyro: pégalo en la campaña Ketone-IQ. Vyro solo deja 3 en revisión a la vez."), ir);
+      if (btns.tiktok) btns.tiktok.querySelector("b").textContent = "Paso 1 · Subir a TikTok";
+      hoja.append(p2, p3);
+    }
     const texto = o.textos?.tiktok || "";
     if (texto) { const box = h("div", "pub-txt", texto); hoja.append(box); }
     const fila = h("div", "pub-fila"), g = h("a", "pub-btn", "Guardar video"), c = h("button", "pub-btn", "Copiar texto");

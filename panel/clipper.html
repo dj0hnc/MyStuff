@@ -56,7 +56,6 @@
   .lectura b { font: 400 clamp(20px, 6vw, 30px)/1 var(--reloj); color: var(--cian); font-variant-numeric: tabular-nums; }
   .lectura span { font-size: 12px; color: var(--cian-suave); letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; }
   .lectura.ambar b { color: var(--ambar); } .lectura.verde b { color: var(--verde); }
-  @media (max-width: 480px) { .lecturas { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   /* Siguiente lanzamiento */
   .lanzamiento { display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: center; border: 1px solid var(--ambar); border-radius: 12px; padding: 10px 14px; background: rgba(255,176,32,0.07); }
   .lanzamiento .cuenta { font: 400 clamp(26px, 8vw, 40px)/1 var(--reloj); color: var(--ambar); font-variant-numeric: tabular-nums; }
@@ -194,6 +193,18 @@
   .cuenta-red { background: var(--panel); border: 1px solid var(--linea); border-left: 4px solid var(--c); border-radius: 12px; padding: 12px; display: grid; gap: 8px; }
   .cuenta-red b { font: 800 14px var(--hud); letter-spacing: .06em; }
   .cuenta-red small { color: var(--cian-suave); }
+  .tira { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; scroll-snap-type: x mandatory; }
+  .tira .vt { flex: 0 0 136px; scroll-snap-align: start; }
+  .card.siguiente { border-color: var(--ambar); box-shadow: 0 0 22px rgba(255,176,32,.25); }
+  @media (max-width: 560px) { /* celulares: encabezado compacto para que se vea el contenido sin bajar */
+    .cabina { padding: 10px 12px; gap: 8px; }
+    .lecturas { gap: 6px; } .lectura { padding: 6px 7px; }
+    .lectura b { font-size: 20px; } .lectura span { font-size: 9.5px; letter-spacing: .06em; }
+    .lanzamiento { grid-template-columns: auto 1fr; gap: 10px; padding: 8px 10px; }
+    .lanzamiento .cuenta { font-size: 24px; } .lanzamiento .que { font-size: 14px; line-height: 1.25; }
+    .tripu .btn { padding: 5px 10px; font-size: 12px; }
+    .consola .tabs { gap: 4px; } .tab { font-size: 9px; letter-spacing: .04em; padding: 10px 0; }
+  }
   [hidden] { display: none !important; }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
@@ -235,6 +246,7 @@
 <div class="toast" id="toast" hidden></div>
 
 <script src="/publicar.js"></script>
+<script src="/crudos.js"></script>
 <script>
 const SERIES = {
   ovni: { n: "OVNI", c: "var(--ovni)" }, roswell: { n: "Roswell", c: "var(--archivo)" }, apolo: { n: "NASA", c: "var(--archivo)" },
@@ -253,7 +265,7 @@ let srv = { videos: {}, pedidos: [], bitacora: [] }, enLinea = false;
 let quien = ls.get("puente-quien", ""), pin = ls.get("puente-pin", "");
 
 const val = (v, k) => { const s = srv.videos[v.id]; return s && k in s ? s[k] : v[k]; };
-const hecho = (v) => (v.serie === "ketone" ? !!val(v, "tiktok") : !!(val(v, "tiktok") && val(v, "youtube")));
+const hecho = (v) => !!val(v, "tiktok"); // publicado = ya está en TikTok; YouTube/IG se terminan desde "Recién publicados"
 const vistas = (v) => (Number(val(v, "vtt")) || 0) + (Number(val(v, "vyt")) || 0);
 
 function texas() {
@@ -288,7 +300,7 @@ async function enviar(cuerpo) {
   if (!quien) { toast("Primero elige quién eres (arriba)"); return false; }
   const body = { ...cuerpo, quien, pin };
   if (!enLinea) { // modo local: se aplica solo en este celular
-    if (body.tipo === "video") { const v = (srv.videos[body.id] ||= {}); Object.assign(v, body.cambios, { por: quien, at: new Date().toISOString() }); }
+    if (body.tipo === "video") { const v = (srv.videos[body.id] ||= {}), at = new Date().toISOString(); Object.assign(v, body.cambios, { por: quien, at }); for (const k in body.cambios) if (typeof body.cambios[k] === "boolean") v[k + "At"] = body.cambios[k] ? at : null; }
     if (body.tipo === "pedido") srv.pedidos.unshift({ id: Math.random().toString(36).slice(2, 10), texto: body.texto, quien, at: new Date().toISOString(), estado: "nuevo" });
     ls.set("puente-local", srv); render(); return true;
   }
@@ -337,21 +349,53 @@ function grupoDias(lista) {
   const frag = document.createDocumentFragment(), porDia = new Map();
   lista.forEach((v) => { const k = v.fecha || "zz"; porDia.has(k) || porDia.set(k, []); porDia.get(k).push(v); });
   [...porDia.keys()].sort().forEach((k) => {
-    frag.append(el("h2", null, k === "zz" ? "En espera (Ketone-IQ)" : fmtDia(k) + (k === texas().fecha ? " · HOY" : "")));
+    frag.append(el("h2", null, k === "zz" ? "Para Vyro (Ketone-IQ)" : fmtDia(k) + (k === texas().fecha ? " · HOY" : "")));
     const g = el("div", "grid"); porDia.get(k).sort((a, b) => (a.orden || 0) - (b.orden || 0)).forEach((v) => g.append(tarjeta(v))); frag.append(g);
   });
   return frag;
 }
 
 // --- vistas ---
+// --- cola viva: los pendientes toman los siguientes horarios libres desde AHORA; publicar cualquiera reacomoda todo ---
+const SLOTS = [["12:00 PM", "12:30 PM"], ["3:00 PM", "3:30 PM"], ["6:00 PM", "6:30 PM"], ["9:30 PM", "10:00 PM"]];
+const diaTx = (iso) => (iso ? new Intl.DateTimeFormat("en-CA", { timeZone: "America/Chicago" }).format(new Date(iso)) : "");
+const sumaDia = (d) => new Date(Date.parse(d + "T12:00:00Z") + 864e5).toISOString().slice(0, 10);
+const esCola = (v) => v.serie !== "ketone";
+const recientes = () => data.videos.filter(hecho).sort((a, b) => String(val(b, "tiktokAt") || "").localeCompare(String(val(a, "tiktokAt") || "")));
+const cola = () => data.videos.filter((v) => esCola(v) && !hecho(v)).sort((a, b) => a._k.localeCompare(b._k));
+function reprogramar() {
+  const t = texas(), pubHoy = data.videos.filter((v) => esCola(v) && hecho(v) && diaTx(val(v, "tiktokAt")) === t.fecha).length;
+  let dia = t.fecha, libres = SLOTS.filter(([h]) => aMin(h) > t.min - 20).slice(0, Math.max(0, SLOTS.length - pubHoy)), i = 0; // 20 min de gracia
+  cola().forEach((v) => {
+    while (i >= libres.length) { dia = sumaDia(dia); libres = SLOTS; i = 0; }
+    [v.hora, v.horaYT] = libres[i]; v.fecha = dia; v.orden = i++;
+  });
+  data.videos.filter(hecho).forEach((v) => { v.fecha = diaTx(val(v, "tiktokAt")) || v._fecha0; });
+}
+
 function vistaMision() {
-  const t = texas(), f = document.createDocumentFragment();
+  const f = document.createDocumentFragment(), c = cola(), rec = recientes();
   if (!enLinea) f.append(el("div", "aviso-banda", "Modo local: lo que marques se queda en este celular. En cuanto se conecte la memoria compartida, se sincroniza para todos."));
-  const hoy = data.videos.filter((v) => v.fecha === t.fecha);
-  f.append(el("h2", null, "Misión de hoy"), el("p", "sub", hoy.length ? "Sube cada uno a su hora y pícale su palomita. Todos lo ven al instante." : "Hoy no hay lanzamientos programados."));
-  if (hoy.length) { const g = el("div", "grid"); hoy.sort((a, b) => a.orden - b.orden).forEach((v) => g.append(tarjeta(v))); f.append(g); }
-  const atrasados = data.videos.filter((v) => v.fecha && v.fecha < t.fecha && !hecho(v));
-  if (atrasados.length) { f.append(el("h2", null, "Atrasados"), el("p", "sub", "Se quedaron sin subir. Métanlos en un hueco libre.")); const g = el("div", "grid"); atrasados.forEach((v) => g.append(tarjeta(v))); f.append(g); }
+  if (rec.length) {
+    const falta = rec.filter((v) => esCola(v) && (!val(v, "youtube") || !val(v, "instagram"))).length;
+    f.append(el("h2", null, "Recién publicados"), el("p", "sub", falta ? `${falta} todavía sin YouTube o Instagram: tócalos para terminarlos.` : "Todo lo publicado ya está en todas sus redes. 🔥"));
+    const tira = el("div", "tira"); rec.slice(0, 12).forEach((v) => tira.append(miniatura(v))); f.append(tira);
+  }
+  if (c.length) {
+    f.append(el("h2", null, "Siguiente"));
+    const t1 = tarjeta(c[0]); t1.classList.add("siguiente"); f.append(t1);
+    if (c.length > 1) {
+      f.append(el("h2", null, `En cola · ${c.length - 1}`), el("p", "sub", "¿Quieres publicar otro antes? Tócalo y dale Publicar: sale de la cola y los horarios se reacomodan solos."));
+      const g = el("div", "teca"); c.slice(1, 13).forEach((v) => g.append(miniatura(v))); f.append(g);
+      if (c.length > 13) { const b = el("button", "btn", `Ver toda la cola (${c.length - 1})`); b.type = "button"; b.onclick = () => irA("calendario"); f.append(b); }
+    }
+  } else f.append(el("div", "vacio", "¡Cola vacía! Todo está publicado. Pide más en la Consola."));
+  const vy = data.videos.filter((v) => v.serie === "ketone" && !val(v, "vyro"));
+  if (vy.length) {
+    const hv = el("h2", null, `Para Vyro · ${vy.length}`); hv.id = "vyro";
+    f.append(hv, el("p", "sub", "Ketone-IQ: TikTok con Branded content → pegas el link → lo registras en Vyro. Vyro solo deja 3 en revisión a la vez."));
+    const g = el("div", "teca"); vy.forEach((v) => g.append(miniatura(v))); f.append(g);
+  }
   if (srv.bitacora?.length) { f.append(el("h2", null, "Bitácora")); f.append(bitacora(8)); }
   return f;
 }
@@ -383,7 +427,8 @@ function vistaCalendario() {
 function publicar(v) {
   const ket = v.serie === "ketone";
   Publicar.abrir({ titulo: v.titulo, video: v.video, textos: { tiktok: v.caption, youtube: v.ytTitle || v.caption, instagram: v.caption },
-    redes: ket ? ["tiktok"] : ["tiktok", "youtube", "instagram"], nota: ket ? "Ketone-IQ: en TikTok activa Branded content y luego registra el enlace en Vyro." : (v.hora ? `Hora sugerida: TikTok ${v.hora} · YouTube ${v.horaYT || "-"} (Texas)` : ""),
+    redes: ket ? ["tiktok"] : ["tiktok", "youtube", "instagram"], nota: ket ? "Ketone-IQ: en TikTok activa Branded content y agrega un sonido de la Commercial Music Library." : (!hecho(v) && v.hora ? `En la cola le toca: ${fmtDia(v.fecha)}, TikTok ${v.hora} · YouTube ${v.horaYT}. Si lo publicas ya, la cola se reacomoda.` : ""),
+    vyro: ket ? { link: val(v, "link") || "", registrado: !!val(v, "vyro"), onLink: (link) => enviar({ tipo: "video", id: v.id, cambios: { link } }), onRegistrado: () => enviar({ tipo: "video", id: v.id, cambios: { vyro: true } }) } : null,
     hecho: { tiktok: !!val(v, "tiktok"), youtube: !!val(v, "youtube"), instagram: !!val(v, "instagram") },
     onHecho: (red) => enviar({ tipo: "video", id: v.id, cambios: { [red]: true } }) });
 }
@@ -431,9 +476,12 @@ function hubRedes() {
   CUENTAS.forEach((c) => { const d = el("div", "cuenta-red"), fila = el("div", "fila"); d.style.setProperty("--c", c.c); c.l.forEach(([n, u]) => { const a = el("a", "btn mini", n); a.href = u; a.target = "_blank"; a.rel = "noopener"; fila.append(a); }); d.append(el("b", null, c.n), el("small", null, c.d), fila); g.append(d); });
   return g;
 }
+let nodoCrudos; // se crea una vez: si el panel se redibuja, la subida en curso sigue y no se pierde su barra
+const crudos = () => nodoCrudos ||= (() => { const d = el("div"); d.id = "crudos"; Crudos.montar(d, { p: "clipper", quien: () => quien || "Juan", toast }); return d; })();
 function vistaFabrica() {
   const f = document.createDocumentFragment();
-  f.append(el("h2", null, "Redes"), el("p", "sub", "Cada botón te lleva directo a donde se hace la cosa."), hubRedes(), vistaMaquinas(), vistaGuia());
+  f.append(el("h2", null, "Subir crudos"), el("p", "sub", "Sube el material original y di qué quieres. La Fábrica lo trabaja en su siguiente vuelta y te contesta en Pedidos."), crudos(),
+    el("h2", null, "Redes"), el("p", "sub", "Cada botón te lleva directo a donde se hace la cosa."), hubRedes(), vistaMaquinas(), vistaGuia());
   return f;
 }
 
@@ -532,7 +580,7 @@ function vistaMaquinas() {
   f.append(cs);
   if (fb.enCola?.length) { f.append(el("h2", null, "En producción")); const ul = el("ul", "lista"); fb.enCola.forEach((x) => ul.append(el("li", null, x))); f.append(ul); }
   const hp = el("h2", null, "Pedidos a la fábrica"); hp.id = "pedidos";
-  f.append(hp, el("p", "sub", "Escriban qué video quieren o peguen un enlace. Claude los revisa 4 veces al día y contesta aquí mismo."));
+  f.append(hp, el("p", "sub", "Escriban qué video quieren o peguen un enlace. Claude los revisa cada hora (8 AM a 10 PM) y contesta aquí mismo."));
   const fila = el("div", "fila"), inp = el("input", "vistas"); inp.placeholder = "Ej. más persecuciones de noche, o pega un enlace"; inp.maxLength = 500;
   const btn = el("button", "btn cian", "Enviar pedido"); btn.onclick = async () => { const t = inp.value.trim(); if (!t) return; if (await enviar({ tipo: "pedido", texto: t })) { inp.value = ""; toast("Pedido enviado"); } };
   fila.append(inp, btn); f.append(fila);
@@ -572,7 +620,7 @@ function lecturas() {
   const hoyPend = data.videos.filter((v) => v.fecha === t.fecha && !hecho(v)).length;
   const tv = data.videos.reduce((a, v) => a + vistas(v), 0);
   const L = $("#lecturas"); L.replaceChildren();
-  [["Publicados", `${sub}/${total}`, "verde", () => { vistaVideoteca.st = { q: "", serie: "", est: "hechos" }; irA("videoteca"); }], ["Hoy por lanzar", hoyPend, "ambar", () => irA("mision")],
+  [["Publicados", `${sub}/${total}`, "verde", () => { vistaVideoteca.st = { q: "", serie: "", est: "hechos" }; irA("videoteca"); }], ["Hoy por publicar", hoyPend, "ambar", () => irA("mision")],
    ["Vistas anotadas", fmtN(tv), "", () => irA("radar")], ["Pedidos nuevos", (srv.pedidos || []).filter((p) => p.estado === "nuevo").length, "", () => irA("fabrica", "pedidos")]]
     .forEach(([n, x, cl, fn]) => { const d = el("div", "lectura " + cl); d.tabIndex = 0; d.setAttribute("role", "button"); d.onclick = fn; d.onkeydown = (e) => (e.key === "Enter" || e.key === " ") && fn(); d.append(el("b", null, String(x)), el("span", null, n)); L.append(d); });
 }
@@ -590,7 +638,7 @@ function reloj() {
 }
 
 function render() {
-  lecturas();
+  reprogramar(); lecturas();
   if (!$("#sala").hidden) return;
   const act = document.activeElement; if (act && (act.classList.contains("vistas") || act.classList.contains("vistas-n") || act.tagName === "TEXTAREA")) return; // no pisar lo que se escribe
   const V = VISTAS[tab] || vistaMision;
@@ -611,7 +659,7 @@ document.querySelectorAll(".tab").forEach((x) => x.setAttribute("aria-selected",
 
 (async () => {
   barraTripu();
-  try { data = await (await fetch("data.json", { cache: "no-store" })).json(); }
+  try { data = await (await fetch("data.json", { cache: "no-store" })).json(); data.videos.forEach((v, i) => { v._fecha0 = v.fecha; v._k = (v.fecha || "9999") + String(v.orden || 0).padStart(3, "0") + String(i).padStart(3, "0"); }); }
   catch { $("#vista").replaceChildren(el("div", "vacio", "No se pudo cargar la lista. Revisa tu conexión y recarga.")); return; }
   await traer(); render(); reloj(); setInterval(reloj, 1000);
   // Sincroniza con la tripulación cada 15 s (y al volver a la pestaña).

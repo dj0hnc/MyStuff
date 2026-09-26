@@ -144,6 +144,7 @@
 <div class="toast" id="toast" hidden></div>
 
 <script src="/publicar.js"></script>
+<script src="/crudos.js"></script>
 <script>
 // Un solo archivo para los paneles de proyecto (/karen, /rave). La configuración vive en /proyectos/<id>.json
 // y el cerebro del chat en /cerebro/<id>.md. El estado compartido va aparte por proyecto (/api/estado?p=<id>).
@@ -216,6 +217,8 @@ function listos() {
   });
   return g;
 }
+let nodoCrudos; // se crea una vez: la subida sigue aunque cambies de pestaña
+const crudos = () => nodoCrudos ||= (() => { const d = el("div"); d.style.setProperty("--cr-a", "var(--a)"); Crudos.montar(d, { p: P, quien: () => quien || cfg.tripulacion[0], toast }); return d; })();
 function vistaVideos() {
   const f = document.createDocumentFragment(), n = (cfg.videos || []).length;
   f.append(el("h2", null, `Videos · ${n}`));
@@ -224,7 +227,8 @@ function vistaVideos() {
   const form = el("form", "fila"), inp = el("input", "campo"); inp.placeholder = "Pega aquí el enlace de tu clip (Drive, Dropbox, TikTok)…"; inp.setAttribute("aria-label", "Enlace del clip"); inp.maxLength = 500;
   const bt = el("button", "btn a", "Mandar a editar"); bt.type = "submit"; form.append(inp, bt);
   form.onsubmit = async (e) => { e.preventDefault(); const t = inp.value.trim(); if (!t) return; if (await enviar({ tipo: "pedido", texto: "Editar este clip: " + t })) toast("Mandado a la Fábrica"); };
-  f.append(el("h2", null, "Mandar un clip a editar"), el("p", "sub", "Súbelo a Google Drive o Dropbox con acceso por enlace. Claude lo edita en su siguiente vuelta (7:53, 11:53, 3:53 y 7:53) y aparece aquí."), form);
+  f.append(el("h2", null, "Subir crudos"), el("p", "sub", "Sube tus videos o fotos originales (del tamaño que sea) y di qué quieres. La Fábrica los edita en su siguiente vuelta y aparecen aquí arriba."), crudos(),
+    el("h2", null, "…o pega un enlace"), el("p", "sub", "Si ya está en Google Drive, Dropbox o TikTok."), form);
   return f;
 }
 
