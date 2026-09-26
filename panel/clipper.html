@@ -457,6 +457,7 @@ function vistaMaquinas() {
   const EST = { nuevo: "Nuevo", produccion: "En producción", listo: "Listo" };
   (srv.pedidos || []).slice(0, 30).forEach((p) => {
     const r = el("div", "ped"), t = el("div"); t.append(document.createTextNode(p.texto), el("small", null, `${p.quien} · ${hace(p.at)}`));
+    if (p.nota) { const n = el("div", "nota"); n.innerHTML = "<b>Claude:</b> " + md(p.nota); t.append(n); }
     const sel = el("select"); sel.setAttribute("aria-label", "Estado del pedido"); Object.entries(EST).forEach(([k, n]) => sel.append(Object.assign(el("option", null, n), { value: k }))); sel.value = p.estado;
     sel.onchange = () => enviar({ tipo: "pedido-estado", pid: p.id, estado: sel.value }); r.append(t, sel); f.append(r);
   });

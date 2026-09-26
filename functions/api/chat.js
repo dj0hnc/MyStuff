@@ -1,6 +1,6 @@
 // Chat de los paneles: Gemini con el "cerebro" del proyecto (panel/cerebro/comun.md + <proyecto>.md) y su estado vivo.
 // POST /api/chat {proyecto:"clipper"|"rave"|"karen", mensajes:[{rol:"yo"|"fabrica", texto}], quien} -> {respuesta, pedido?}
-// Secretos en Cloudflare: GEMINI_API_KEY. KV: ESTADO (pedidos por proyecto, ver estado.js). El PIN lo cuida _middleware.js.
+// Secretos en Cloudflare: ANTHROPIC_API_KEY (si está, contesta Claude) y/o GEMINI_API_KEY (respaldo). KV: ESTADO (pedidos por proyecto, ver estado.js). El PIN lo cuida _middleware.js.
 
 import { clave, PROYECTOS } from "./estado.js";
 
@@ -17,6 +17,16 @@ function leerJson(t) {
   try { return JSON.parse(t); } catch {}
   const campo = (k) => { const m = new RegExp(`"${k}"\\s*:\\s*"((?:\\\\.|[^"\\\\])*)"`).exec(t); return m ? JSON.parse(`"${m[1].replace(/\n/g, "\\n").replace(/\r/g, "").replace(/\t/g, "\\t")}"`) : null; };
   return { respuesta: campo("respuesta"), pedido: campo("pedido") };
+}
+
+// Claude: la herramienta forzada "responder" garantiza {respuesta, pedido} sin pelear con el JSON.
+async function claude(env, system, msgs) {
+  const messages = msgs.map((m) => ({ role: m.role === "model" ? "assistant" : "user", content: m.parts[0].text }));
+  const tool = { name: "responder", description: "Entrega la respuesta al usuario y, si confirmó, el pedido para Claude.", input_schema: { type: "object", properties: { respuesta: { type: "string" }, pedido: { type: ["string", "null"] } }, required: ["respuesta", "pedido"] } };
+  const r = await fetch("https://api.anthropic.com/v1/messages", { method: "POST", headers: { "content-type": "application/json", "x-api-key": env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01" },
+    body: JSON.stringify({ model: "claude-sonnet-5", max_tokens: 2048, system, messages, tools: [tool], tool_choice: { type: "tool", name: "responder" } }) });
+  if (!r.ok) throw new Error(`claude: ${r.status} ${(await r.text()).slice(0, 200)}`);
+  return (await r.json()).content?.find((c) => c.type === "tool_use")?.input || {};
 }
 
 const asset = async (env, origin, ruta) => { try { const r = await env.ASSETS.fetch(new URL(ruta, origin)); return r.ok ? await r.text() : ""; } catch { return ""; } };
@@ -37,7 +47,7 @@ async function contexto(env, origin, p) {
 }
 
 export async function onRequestPost({ request, env }) {
-  if (!env.GEMINI_API_KEY) return json({ error: "sin_clave", respuesta: "Falta conectar mi cerebro: agrega el secreto GEMINI_API_KEY en Cloudflare." }, 503);
+  if (!env.GEMINI_API_KEY && !env.ANTHROPIC_API_KEY) return json({ error: "sin_clave", respuesta: "Falta conectar mi cerebro: agrega ANTHROPIC_API_KEY o GEMINI_API_KEY en Cloudflare." }, 503);
   let b;
   try { b = await request.json(); } catch { return json({ error: "json_invalido" }, 400); }
   const p = PROYECTOS.includes(b.proyecto) ? b.proyecto : "clipper";
@@ -47,22 +57,21 @@ export async function onRequestPost({ request, env }) {
 
   const [comun, propio] = await Promise.all([asset(env, request.url, "/cerebro/comun.md"), asset(env, request.url, `/cerebro/${p}.md`)]);
   const hoy = new Date().toLocaleDateString("es-MX", { timeZone: "America/Chicago", weekday: "long", day: "numeric", month: "long", year: "numeric" });
-  const body = {
-    systemInstruction: { parts: [{ text: `${propio}\n\n${comun}\n\n${FORMATO}\n\nHoy (Texas): ${hoy}. Hablas con: ${quien}.${await contexto(env, request.url, p)}` }] },
-    contents: msgs,
-    generationConfig: { responseMimeType: "application/json", responseSchema: ESQUEMA, temperature: 0.9, maxOutputTokens: 4096, thinkingConfig: { thinkingLevel: "low" } },
-  };
-  let out = null, fallo = "";
-  for (const m of [...MODELOS, ...MODELOS]) { // segunda vuelta: Gemini da 503 seguido cuando está saturado
-    const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`, { method: "POST", headers: { "content-type": "application/json", "x-goog-api-key": env.GEMINI_API_KEY }, body: JSON.stringify(body) });
-    if (r.ok) { out = await r.json(); break; }
-    fallo = `${m}: ${r.status} ${(await r.text()).slice(0, 200)}`;
-    await new Promise((s) => setTimeout(s, 800));
+  const system = `${propio}\n\n${comun}\n\n${FORMATO}\n\nHoy (Texas): ${hoy}. Hablas con: ${quien}.${await contexto(env, request.url, p)}`;
+  let resp = null, fallo = "";
+  if (env.ANTHROPIC_API_KEY) { try { resp = await claude(env, system.replace(/\nResponde SOLO JSON:.*$/s, "\nEntrega tu respuesta con la herramienta responder."), msgs); } catch (e) { fallo = e.message; } }
+  if (!resp && env.GEMINI_API_KEY) {
+    const body = { systemInstruction: { parts: [{ text: system }] }, contents: msgs,
+      generationConfig: { responseMimeType: "application/json", responseSchema: ESQUEMA, temperature: 0.9, maxOutputTokens: 4096, thinkingConfig: { thinkingLevel: "low" } } };
+    for (const m of [...MODELOS, ...MODELOS]) { // segunda vuelta: Gemini da 503 seguido cuando está saturado
+      const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`, { method: "POST", headers: { "content-type": "application/json", "x-goog-api-key": env.GEMINI_API_KEY }, body: JSON.stringify(body) });
+      if (r.ok) { const out = await r.json(); try { resp = leerJson(out.candidates?.[0]?.content?.parts?.filter((x) => !x.thought).map((x) => x.text).join("") || "{}"); } catch { resp = {}; } break; }
+      fallo = `${m}: ${r.status} ${(await r.text()).slice(0, 200)}`;
+      await new Promise((s) => setTimeout(s, 800));
+    }
   }
-  if (!out) return json({ respuesta: "Gemini está saturado o sin cuota ahorita. Intenta en un rato, o deja tu idea como pedido directo.", detalle: fallo }, 502);
+  if (!resp) return json({ respuesta: "Mi cerebro está saturado ahorita. Intenta en un rato, o deja tu idea como pedido directo.", detalle: fallo }, 502);
 
-  let resp;
-  try { resp = leerJson(out.candidates?.[0]?.content?.parts?.filter((x) => !x.thought).map((x) => x.text).join("") || "{}"); } catch { resp = {}; }
   const respuesta = String(resp.respuesta || "No entendí, ¿me lo dices de otra forma?").slice(0, 4000);
   const pedido = resp.pedido ? String(resp.pedido).slice(0, 600) : null;
 

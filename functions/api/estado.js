@@ -3,7 +3,7 @@
 // POST /api/estado  -> {tipo, quien, pin?, ...}:
 //   {tipo:"video", id, cambios:{tiktok,youtube,vyro,vtt,vyt,nota}}
 //   {tipo:"pedido", texto}
-//   {tipo:"pedido-estado", pid, estado:"nuevo"|"produccion"|"listo"}
+//   {tipo:"pedido-estado", pid, estado:"nuevo"|"produccion"|"listo", nota?}  (nota = respuesta de Claude, se ve bajo el pedido)
 // Requiere un KV enlazado como ESTADO. El PIN lo cuida functions/_middleware.js.
 // ponytail: un solo documento en KV, último que escribe gana; sobra para 2-3 personas. Si crece, pasar a D1.
 
@@ -50,6 +50,7 @@ export async function onRequestPost({ request, env }) {
     const p = e.pedidos.find((x) => x.id === b.pid);
     if (!p || !["nuevo", "produccion", "listo"].includes(b.estado)) return json({ error: "pedido" }, 400);
     p.estado = b.estado; que = `marcó pedido como ${b.estado}`;
+    if (b.nota) { p.nota = texto(b.nota, 1500); que = `respondió: ${p.nota.slice(0, 60)}`; }
   } else return json({ error: "tipo" }, 400);
 
   if (que) e.bitacora = [{ quien, que, at: ahora }, ...e.bitacora].slice(0, 150);

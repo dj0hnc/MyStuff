@@ -65,7 +65,13 @@
   .caja { background: var(--panel); border: 1px solid var(--linea); border-radius: 14px; padding: 10px 12px; }
   .ped { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; background: var(--panel); border: 1px solid var(--linea); border-radius: 14px; padding: 10px 12px; }
   .ped small { display: block; color: var(--suave); font-size: 12px; margin-top: 2px; }
-  .ped.listo { opacity: 0.55; }
+  .ped.listo { opacity: 0.7; }
+  .nota { margin-top: 8px; padding: 8px 10px; border-left: 3px solid var(--b); background: var(--fondo); border-radius: 8px; font-size: 14px; }
+  .nota p { margin: 0 0 6px; } .nota p:last-child { margin: 0; } .nota ul { margin: 4px 0; padding-left: 18px; }
+  .listos { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+  .listos figure { margin: 0; background: var(--panel); border: 1px solid var(--linea); border-radius: 14px; padding: 8px; display: grid; gap: 6px; }
+  .listos video { width: 100%; aspect-ratio: 9/16; object-fit: cover; border-radius: 10px; background: #000; }
+  .listos figcaption { font-size: 13px; font-weight: 700; }
   select, .campo { background: var(--panel-2); color: var(--texto); border: 1px solid var(--linea); border-radius: 12px; padding: 10px; font: 600 15px var(--leer); }
   .campo { flex: 1; min-width: 200px; }
   .log { display: grid; gap: 6px; }
@@ -172,6 +178,17 @@ function vistaInicio() {
     m.append(el("div", "lbl", cfg.meta.titulo), num, barra, el("p", "sub", cfg.meta.texto)); f.append(m);
   }
   const L = el("div", "lecturas"); cfg.lecturas.forEach(([x, n]) => { const d = el("div", "lectura"); d.append(el("b", null, x), el("span", null, n)); L.append(d); }); f.append(L);
+  if (cfg.videos?.length) { // videos que la Fábrica terminó para este proyecto
+    f.append(el("h2", null, "Listos para subir"));
+    const g = el("div", "listos");
+    cfg.videos.slice().reverse().forEach((v) => {
+      const fig = el("figure"), vid = el("video"); vid.src = v.video; vid.controls = true; vid.playsInline = true; vid.preload = "metadata";
+      const fila = el("div", "fila"), dl = el("a", "btn mini a", "Guardar"); dl.href = v.video; dl.download = ""; fila.append(dl);
+      if (v.caption) { const c = el("button", "btn mini", "Copiar texto"); c.type = "button"; c.onclick = async () => { try { await navigator.clipboard.writeText(v.caption); toast("Texto copiado"); } catch { toast(v.caption); } }; fila.append(c); }
+      fig.append(vid, el("figcaption", null, v.titulo), fila); g.append(fig);
+    });
+    f.append(g);
+  }
   f.append(grande(cfg.botonGrande[0], cfg.botonGrande[1], () => abrirSala(cfg.botonGrande[2])));
   const pend = (srv.pedidos || []).filter((p) => p.estado !== "listo");
   f.append(el("h2", null, "Ideas en marcha"));
@@ -198,6 +215,7 @@ function vistaTemas() {
 function filaPedido(p) {
   const r = el("div", "ped" + (p.estado === "listo" ? " listo" : "")), t = el("div");
   t.append(document.createTextNode(p.texto), el("small", null, `${p.quien} · ${hace(p.at)}`));
+  if (p.nota) { const n = el("div", "nota"); n.innerHTML = "<b>Claude:</b> " + md(p.nota); t.append(n); }
   const sel = el("select"); sel.setAttribute("aria-label", "Estado"); Object.entries(EST).forEach(([k, n]) => sel.append(Object.assign(el("option", null, n), { value: k }))); sel.value = p.estado;
   sel.onchange = () => enviar({ tipo: "pedido-estado", pid: p.id, estado: sel.value }); r.append(t, sel); return r;
 }
