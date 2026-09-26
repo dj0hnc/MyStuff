@@ -216,7 +216,7 @@
 <div class="wrap">
   <section class="cabina" aria-label="Estado general">
     <div class="top">
-      <h1><a href="/" style="color:var(--cian-suave);text-decoration:none" aria-label="Volver a paneles">‹</a> Fábrica de <span>Clips</span></h1>
+      <h1><a href="/" style="color:var(--cian-suave);text-decoration:none" aria-label="Volver al inicio">‹</a> Fábrica de <span>Clips</span></h1>
       <div class="fila" style="align-items:center"><span class="enlace" id="enlace"><i></i><span>CONECTANDO…</span></span><div class="reloj-tx" id="reloj">--:-- TEXAS</div><button class="btn mini engrane" id="engrane" type="button" aria-label="Ajustes">⚙</button></div>
     </div>
     <div class="tripu" id="tripu"></div>
@@ -704,6 +704,8 @@ document.querySelectorAll(".tab").forEach((x) => x.setAttribute("aria-selected",
   barraTripu();
   try { data = await (await fetch("data.json", { cache: "no-store" })).json(); data.videos.forEach((v, i) => { v._fecha0 = v.fecha; v._k = (v.fecha || "9999") + String(v.orden || 0).padStart(3, "0") + String(i).padStart(3, "0"); }); }
   catch { $("#vista").replaceChildren(el("div", "vacio", "No se pudo cargar la lista. Revisa tu conexión y recarga.")); return; }
+  const yo = await fetch("/api/yo").then((r) => r.json()).catch(() => ({})); // quien entró con su PIN
+  if (yo.nombre) { quien = yo.nombre; ls.set("puente-quien", quien); }
   await traer(); barraTripu(); render(); reloj(); setInterval(reloj, 1000);
   // Sincroniza con la tripulación cada 15 s (y al volver a la pestaña).
   const sync = async () => { if (document.visibilityState !== "visible") return; const antes = JSON.stringify(srv); await traer(); if (JSON.stringify(srv) !== antes) render(); }; // solo redibuja si hubo cambios

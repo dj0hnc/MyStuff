@@ -124,7 +124,7 @@
 <body>
 <div class="wrap">
   <header class="top">
-    <div><a class="volver" href="/">← Paneles</a><h1 id="titulo"></h1><p class="lema" id="lema"></p></div>
+    <div><a class="volver" href="/">← Inicio</a><h1 id="titulo"></h1><p class="lema" id="lema"></p></div>
     <div class="fila" style="align-items:center"><div class="tripu" id="tripu"></div><button class="btn mini" id="engrane" type="button" aria-label="Ajustes" style="font-size:18px;padding:4px 11px">⚙</button></div>
   </header>
   <main id="vista"><div class="vacio">Cargando…</div></main>
@@ -369,7 +369,10 @@ document.querySelectorAll(".tab").forEach((x) => x.setAttribute("aria-selected",
   $("#titulo").innerHTML = cfg.titulo; $("#lema").textContent = cfg.lema;
   $("#salaNombre").textContent = cfg.chatNombre; $("#salaSub").textContent = cfg.chatSub; $("#fabTxt").textContent = cfg.fab || "Platicar";
   cfg._base = { tripulacion: cfg.tripulacion, redes: cfg.redes || ["tiktok", "instagram", "youtube"] }; $("#engrane").onclick = abrirAjustes;
-  await traer(); quien = ls.get(`quien-${P}`, cfg.tripulacion[0]); barraTripu(); render();
+  await traer(); quien = ls.get(`quien-${P}`, cfg.tripulacion[0]);
+  const yo = await fetch("/api/yo").then((r) => r.json()).catch(() => ({})); // quien entró con su PIN
+  if (yo.nombre) { quien = yo.nombre; ls.set(`quien-${P}`, quien); }
+  barraTripu(); render();
   setInterval(async () => { if (document.visibilityState !== "visible") return; const antes = JSON.stringify(srv); await traer(); if (JSON.stringify(srv) !== antes) render(); }, 15000);
 })();
 </script>
