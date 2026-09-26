@@ -55,6 +55,7 @@ export const RemotionRoot: React.FC = () => {
           efectos: true,
           fondoVideo: "",
           fondoImagen: "",
+          textoAbajo: false,
           fondoClips: false,
           segundosPorClip: 3.5,
           clips: [],

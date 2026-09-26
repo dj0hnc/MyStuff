@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="icon" href="/icono-192.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Puente">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#05080f">
+<title>Puente de Mando</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@800&family=Rajdhani:wght@600;700&display=swap">
+<style>
+  :root { color-scheme: dark; --casco: #05080f; --panel: #0a1322; --linea: #1b3656; --cian: #29e7ff; --suave: #7fb8d6; --texto: #d6ecff; --yo: #29e7ff; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    min-height: 100vh; color: var(--texto); font: 600 16px/1.4 "Rajdhani", system-ui, sans-serif;
+    background: radial-gradient(1000px 520px at 50% -180px, color-mix(in srgb, var(--yo) 22%, #05080f), transparent 60%), repeating-linear-gradient(0deg, rgba(41,231,255,.035) 0 1px, transparent 1px 4px), var(--casco);
+    padding: calc(20px + env(safe-area-inset-top, 0px)) 16px calc(28px + env(safe-area-inset-bottom, 0px));
+  }
+  .wrap { max-width: 980px; margin: 0 auto; display: grid; gap: 18px; }
+  .hola { display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center; }
+  .avatar { width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center; font: 800 24px "Orbitron", sans-serif; color: var(--casco); background: var(--yo); box-shadow: 0 0 24px color-mix(in srgb, var(--yo) 50%, transparent); }
+  h1 { margin: 0; font: 800 clamp(20px, 5.5vw, 30px)/1.1 "Orbitron", sans-serif; letter-spacing: .04em; }
+  h1 span { color: var(--yo); }
+  .hola p { margin: 2px 0 0; color: var(--suave); }
+  h2 { margin: 6px 0 0; font: 800 13px "Orbitron", sans-serif; letter-spacing: .16em; color: var(--yo); display: flex; gap: 10px; align-items: center; }
+  h2::after { content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--linea), transparent); }
+  .btn { appearance: none; display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 9px 14px; border-radius: 12px; border: 1px solid var(--linea); background: var(--panel); color: var(--texto); font: 700 15px "Rajdhani", sans-serif; cursor: pointer; text-decoration: none; }
+  .btn:hover { border-color: var(--yo); }
+  .btn:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid #ffb020; outline-offset: 2px; }
+  .puertas { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+  a.puerta { position: relative; display: grid; gap: 8px; align-content: start; min-height: 180px; padding: 20px; border-radius: 18px; text-decoration: none; color: var(--texto);
+    border: 1px solid var(--c); background: linear-gradient(160deg, color-mix(in srgb, var(--c) 18%, #0a1322), #0a1322 70%); transition: box-shadow .2s, transform .2s; }
+  a.puerta:hover { box-shadow: 0 0 28px color-mix(in srgb, var(--c) 45%, transparent); transform: translateY(-2px); }
+  a.puerta.primera { min-height: 210px; }
+  .puerta .etq { font: 800 11px "Orbitron", sans-serif; letter-spacing: .16em; color: var(--c); }
+  .puerta b { font: 800 clamp(22px, 5.5vw, 28px)/1.05 "Orbitron", sans-serif; letter-spacing: .04em; }
+  .puerta small { color: var(--suave); font-size: 15px; }
+  .puerta .cifras { font-weight: 700; font-size: 15px; }
+  .puerta .ir { margin-top: auto; font-weight: 700; color: var(--c); }
+  .hoy { display: grid; gap: 8px; }
+  .hoy a { display: grid; grid-template-columns: 52px 1fr auto; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 14px; border: 1px solid #ffb020; background: rgba(255,176,32,.08); color: var(--texto); text-decoration: none; }
+  .hoy a:hover { background: rgba(255,176,32,.16); }
+  .hoy a b { font: 800 16px "Orbitron", sans-serif; color: #ffb020; text-align: center; }
+  .hoy small { color: var(--suave); display: block; }
+  .cuenta { display: grid; gap: 12px; padding: 16px; border: 1px solid var(--linea); border-radius: 16px; background: rgba(10,19,34,.8); }
+  .cuenta form { display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; }
+  @media (max-width: 560px) { .cuenta form { grid-template-columns: 1fr 1fr; } .cuenta form .btn { grid-column: 1 / -1; } }
+  .cuenta input { width: 100%; padding: 11px; border-radius: 10px; border: 1px solid var(--linea); background: var(--casco); color: var(--texto); font: 600 16px "Rajdhani", sans-serif; letter-spacing: .2em; }
+  .msg { font-size: 14px; color: var(--suave); }
+  .fila { display: flex; flex-wrap: wrap; gap: 8px; }
+  .nota { color: var(--suave); font-size: 15px; margin: 0; }
+  @media (max-width: 560px) { .hola p { display: none; } .hola .btn span { display: none; } .avatar { width: 50px; height: 50px; font-size: 21px; } }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hola">
+    <div class="avatar" id="avatar" aria-hidden="true">·</div>
+    <div><h1 id="saludo">Puente de <span>Mando</span></h1><p id="sub">Tus proyectos, cada uno con su panel y su chat.</p></div>
+    <a class="btn" href="/__salir" title="Cambiar de persona">⇄ <span>Cambiar</span></a>
+  </header>
+  <section id="hoySec" hidden><h2 id="hoyTit">LO TUYO HOY</h2><div class="hoy" id="hoy"></div></section>
+  <section><h2>TUS PROYECTOS</h2><nav class="puertas" id="puertas" aria-label="Proyectos"></nav></section>
+  <section class="cuenta" id="avisos" aria-label="Avisos"><h2 style="margin:0">🔔 AVISOS EN ESTE DISPOSITIVO</h2><div id="avisosCaja"><p class="nota">Cargando…</p></div></section>
+  <section class="cuenta" aria-label="Mi cuenta">
+    <h2 style="margin:0">MI CUENTA</h2>
+    <p class="nota" id="pinInfo">Cambia tu PIN de entrada. Solo cambia el tuyo.</p>
+    <form id="pinForm"><input name="actual" type="password" inputmode="numeric" autocomplete="current-password" placeholder="PIN actual" required aria-label="PIN actual"><input name="nuevo" type="password" inputmode="numeric" autocomplete="new-password" placeholder="PIN nuevo" required minlength="4" maxlength="12" pattern="\d{4,12}" aria-label="PIN nuevo (4 a 12 números)"><button class="btn" type="submit">Cambiar PIN</button></form>
+    <div class="msg" id="pinMsg" aria-live="polite"></div>
+    <p class="nota">Instálalo como app: iPhone/iPad → Safari → Compartir → <b>Agregar a inicio</b>. Android → Chrome → ⋮ → <b>Instalar app</b>.</p>
+    <div class="fila"><button class="btn" type="button" onclick="Taller.abrir()">🎬 Taller</button><a class="btn" href="/__salir">Cambiar de persona</a><a class="btn" href="/__salir" style="color:#ff8fa3">Cerrar sesión</a></div>
+  </section>
+</div>
+<script src="/taller.js"></script>
+<script src="/avisos.js"></script>
+<script>
+// Inicio personal: quién eres (/api/yo), tus proyectos en tu orden con sus números en vivo, y lo tuyo de hoy.
+const PROY = {
+  clipper: { n: "Fábrica de Clips", c: "#29e7ff", etq: "DINERO RÁPIDO", d: "@dj0hnclipper y @j0_clip1. OVNIs, Roswell, NASA, persecuciones, historias y Ketone-IQ.", url: "/clipper" },
+  rave: { n: "The Rave Couple", c: "#39ff14", etq: "JUAN + KAREN", d: "@theravecouple.official. El regreso de Juan, Karen protagonista, Old School.", url: "/rave" },
+  karen: { n: "Estudio de Karen", c: "#ff5fa2", etq: "KAREN", d: "@karena.reyes y @karenareyesnails. Mexicana en Texas, familia, humor y uñas.", url: "/karen" },
+};
+const $ = (s) => document.querySelector(s);
+const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; };
+const get = (u) => fetch(u, { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+const saludo = () => { const h = +new Intl.DateTimeFormat("en-US", { timeZone: "America/Chicago", hour: "numeric", hour12: false }).format(new Date()) % 24; return h < 12 ? "Buenos días" : h < 19 ? "Buenas tardes" : "Buenas noches"; };
+
+(async () => {
+  const yo = (await get("/api/yo")) || {};
+  const orden = yo.proyectos || ["clipper", "rave", "karen"];
+  Avisos.tarjeta(document.getElementById("avisosCaja"), { usuario: yo.usuario });
+  if (yo.nombre) {
+    document.documentElement.style.setProperty("--yo", yo.color);
+    $("#avatar").textContent = yo.nombre[0]; $("#saludo").innerHTML = `${saludo()}, <span></span>`; $("#saludo span").textContent = yo.nombre;
+    try { localStorage.setItem("puente-quien", JSON.stringify(yo.nombre)); localStorage.setItem("puente-ultimo", yo.usuario); } catch {}
+    if (yo.pinPropio) $("#pinInfo").textContent = "Ya tienes tu propio PIN. Puedes cambiarlo cuando quieras.";
+    else $("#pinInfo").textContent = "Hoy entras con el PIN general. Ponte uno propio: solo tú lo sabrás.";
+  }
+  // puertas en tu orden
+  const nav = $("#puertas"), cifras = {};
+  orden.forEach((k, i) => {
+    const p = PROY[k]; if (!p) return;
+    const a = el("a", "puerta" + (i ? "" : " primera")); a.href = p.url; a.style.setProperty("--c", p.c);
+    cifras[k] = el("span", "cifras", "…");
+    a.append(el("span", "etq", i ? p.etq : "TU PRINCIPAL · " + p.etq), el("b", null, p.n), el("small", null, p.d), cifras[k], el("span", "ir", "Entrar →")); nav.append(a);
+  });
+  // números en vivo de cada proyecto
+  const [d, e, ek, er, ck, cr] = await Promise.all([get("/data.json"), get("/api/estado"), get("/api/estado?p=karen"), get("/api/estado?p=rave"), get("/proyectos/karen.json"), get("/proyectos/rave.json")]);
+  const hoy = $("#hoy"), agrega = (b, titulo, sub, url) => { const a = el("a"); a.href = url; const t = el("div", null, titulo); t.append(el("small", null, sub)); a.append(el("b", null, b), t, el("span", null, "▶")); hoy.append(a); };
+  let cola = [];
+  if (d) {
+    const sv = (v) => e?.videos?.[v.id] || {}, sub = (v) => ("tiktok" in sv(v) ? sv(v).tiktok : v.tiktok), vy = (v) => ("vyro" in sv(v) ? sv(v).vyro : v.vyro);
+    cola = d.videos.map((v, i) => ({ v, k: (v.fecha || "9999") + String(v.orden || 0).padStart(3, "0") + String(i).padStart(3, "0") })).filter(({ v }) => v.serie !== "ketone" && !sub(v)).sort((a, b) => a.k.localeCompare(b.k)).map((x) => x.v);
+    const vyro = d.videos.filter((v) => v.serie === "ketone" && !vy(v)).length;
+    if (cifras.clipper) cifras.clipper.textContent = `${d.videos.length} videos · ${cola.length} en cola${vyro ? ` · ${vyro} para Vyro` : ""}`;
+  }
+  const ideas = (s) => (s?.pedidos || []).filter((x) => x.estado !== "listo"), cuenta = (s, e) => (s?.pedidos || []).filter((x) => e.includes(x.estado)).length;
+  if (cifras.karen) cifras.karen.textContent = `${cuenta(ek, ["idea"])} ideas · ${cuenta(ek, ["nuevo", "produccion"])} en producción · ${(ck?.videos || []).length} videos listos`;
+  if (cifras.rave) cifras.rave.textContent = `${cuenta(er, ["idea"])} ideas · ${cuenta(er, ["nuevo", "produccion"])} en producción · ${(cr?.videos || []).length} episodios listos`;
+  // lo tuyo hoy: según tu proyecto principal
+  if (orden[0] === "clipper") cola.slice(0, 3).forEach((v, i) => agrega(i ? `#${i + 1}` : "YA", v.titulo, i ? "En cola · Fábrica de Clips" : "Siguiente a publicar · toca para ir", "/clipper#mision"));
+  else {
+    const mias = ideas(orden[0] === "karen" ? ek : er).slice(0, 3);
+    mias.forEach((x) => agrega(x.estado === "idea" ? "💡" : "⚙", x.texto.split("\n")[0].slice(0, 90), { idea: "Idea por aprobar · toca para aprobarla", nuevo: "Aprobada · en fila para producir", produccion: "La Fábrica lo está haciendo" }[x.estado], `${PROY[orden[0]].url}#ideas`));
+    if (!mias.length) agrega("💬", "¿Qué grabo hoy?", "Toca y tu productora te da 3 ideas listas", `${PROY[orden[0]].url}#inicio`);
+  }
+  $("#hoySec").hidden = !hoy.children.length;
+})();
+
+$("#pinForm").onsubmit = async (ev) => {
+  ev.preventDefault(); const f = ev.target, msg = $("#pinMsg"); msg.textContent = "Guardando…";
+  const r = await fetch("/api/yo", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ actual: f.actual.value, nuevo: f.nuevo.value }) }).catch(() => null);
+  const d = r ? await r.json().catch(() => ({})) : {};
+  msg.textContent = r?.ok ? "✓ Listo. Desde ahora entras con tu PIN nuevo." : d.mensaje || "No se pudo. Revisa la señal.";
+  if (r?.ok) f.reset();
+};
+</script>
+</body>
+</html>

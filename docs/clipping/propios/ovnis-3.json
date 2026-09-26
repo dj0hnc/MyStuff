@@ -1,0 +1,269 @@
+{
+ "cuenta": "@dj0hnclipper",
+ "textoAbajo": true,
+ "voz": {
+  "proveedor": "gemini",
+  "voice": "Charon",
+  "estilo": "Speak in American English like a gripping documentary narrator revealing classified files. Serious, a little mysterious, brisk pace with short pauses."
+ },
+ "estilo": {
+  "accent": "#39FF14"
+ },
+ "videos": [
+  {
+   "id": "ovni-14-shape",
+   "hook": "It changes shape",
+   "kicker": "DECLASSIFIED",
+   "cta": "Follow for more cases",
+   "frases": [
+    "This is one of the files Congress asked the Pentagon for in 2026.",
+    "A U.S. military infrared sensor in the Indo-Pacific tracks this object.",
+    "Whoever uploaded it wrote: possible changes of shape.",
+    "The clip is sped up eight times and enhanced. Watch the shape.",
+    "The Pentagon's description offers no explanation.",
+    "What do you see?"
+   ],
+   "palabrasClave": [
+    "Congress",
+    "Pentagon",
+    "infrared",
+    "shape",
+    "eight",
+    "explanation"
+   ],
+   "fondos": [
+    "night sky"
+   ],
+   "fuentes": [
+    "https://www.dvidshub.net/video/1007723#5-41"
+   ],
+   "caption": "'Possible changes of shape.' A Pentagon UAP file, sped up 8x. #ufo #uap #pentagon #declassified #mystery"
+  },
+  {
+   "id": "ovni-15-formation",
+   "hook": "Four objects in formation",
+   "kicker": "DECLASSIFIED",
+   "cta": "Follow for more cases",
+   "frases": [
+    "The file's title: UAP, USO formation.",
+    "A military infrared sensor catches four objects moving together across the frame.",
+    "The camera zooms in. Still four.",
+    "The Pentagon released it in 2026, with no explanation.",
+    "Birds? Drones? Something else?"
+   ],
+   "palabrasClave": [
+    "USO",
+    "formation",
+    "four",
+    "together",
+    "zooms",
+    "explanation"
+   ],
+   "fondos": [
+    "night sky"
+   ],
+   "fuentes": [
+    "https://www.dvidshub.net/video/1007708#7-38"
+   ],
+   "caption": "Four objects moving in formation. Pentagon file released in 2026. #ufo #uap #pentagon #declassified #uso"
+  },
+  {
+   "id": "ovni-16-afghanistan",
+   "hook": "In and out of the clouds",
+   "kicker": "DECLASSIFIED",
+   "cta": "Follow for more cases",
+   "frases": [
+    "November 23, 2020. Over Afghanistan.",
+    "A military infrared sensor films a sphere moving in and out of the clouds.",
+    "Someone zoomed and enhanced it before uploading it.",
+    "Here it is slowed down, and then the original.",
+    "Still no explanation."
+   ],
+   "palabrasClave": [
+    "Afghanistan",
+    "sphere",
+    "clouds",
+    "enhanced",
+    "original",
+    "explanation"
+   ],
+   "fondos": [
+    "night sky"
+   ],
+   "fuentes": [
+    "https://www.dvidshub.net/video/1007713#13.5-28",
+    "https://www.dvidshub.net/video/1007713#32-47"
+   ],
+   "caption": "A sphere moving in and out of the clouds over Afghanistan, 2020. #ufo #uap #pentagon #declassified #mystery"
+  },
+  {
+   "id": "ovni-17-erratic",
+   "hook": "Erratic movement?",
+   "kicker": "DECLASSIFIED",
+   "cta": "Follow for more cases",
+   "frases": [
+    "August 2022. Europe.",
+    "The file is called: spherical UAP, erratic movement.",
+    "But the Pentagon warns this video was digitally altered.",
+    "And that changes how the object seems to move.",
+    "So what are we really looking at?"
+   ],
+   "palabrasClave": [
+    "Europe",
+    "spherical",
+    "erratic",
+    "altered",
+    "changes",
+    "really"
+   ],
+   "fondos": [
+    "night sky"
+   ],
+   "fuentes": [
+    "https://www.dvidshub.net/video/1007711#0-45"
+   ],
+   "caption": "The file says 'erratic movement.' The Pentagon says the video was altered. You decide. #ufo #uap #pentagon #declassified"
+  },
+  {
+   "id": "ovni-18-yellowsea",
+   "hook": "Locked on at sea",
+   "kicker": "DECLASSIFIED",
+   "cta": "Follow for more cases",
+   "frases": [
+    "2023. The Yellow Sea.",
+    "A U.S. military infrared sensor locks onto this dark object and follows it.",
+    "Nineteen seconds of footage.",
+    "It is still listed as an unresolved case.",
+    "What is it?"
+   ],
+   "palabrasClave": [
+    "Yellow",
+    "Sea",
+    "infrared",
+    "dark",
+    "object",
+    "unresolved"
+   ],
+   "fondos": [
+    "night sky"
+   ],
+   "fuentes": [
+    "https://www.dvidshub.net/video/1023403#0-19"
+   ],
+   "caption": "A dark object tracked over the Yellow Sea, 2023. Still unresolved. #ufo #uap #pentagon #declassified #mystery"
+  },
+  {
+   "id": "ovni-19-f18",
+   "hook": "Locked on, then lost",
+   "kicker": "DECLASSIFIED",
+   "cta": "Follow for more cases",
+   "frases": [
+    "2022. An F/A-18's infrared camera tracks something over North America.",
+    "At fourteen seconds, the targeting box locks on.",
+    "At twenty-seven seconds, it loses the track.",
+    "The file's title: F/A-18 FLIR UAP.",
+    "No explanation given."
+   ],
+   "palabrasClave": [
+    "F/A-18",
+    "infrared",
+    "fourteen",
+    "locks",
+    "twenty-seven",
+    "loses"
+   ],
+   "fondos": [
+    "night sky"
+   ],
+   "fuentes": [
+    "https://www.dvidshub.net/video/1007781#0-28"
+   ],
+   "caption": "An F/A-18 locks onto a UAP, then loses it. Pentagon file. #ufo #uap #pentagon #declassified #f18"
+  },
+  {
+   "id": "ovni-20-eastcoast",
+   "hook": "December 2019, East Coast",
+   "kicker": "DECLASSIFIED",
+   "cta": "Follow for more cases",
+   "frases": [
+    "December 2019. The U.S. East Coast.",
+    "A military sensor tracks a bright object, switching camera modes to keep it in view.",
+    "Someone uploaded it to a classified network in 2020.",
+    "Congress got it in 2026.",
+    "It is still unexplained."
+   ],
+   "palabrasClave": [
+    "December",
+    "East",
+    "Coast",
+    "bright",
+    "classified",
+    "Congress"
+   ],
+   "fondos": [
+    "night sky"
+   ],
+   "fuentes": [
+    "https://www.dvidshub.net/video/1007797#0-23"
+   ],
+   "caption": "A bright object tracked off the U.S. East Coast, December 2019. #ufo #uap #pentagon #declassified #mystery"
+  },
+  {
+   "id": "ovni-21-pacific",
+   "hook": "Filmed off a Navy screen",
+   "kicker": "DECLASSIFIED",
+   "cta": "Follow for more cases",
+   "frases": [
+    "2019. The Pacific Ocean.",
+    "Someone films a military infrared screen with a handheld device.",
+    "The sensor zooms in on a dark object.",
+    "Then it fades into the background.",
+    "Five clips were recorded at the same time. The case is still unresolved."
+   ],
+   "palabrasClave": [
+    "Pacific",
+    "infrared",
+    "screen",
+    "zooms",
+    "dark",
+    "unresolved"
+   ],
+   "fondos": [
+    "night sky"
+   ],
+   "fuentes": [
+    "https://www.dvidshub.net/video/1017805#8-64",
+    "https://www.dvidshub.net/video/1017806#2-29"
+   ],
+   "caption": "Filmed off a Navy infrared screen over the Pacific, 2019. Still unresolved. #ufo #uap #pentagon #declassified #navy"
+  },
+  {
+   "id": "ovni-22-pulsing",
+   "hook": "Pulsing over water?",
+   "kicker": "DECLASSIFIED",
+   "cta": "Follow for more cases",
+   "frases": [
+    "The file's title: spherical UAP, pulsing over water.",
+    "A military infrared sensor keeps it centered for minutes.",
+    "The Pentagon released it in 2026.",
+    "Its description gives no explanation.",
+    "Does it look like it's pulsing to you?"
+   ],
+   "palabrasClave": [
+    "spherical",
+    "pulsing",
+    "water",
+    "minutes",
+    "Pentagon",
+    "explanation"
+   ],
+   "fondos": [
+    "night sky"
+   ],
+   "fuentes": [
+    "https://www.dvidshub.net/video/1007718#1-47"
+   ],
+   "caption": "'Spherical UAP pulsing over water.' Pentagon file released in 2026. #ufo #uap #pentagon #declassified #mystery"
+  }
+ ]
+}

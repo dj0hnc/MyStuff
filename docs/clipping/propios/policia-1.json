@@ -1,0 +1,140 @@
+{
+ "cuenta": "@dj0hnclipper",
+ "textoAbajo": true,
+ "voz": {
+  "proveedor": "gemini",
+  "voice": "Charon",
+  "estilo": "Speak in American English like an intense, gripping narrator of a real police chase show. Urgent, punchy, fast pace, short dramatic pauses."
+ },
+ "estilo": {
+  "accent": "#FF2D2D"
+ },
+ "videos": [
+  {
+   "id": "poli-1-20000lbs",
+   "hook": "20,000 pounds on board",
+   "kicker": "REAL CHASE",
+   "cta": "Follow for more chases",
+   "frases": [
+    "December 2, 2025. Eastern Pacific.",
+    "A go-fast boat loaded with packages runs from the U.S. Coast Guard.",
+    "A helicopter crew moves in and disables the engines.",
+    "Then the cutters close in.",
+    "More than twenty thousand pounds of narcotics.",
+    "The Coast Guard's biggest single seizure at sea in over eighteen years.",
+    "Would you run?"
+   ],
+   "palabrasClave": [
+    "go-fast",
+    "packages",
+    "Coast",
+    "Guard",
+    "disables",
+    "twenty",
+    "thousand",
+    "eighteen"
+   ],
+   "fondos": [
+    "speedboat ocean"
+   ],
+   "fuentes": [
+    "https://www.dvidshub.net/video/989076#2-100",
+    "https://www.dvidshub.net/video/989073#20-67",
+    "https://www.dvidshub.net/video/989074#30-80"
+   ],
+   "caption": "The Coast Guard's biggest at-sea drug bust in 18 years: 20,000+ lbs. Real footage. #coastguard #chase #drugbust #police #realfootage"
+  },
+  {
+   "id": "poli-2-blackhawk",
+   "hook": "They tried to dump it",
+   "kicker": "REAL CHASE",
+   "cta": "Follow for more chases",
+   "frases": [
+    "May 2026, off Puerto Rico.",
+    "A small boat with three people and visible packages heads for the coast.",
+    "A Black Hawk and two interceptor boats go after it.",
+    "The suspects try to throw the packages overboard.",
+    "Agents recover the bales anyway.",
+    "Three hundred ninety-one pounds of cocaine. Three arrested.",
+    "Bad plan."
+   ],
+   "palabrasClave": [
+    "packages",
+    "Black",
+    "Hawk",
+    "overboard",
+    "bales",
+    "cocaine",
+    "arrested"
+   ],
+   "fondos": [
+    "helicopter night ocean"
+   ],
+   "fuentes": [
+    "https://www.dvidshub.net/video/1008245#48-130"
+   ],
+   "caption": "A Black Hawk chase off Puerto Rico ends with 391 lbs of cocaine and 3 arrests. Official CBP footage. #chase #police #cocaine #blackhawk #realfootage"
+  },
+  {
+   "id": "poli-3-colombia",
+   "hook": "View from the helicopter",
+   "kicker": "REAL CHASE",
+   "cta": "Follow for more chases",
+   "frases": [
+    "May 8, 2026. Eighty miles off Cartagena, Colombia.",
+    "This is the view from a Coast Guard interdiction helicopter.",
+    "The target: a suspected drug smuggling boat.",
+    "The helicopter stops it cold.",
+    "That patrol seized more than six thousand pounds of narcotics.",
+    "Worth nearly forty-six million dollars."
+   ],
+   "palabrasClave": [
+    "Colombia",
+    "helicopter",
+    "drug",
+    "smuggling",
+    "stops",
+    "six",
+    "thousand",
+    "million"
+   ],
+   "fondos": [
+    "helicopter ocean"
+   ],
+   "fuentes": [
+    "https://www.dvidshub.net/video/1006861#2-44"
+   ],
+   "caption": "The view from a Coast Guard helicopter chasing a drug boat off Colombia. $45.8M seized. #coastguard #chase #drugbust #police #realfootage"
+  },
+  {
+   "id": "poli-4-bahamas",
+   "hook": "Caught on thermal camera",
+   "kicker": "REAL CHASE",
+   "cta": "Follow for more chases",
+   "frases": [
+    "May 3, 2026. Off Andros, Bahamas.",
+    "A Coast Guard plane tracks a suspected drug boat in the dark.",
+    "On thermal, you can see everything.",
+    "The Royal Bahamas Defence Force closes in.",
+    "Three suspects stopped. Almost two thousand six hundred pounds of marijuana.",
+    "They thought the night would hide them."
+   ],
+   "palabrasClave": [
+    "thermal",
+    "drug",
+    "boat",
+    "dark",
+    "Bahamas",
+    "marijuana",
+    "night"
+   ],
+   "fondos": [
+    "night ocean"
+   ],
+   "fuentes": [
+    "https://www.dvidshub.net/video/1005998#10-49"
+   ],
+   "caption": "A drug boat thought the dark would hide it. The thermal camera saw everything. #coastguard #chase #police #thermal #realfootage"
+  }
+ ]
+}

@@ -1,0 +1,11 @@
+# Worker de avisos del Puente de mando: despliega con `npm run avisos`
+name = "puente-avisos"
+main = "worker.js"
+compatibility_date = "2026-09-01"
+
+[triggers]
+crons = ["*/5 * * * *"]
+
+[[kv_namespaces]]
+binding = "ESTADO"
+id = "fb0d5ba69f0a4704b5ec415d3b6b9dba"

@@ -1,0 +1,89 @@
+{
+ "cuenta": "@dj0hnclipper",
+ "textoAbajo": true,
+ "voz": {
+  "proveedor": "gemini",
+  "voice": "Charon",
+  "estilo": "Speak in American English like a gripping documentary narrator revealing a classified file. Serious and a little mysterious, but at a brisk, energetic pace with short pauses."
+ },
+ "videos": [
+  {
+   "id": "roswell-2-rancher",
+   "hook": "The rancher who found it",
+   "kicker": "ROSWELL PART 2",
+   "cta": "Follow for part 3",
+   "frases": [
+    "Summer 1947. A New Mexico rancher, W. W. Brazel, finds debris scattered across his land.",
+    "Rubber strips, tinfoil, tough paper and sticks.",
+    "He takes it to the sheriff. The Army at Roswell calls it a flying disc.",
+    "Major Jesse Marcel poses with the debris.",
+    "Then the story changes. Officials say it's a radar target.",
+    "Brazel told the paper: if he ever found anything else, short of a bomb, he wasn't saying a word.",
+    "Why?"
+   ],
+   "palabrasClave": [
+    "rancher",
+    "debris",
+    "tinfoil",
+    "sheriff",
+    "flying",
+    "disc",
+    "radar",
+    "bomb"
+   ],
+   "fondos": [
+    "desert ranch"
+   ],
+   "fuentes": [
+    "public/reedit/propios/roswell/r2-titular.jpg",
+    "public/reedit/propios/roswell/r2-articulo.jpg",
+    "public/reedit/propios/roswell/r2-radar.jpg",
+    "public/reedit/propios/roswell/z2-disco.jpg",
+    "public/reedit/propios/roswell/r2-marcel.jpg",
+    "public/reedit/propios/roswell/z5-globo.jpg",
+    "public/reedit/propios/roswell/r2-titular.jpg",
+    "public/reedit/propios/roswell/r2-marcel.jpg"
+   ],
+   "caption": "The rancher who found the Roswell debris in 1947, in his own words. #roswell #ufo #history #declassified #mystery"
+  },
+  {
+   "id": "roswell-3-official",
+   "hook": "The Air Force's answer",
+   "kicker": "ROSWELL PART 3",
+   "cta": "Follow for more files",
+   "frases": [
+    "In 1994, the Air Force said Roswell was Project Mogul.",
+    "A secret train of weather balloons over six hundred feet long, built to detect Soviet nuclear tests.",
+    "Charles Moore launched it on June 4, 1947.",
+    "But what about the alien bodies?",
+    "Those stories first appeared in the late 1970s. More than thirty years later.",
+    "In 1997, the Air Force said witnesses were remembering test dummies dropped from balloons in the 1950s.",
+    "Do you believe them?"
+   ],
+   "palabrasClave": [
+    "Mogul",
+    "secret",
+    "Soviet",
+    "nuclear",
+    "bodies",
+    "thirty",
+    "dummies",
+    "believe"
+   ],
+   "fondos": [
+    "desert balloon"
+   ],
+   "fuentes": [
+    "public/reedit/propios/roswell/r3-dummy2.jpg",
+    "public/reedit/propios/roswell/r3-mogul.jpg",
+    "public/reedit/propios/roswell/r2-radar.jpg",
+    "public/reedit/propios/roswell/r3-moore.jpg",
+    "public/reedit/propios/roswell/r3-dummy1.jpg",
+    "public/reedit/propios/roswell/r2-articulo.jpg",
+    "public/reedit/propios/roswell/r3-dummy3.jpg",
+    "public/reedit/propios/roswell/r3-dummy2.jpg"
+   ],
+   "caption": "The Air Force's official answer to Roswell: Project Mogul and crash test dummies. Do you buy it? #roswell #ufo #airforce #declassified #history"
+  }
+ ]
+}

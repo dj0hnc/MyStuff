@@ -1,0 +1,318 @@
+{
+  "nombre": "Karen",
+  "titulo": "Estudio de <span>Karen</span>",
+  "lema": "Tus temas, tus ideas, tu canal. Solo tuyo.",
+  "colores": {
+    "--a": "#ff5fa2",
+    "--b": "#ffc857"
+  },
+  "tripulacion": [
+    "Karen",
+    "Juan"
+  ],
+  "chatNombre": "TU PRODUCTORA",
+  "chatSub": "Te conoce a ti y a tu canal. Dile \"apúntalo\" y se guarda.",
+  "fab": "Platicar",
+  "saludo": "¡Hola{quien}! 💖 Soy **tu productora**. Me sé tu canal de memoria: lo que te pega (ser **mexicana en Texas**, familia y humor), tus números y tu estudio de uñas.\n- Pídeme ideas para grabar hoy, de 8 a 15 segundos.\n- Te doy el gancho exacto, las tomas, el texto y los hashtags.\n- Cuando te guste una, dime **\"apúntalo\"** y queda guardada.",
+  "ideas": [
+    "¿Qué grabo hoy?",
+    "3 ideas de Mexicana en Texas",
+    "Un video con los niños",
+    "Promo para mis uñas",
+    "¿Cómo llego a los 10K?",
+    "Ideas para Día de Muertos"
+  ],
+  "meta": {
+    "titulo": "Meta: Creator Rewards de TikTok",
+    "actual": 8310,
+    "objetivo": 10000,
+    "unidad": "seguidores",
+    "texto": "Pide 10K seguidores + 100K vistas en 30 días. Te faltan ~1,700. Números del 23 de sep.",
+    "url": "https://www.tiktok.com/tiktokstudio/analytics"
+  },
+  "lecturas": [
+    [
+      "8.3K",
+      "Seguidores",
+      "https://www.tiktok.com/@karena.reyes"
+    ],
+    [
+      "292.8K",
+      "Tu video más visto (la INE)",
+      "https://www.tiktok.com/@karena.reyes/video/7536304111529086238"
+    ],
+    [
+      "8-15 s",
+      "La duración que más te jala",
+      "#temas"
+    ],
+    [
+      "#mexicana",
+      "El hashtag que mejor te funciona",
+      "https://www.tiktok.com/tag/mexicana"
+    ]
+  ],
+  "botonGrande": [
+    "¿Qué grabo hoy?",
+    "Toca y te doy 3 ideas listas para grabar con tu cel, con gancho, tomas, texto y hashtags.",
+    "¿Qué grabo hoy? Dame 3 ideas de 8 a 15 segundos que pueda grabar hoy mismo."
+  ],
+  "temasSub": "Salen de tus números: lo que más te pega, arriba. Toca \"Dame ideas de esto\" y el chat te arma todo.",
+  "temas": [
+    {
+      "n": "Mexicana en Texas",
+      "c": "#ff5fa2",
+      "por": "Tus 3 virales son esto. 299 videos, 1,251 vistas promedio.",
+      "ejemplos": [
+        "Cosas que solo entiende una mexicana en Texas",
+        "Trámites, palabras, comida: México vs Texas",
+        "Cosas de México que en Texas nadie entiende"
+      ]
+    },
+    {
+      "n": "Familia y los niños",
+      "c": "#ffc857",
+      "por": "Lo que más rinde por video (2,848) y casi no lo usas: solo 13 videos.",
+      "ejemplos": [
+        "Un día normal con los niños, versión mexicana",
+        "Lo que mis hijos dicen en inglés y yo en español",
+        "Gym con los niños, parte 2"
+      ]
+    },
+    {
+      "n": "Volver a México",
+      "c": "#5be49b",
+      "por": "Nostalgia: el mismo hilo que tu video de la INE.",
+      "ejemplos": [
+        "Lo que más extraño de México",
+        "Lo primero que hago cuando llego a México",
+        "Cuenta regresiva para el viaje"
+      ]
+    },
+    {
+      "n": "Humor de todos los días",
+      "c": "#8ab4ff",
+      "por": "238 videos, 1,113 promedio. Funciona mejor si lo amarras a ser mexicana.",
+      "ejemplos": [
+        "Videollamada con la familia en México vs mi vida aquí",
+        "Cuando Juan pone psytrance y yo country",
+        "Ojalá fuera chiste, parte 2"
+      ]
+    },
+    {
+      "n": "Uñas · @karenareyesnails",
+      "c": "#ff9ecb",
+      "por": "Tu estudio en Princeton, TX. Solo español y sin precios. Ya hay 5 promos hechas.",
+      "ejemplos": [
+        "Antes y después en 10 segundos",
+        "Diseño de temporada (Halloween, Día de Muertos)",
+        "Un día en mi estudio"
+      ]
+    },
+    {
+      "n": "Gym (con enfoque)",
+      "c": "#b39ddb",
+      "por": "Es tu tema con más videos (344) pero de los que menos rinden. Mejor mezclado con familia o humor.",
+      "ejemplos": [
+        "Gym de mamá mexicana",
+        "Entrenando con los niños"
+      ]
+    }
+  ],
+  "pasos": [
+    [
+      "Toca \"Platicar\" (abajo a la derecha).",
+      "Pídele ideas como a una amiga: \"¿qué grabo hoy?\", \"algo con los niños\", \"promo de uñas\"."
+    ],
+    [
+      "Graba con tu cel o tus Ray-Ban.",
+      "8 a 15 segundos, con el gancho en los primeros 2 segundos."
+    ],
+    [
+      "Dile \"apúntalo\" o guárdala en IDEAS.",
+      "Si quieres que la Fábrica te lo edite, pega el enlace de tu clip (Google Drive, iCloud o Dropbox)."
+    ],
+    [
+      "Publica con 3 a 5 hashtags específicos.",
+      "#mexicana #mexico funcionan; #fyp y #viral no ayudan."
+    ]
+  ],
+  "redes": [
+    "tiktok",
+    "instagram",
+    "youtube"
+  ],
+  "videos": [],
+  "videosVacio": "Todavía no hay videos editados para ti. Manda un clip abajo o pídele una promo de uñas al chat.",
+  "cuentas": [
+    {
+      "n": "TikTok · @karena.reyes",
+      "c": "#ff2d55",
+      "d": "Tu canal",
+      "l": [
+        [
+          "Perfil",
+          "https://www.tiktok.com/@karena.reyes"
+        ],
+        [
+          "Subir",
+          "https://www.tiktok.com/upload"
+        ],
+        [
+          "Estadísticas",
+          "https://www.tiktok.com/tiktokstudio/analytics"
+        ],
+        [
+          "Comentarios",
+          "https://www.tiktok.com/tiktokstudio/comment"
+        ]
+      ]
+    },
+    {
+      "n": "TikTok · @karenareyesnails",
+      "c": "#ff9ecb",
+      "d": "Tu estudio de uñas",
+      "l": [
+        [
+          "Perfil",
+          "https://www.tiktok.com/@karenareyesnails"
+        ],
+        [
+          "Subir",
+          "https://www.tiktok.com/upload"
+        ]
+      ]
+    },
+    {
+      "n": "Instagram",
+      "c": "#c13584",
+      "d": "Reels: mismo video, más alcance",
+      "l": [
+        [
+          "Abrir",
+          "https://www.instagram.com/"
+        ],
+        [
+          "Estadísticas",
+          "https://www.instagram.com/accounts/insights/"
+        ]
+      ]
+    },
+    {
+      "n": "Ideas y tendencias",
+      "c": "#ffc857",
+      "d": "Qué se está moviendo hoy",
+      "l": [
+        [
+          "Hashtags del momento",
+          "https://ads.tiktok.com/business/creativecenter/inspiration/popular/hashtag/pc/es"
+        ],
+        [
+          "#mexicana",
+          "https://www.tiktok.com/tag/mexicana"
+        ],
+        [
+          "#mexicanlife",
+          "https://www.tiktok.com/tag/mexicanlife"
+        ]
+      ]
+    }
+  ],
+  "nails": {
+    "nombre": "Karen A. Reyes Nails",
+    "lugar": "Tu estudio · Princeton, TX",
+    "reglas": "Reglas de la marca: solo español, sin precios, voz tapatía. Todo va a @karenareyesnails.",
+    "pregunta": "Para mi negocio de uñas (@karenareyesnails): dame 3 ideas de videos que pueda grabar esta semana en el estudio, con gancho, tomas, texto en pantalla y hashtags. Sin precios.",
+    "enlaces": [
+      [
+        "TikTok @karenareyesnails",
+        "https://www.tiktok.com/@karenareyesnails"
+      ],
+      [
+        "Subir a TikTok",
+        "https://www.tiktok.com/upload"
+      ],
+      [
+        "Estadísticas",
+        "https://www.tiktok.com/tiktokstudio/analytics"
+      ]
+    ],
+    "promos": [
+      {
+        "id": "01-marca",
+        "titulo": "Uñas lindas en Princeton TX",
+        "de": "La marca: quién eres y dónde está tu estudio."
+      },
+      {
+        "id": "02-tamanos",
+        "titulo": "Tú eliges el tamaño",
+        "de": "Los largos y formas que ofreces."
+      },
+      {
+        "id": "03-disenos",
+        "titulo": "Diseños y extras",
+        "de": "Arte, piedras y detalles."
+      },
+      {
+        "id": "04-gel",
+        "titulo": "Gel polish con manicura",
+        "de": "El servicio de gel con manicura."
+      },
+      {
+        "id": "05-estudio",
+        "titulo": "Mi estudio en Princeton TX",
+        "de": "Privado, limpio, con cita y sin prisas."
+      }
+    ],
+    "formatos": [
+      {
+        "n": "Antes y después",
+        "por": "El formato que más detiene el scroll en belleza.",
+        "ejemplos": [
+          "Mano natural → set terminado en 10 s",
+          "Uñas mordidas → uñas de ensueño"
+        ]
+      },
+      {
+        "n": "Proceso en cámara rápida",
+        "por": "Hipnótico: la gente se queda hasta ver el final.",
+        "ejemplos": [
+          "Del limado al brillo en 15 s",
+          "Así se hace un diseño de flores"
+        ]
+      },
+      {
+        "n": "Historia de clienta",
+        "por": "Confianza: gente real, con su permiso.",
+        "ejemplos": [
+          "\"Vino por su boda y mira\"",
+          "La reacción al ver sus uñas"
+        ]
+      },
+      {
+        "n": "Temporada",
+        "por": "Lo que la gente busca esta semana.",
+        "ejemplos": [
+          "Halloween y Día de Muertos",
+          "Navidad, San Valentín, graduaciones"
+        ]
+      },
+      {
+        "n": "Detrás del estudio",
+        "por": "Que te conozcan a ti: la gente regresa por la persona.",
+        "ejemplos": [
+          "Un día en mi estudio",
+          "Así preparo todo antes de cada cita"
+        ]
+      },
+      {
+        "n": "Comercial de 15 s",
+        "por": "Para anunciar el estudio con voz y textos.",
+        "ejemplos": [
+          "\"Uñas lindas en Princeton, TX\"",
+          "Agenda tu cita por Instagram"
+        ]
+      }
+    ]
+  }
+}

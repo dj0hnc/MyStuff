@@ -1,7 +1,9 @@
-import { AbsoluteFill, OffthreadVideo, Sequence, interpolate, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
+import { AbsoluteFill, Img, OffthreadVideo, Sequence, interpolate, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 
 // inicio: segundo del archivo donde empieza la toma (para usar tramos de un video largo).
-export type Clip = { archivo: string; duracion: number; inicio?: number };
+// archivo puede ser una foto (.jpg/.png/.webp): se ve completa sobre una copia desenfocada.
+// corte: segundos en pantalla de esa toma (si todas lo traen, se corta ahí en vez de cada segundosPorClip; para ir al ritmo de la voz).
+export type Clip = { archivo: string; duracion: number; inicio?: number; corte?: number };
 
 type Props = {
   readonly clips: Clip[];
@@ -21,23 +23,28 @@ export const ClipsBackground: React.FC<Props> = ({ clips, segundosPorClip = 3.5,
 
   const cutF = Math.round(segundosPorClip * fps);
   const fadeF = Math.round(fps * 0.35);
-  const cortes = Math.ceil(durationInFrames / cutF);
-
-  return (
-    <AbsoluteFill style={{ background: `linear-gradient(160deg, ${from} 0%, ${to} 100%)` }}>
-      {Array.from({ length: cortes }).map((_, i) => {
+  // Tomas: cortes a mano (uno por clip, la última dura hasta el final) o cada cutF frames en loop.
+  const tomas = clips.every((c) => c.corte)
+    ? clips.map((clip, i) => {
+        const start = Math.round(clips.slice(0, i).reduce((a, c) => a + (c.corte ?? 0), 0) * fps);
+        const len = i === clips.length - 1 ? Math.max(1, durationInFrames - start) : Math.round((clip.corte ?? 0) * fps);
+        return { clip, start, len, offset: 0 };
+      })
+    : Array.from({ length: Math.ceil(durationInFrames / cutF) }, (_, i) => {
         const clip = clips[i % clips.length];
-        const start = i * cutF;
         // Arrancar el clip en un punto distinto cada vez que se repite.
         const vuelta = Math.floor(i / clips.length);
         const maxOffset = Math.max(0, clip.duracion - segundosPorClip - 0.5);
-        const offset = Math.min(maxOffset, vuelta * segundosPorClip) % Math.max(0.1, maxOffset + 0.1);
-        return (
-          <Sequence key={i} from={start} durationInFrames={cutF + fadeF} layout="none">
-            <ClipShot src={clip.archivo} startFrom={Math.round(((clip.inicio ?? 0) + offset) * fps)} fadeF={fadeF} cutF={cutF} width={width} height={height} zoomIn={i % 2 === 0} />
-          </Sequence>
-        );
-      })}
+        return { clip, start: i * cutF, len: cutF, offset: Math.min(maxOffset, vuelta * segundosPorClip) % Math.max(0.1, maxOffset + 0.1) };
+      });
+
+  return (
+    <AbsoluteFill style={{ background: `linear-gradient(160deg, ${from} 0%, ${to} 100%)` }}>
+      {tomas.map(({ clip, start, len, offset }, i) => (
+        <Sequence key={i} from={start} durationInFrames={len + fadeF} layout="none">
+          <ClipShot src={clip.archivo} startFrom={Math.round(((clip.inicio ?? 0) + offset) * fps)} fadeF={fadeF} cutF={len} width={width} height={height} zoomIn={i % 2 === 0} />
+        </Sequence>
+      ))}
       {/* Capa oscura para que el texto se lea siempre */}
       <AbsoluteFill style={{ background: `linear-gradient(180deg, ${from}B3 0%, rgba(0,0,0,0.35) 45%, ${to}B3 100%)` }} />
       <AbsoluteFill style={{ opacity: interpolate(frame, [0, 10], [1, 0], { extrapolateRight: "clamp" }), background: "black" }} />
@@ -59,7 +66,14 @@ const ClipShot: React.FC<{ src: string; startFrom: number; fadeF: number; cutF: 
   const zoom = interpolate(f, [0, cutF + fadeF], zoomIn ? [1.0, 1.12] : [1.12, 1.0]);
   return (
     <AbsoluteFill style={{ opacity, transform: `scale(${zoom})` }}>
-      <OffthreadVideo src={staticFile(src)} muted startFrom={startFrom} style={{ width, height, objectFit: "cover" }} />
+      {/\.(jpe?g|png|webp)$/i.test(src) ? (
+        <>
+          <Img src={staticFile(src)} style={{ position: "absolute", width, height, objectFit: "cover", filter: "blur(40px) brightness(0.55)", transform: "scale(1.15)" }} />
+          <Img src={staticFile(src)} style={{ position: "absolute", width, height, objectFit: "contain" }} />
+        </>
+      ) : (
+        <OffthreadVideo src={staticFile(src)} muted startFrom={startFrom} style={{ width, height, objectFit: "cover" }} />
+      )}
     </AbsoluteFill>
   );
 };

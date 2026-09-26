@@ -1,0 +1,56 @@
+{
+ "cuenta": "@dj0hnclipper",
+ "textoAbajo": true,
+ "voz": {
+  "proveedor": "gemini",
+  "voice": "Charon",
+  "estilo": "Speak in American English like a gripping documentary narrator revealing a classified file. Serious and a little mysterious, but at a brisk, energetic pace with short pauses."
+ },
+ "videos": [
+  {
+   "id": "roswell-1-fbi",
+   "hook": "The FBI's Roswell telex",
+   "kicker": "FBI FILE",
+   "cta": "Follow for part 2",
+   "frases": [
+    "July 8, 1947. The FBI in Dallas sends an urgent teletype.",
+    "Subject: flying disc.",
+    "Recovered near Roswell, New Mexico.",
+    "Hexagonal in shape, hanging from a balloon.",
+    "It resembles a weather balloon with a radar reflector.",
+    "But Wright Field did not confirm it.",
+    "It's flown out by special plane.",
+    "Reporters are chasing the story.",
+    "Last line: no further investigation.",
+    "What was it?"
+   ],
+   "palabrasClave": [
+    "urgent",
+    "flying",
+    "disc",
+    "Roswell",
+    "Hexagonal",
+    "balloon",
+    "confirm",
+    "investigation"
+   ],
+   "fondos": [
+    "old documents desk"
+   ],
+   "fuentes": [
+    "public/reedit/propios/roswell/0-completo.jpg",
+    "public/reedit/propios/roswell/z1-fecha.jpg",
+    "public/reedit/propios/roswell/z2-disco.jpg",
+    "public/reedit/propios/roswell/z3-roswell.jpg",
+    "public/reedit/propios/roswell/z4-hexagonal.jpg",
+    "public/reedit/propios/roswell/z5-globo.jpg",
+    "public/reedit/propios/roswell/z6-noconfirma.jpg",
+    "public/reedit/propios/roswell/z7-avion.jpg",
+    "public/reedit/propios/roswell/z8-prensa.jpg",
+    "public/reedit/propios/roswell/z9-final.jpg",
+    "public/reedit/propios/roswell/0-completo.jpg"
+   ],
+   "caption": "The real FBI teletype about Roswell, July 8, 1947. Read the last line. #roswell #ufo #fbi #declassified #history"
+  }
+ ]
+}

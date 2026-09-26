@@ -29,12 +29,13 @@ export const tiktokProSchema = z.object({
   palabrasClave: z.array(z.string()).default([]).describe("Palabras que se resaltan con color aunque ya hayan pasado"),
   fondoClips: z.boolean().describe("Usar la secuencia de clips de public/clips.json (npm run fondo con varias búsquedas, o npm run clips)"),
   segundosPorClip: z.number().min(1).max(15),
+  textoAbajo: z.boolean().default(false).describe("Gancho y subtítulos en el tercio inferior (para no tapar el centro del video)"),
   fondoImagen: z.string().describe("Imagen en public/ para el fondo (ej. img/zorro.png). Vacío = gradiente"),
   // Se llenan solos desde public/voz.json y public/fondo.json
   words: z.array(z.object({ text: z.string(), start: z.number(), end: z.number() })).default([]),
   voiceDuration: z.number().default(0),
   fondoSegundos: z.number().default(10),
-  clips: z.array(z.object({ archivo: z.string(), duracion: z.number(), inicio: z.number().optional() })).default([]),
+  clips: z.array(z.object({ archivo: z.string(), duracion: z.number(), inicio: z.number().optional(), corte: z.number().optional() })).default([]),
 });
 
 export type TikTokProProps = z.infer<typeof tiktokProSchema>;
@@ -101,7 +102,7 @@ export const TikTokPro: React.FC<TikTokProProps> = (p) => {
 
       <TransitionSeries>
         <TransitionSeries.Sequence durationInFrames={hookF}>
-          <HookPro text={p.hook} accent={p.accent} kicker={p.kicker} logo={p.logo || undefined} />
+          <HookPro text={p.hook} accent={p.accent} kicker={p.kicker} logo={p.logo || undefined} abajo={p.textoAbajo} />
         </TransitionSeries.Sequence>
 
         <TransitionSeries.Transition presentation={slide({ direction: "from-right" })} timing={linearTiming({ durationInFrames: TRANS_F })} />
@@ -109,7 +110,7 @@ export const TikTokPro: React.FC<TikTokProProps> = (p) => {
         <TransitionSeries.Sequence durationInFrames={voiceSeqF}>
           <Sequence from={LEAD_F}>
             <Audio src={staticFile("voz.mp3")} />
-            <CaptionsPro words={p.words} accent={p.accent} voiceSrc="voz.mp3" keywords={p.palabrasClave} />
+            <CaptionsPro words={p.words} accent={p.accent} voiceSrc="voz.mp3" keywords={p.palabrasClave} abajo={p.textoAbajo} />
           </Sequence>
         </TransitionSeries.Sequence>
 

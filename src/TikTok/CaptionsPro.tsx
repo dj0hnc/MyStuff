@@ -9,6 +9,7 @@ type Props = {
   readonly perLine?: number;
   readonly voiceSrc: string;
   readonly keywords?: string[];
+  readonly abajo?: boolean; // texto en el tercio inferior para no tapar el centro del video
 };
 
 // Palabras sin peso: cuando están activas solo se encienden en blanco, sin pastilla.
@@ -23,7 +24,7 @@ const limpia = (w: string) => w.toLowerCase().replace(/[^a-záéíóúñü]/g, "
 // Subtítulos "pro": Montserrat 900, la palabra activa va dentro de una pastilla
 // de color que rota un poco, las demás en blanco con contorno. Debajo, el
 // visualizador de la voz.
-export const CaptionsPro: React.FC<Props> = ({ words, accent, perLine = 3, voiceSrc, keywords = [] }) => {
+export const CaptionsPro: React.FC<Props> = ({ words, accent, perLine = 3, voiceSrc, keywords = [], abajo = false }) => {
   const claves = new Set(keywords.map(limpia));
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -48,8 +49,8 @@ export const CaptionsPro: React.FC<Props> = ({ words, accent, perLine = 3, voice
   const group = gi >= 0 ? groups[gi] : null;
 
   return (
-    <AbsoluteFill style={{ justifyContent: "center", alignItems: "center", padding: "0 60px" }}>
-      <div style={{ height: 420, display: "flex", alignItems: "center", justifyContent: "center", width: "100%" }}>
+    <AbsoluteFill style={{ justifyContent: abajo ? "flex-end" : "center", alignItems: "center", padding: abajo ? "0 60px 330px" : "0 60px" }}>
+      <div style={{ height: abajo ? 300 : 420, display: "flex", alignItems: "center", justifyContent: "center", width: "100%" }}>
         {group ? (
           <Line group={group} accent={accent} t={t} frame={frame} fps={fps} tilt={gi % 2 === 0 ? -2 : 2} claves={claves} />
         ) : null}

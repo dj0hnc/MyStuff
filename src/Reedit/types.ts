@@ -14,6 +14,10 @@ export type Bloque = {
   fadeIn?: number; // frames de fade de entrada del audio (para cambios de música)
   fadeOut?: number; // frames de fade de salida
   nota?: string; // texto de referencia (no se muestra)
+  // Otro video fuente solo para este bloque (remix de varios clips); su audio sale del mismo archivo.
+  src?: string;
+  srcWidth?: number;
+  srcHeight?: number;
 };
 export type Word = { text: string; start: number; end: number };
 export type EDL = {

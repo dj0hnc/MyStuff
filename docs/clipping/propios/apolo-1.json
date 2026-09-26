@@ -1,0 +1,91 @@
+{
+ "cuenta": "@dj0hnclipper",
+ "textoAbajo": true,
+ "voz": {
+  "proveedor": "gemini",
+  "voice": "Charon",
+  "estilo": "Speak in American English like a gripping documentary narrator revealing a classified file. Serious and a little mysterious, but at a brisk, energetic pace with short pauses."
+ },
+ "videos": [
+  {
+   "id": "apolo-1-cooper",
+   "hook": "An astronaut on UFOs, 1962",
+   "kicker": "NASA FILE",
+   "cta": "Follow for more files",
+   "frases": [
+    "November 1962. Walter Cronkite asks astronaut Gordon Cooper about UFOs.",
+    "Cooper says well-qualified people have seen objects with no logical explanation. Then he adds this.",
+    "Months later, Cooper flew the longest mission of Project Mercury.",
+    "This interview is now part of NASA's official UAP files.",
+    "Do you agree with him?"
+   ],
+   "audioReal": {
+    "src": "public/reedit/propios/https_www_dvidshub_net_video_1010337.mp4",
+    "desde": 40.0,
+    "hasta": 61.0,
+    "despuesDe": 2
+   },
+   "palabrasClave": [
+    "Cronkite",
+    "Cooper",
+    "UFOs",
+    "planets",
+    "life",
+    "NASA"
+   ],
+   "fondos": [
+    "space capsule"
+   ],
+   "fuentes": [
+    "public/reedit/propios/nasa/s64-31847.jpg",
+    "public/reedit/propios/nasa/LRC-1968-B701_P-08308.jpg",
+    "public/reedit/propios/nasa/6413217.jpg",
+    "public/reedit/propios/nasa/s63-06259.jpg",
+    "public/reedit/propios/nasa/S71-24944.jpg",
+    "public/reedit/propios/nasa/s63-06482.jpg"
+   ],
+   "caption": "Astronaut Gordon Cooper on UFOs, 1962. Real audio from NASA's UAP files. #ufo #nasa #space #declassified #astronaut"
+  },
+  {
+   "id": "apolo-2-apollo17",
+   "hook": "What Apollo 17 saw",
+   "kicker": "NASA FILE",
+   "cta": "Follow for more files",
+   "frases": [
+    "December 1972. Apollo 17 is on its way to the Moon.",
+    "The crew radios Houston about something outside the window. This is the real audio.",
+    "They guessed paint or ice chips coming off the rocket stage.",
+    "Now the recording is in NASA's official UAP files.",
+    "Paint chips... or something else?"
+   ],
+   "audioReal": {
+    "src": "public/reedit/propios/https_www_dvidshub_net_video_1007872.mp4",
+    "desde": 24.0,
+    "hasta": 43.0,
+    "despuesDe": 2
+   },
+   "palabrasClave": [
+    "Apollo",
+    "Moon",
+    "window",
+    "jagged",
+    "angular",
+    "bright",
+    "paint",
+    "ice"
+   ],
+   "fondos": [
+    "space earth"
+   ],
+   "fuentes": [
+    "public/reedit/propios/nasa/S72-55070.jpg",
+    "public/reedit/propios/nasa/S72-50438.jpg",
+    "public/reedit/propios/nasa/as17-148-22727.jpg",
+    "public/reedit/propios/nasa/as17-152-23274.jpg",
+    "public/reedit/propios/nasa/S72-54813.jpg",
+    "public/reedit/propios/nasa/as17-148-22742.jpg"
+   ],
+   "caption": "Apollo 17's crew describes bright, jagged fragments outside the spacecraft. Real NASA audio. #ufo #nasa #apollo #space #declassified"
+  }
+ ]
+}
