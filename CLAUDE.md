@@ -62,6 +62,7 @@ Tablero de publicación (`panel/`, sitio estático en Cloudflare Pages, se publi
 - `panel/data.json` es la fuente: cada video con serie, fecha/hora de Texas, textos TikTok/YouTube y estado reportado.
 - `panel/videos/` guarda los finales comprimidos (720x1280, crf 26). Para agregar un video: comprimirlo ahí y sumar su fila en `data.json`.
 - Estado compartido (palomitas, vistas, notas, pedidos, bitácora) en `functions/api/estado.js` (Pages Function + KV enlazado como `ESTADO`; `PIN` opcional). Leerlo: `curl https://<proyecto>.pages.dev/api/estado`. Sin KV, el panel cae a modo local.
+- Consola de la Fábrica: `functions/api/chat.js` (Gemini con secreto `GEMINI_API_KEY` en Cloudflare) platica ideas y crea pedidos en el mismo KV; Claude los produce y los marca `listo`.
 
 ## Composiciones (`src/Root.tsx`)
 - `TikTokPro`: gancho (Bebas Neue) → subtítulos palabra a palabra (Montserrat) con visualizador →

@@ -145,6 +145,15 @@
   .ped { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; background: var(--panel); border: 1px solid var(--linea); border-radius: 10px; padding: 8px 12px; }
   .ped small { display: block; color: var(--cian-suave); font-family: var(--reloj); font-size: 12px; }
   .aviso-banda { border: 1px solid var(--ambar); background: rgba(255,176,32,0.08); color: var(--ambar); border-radius: 10px; padding: 8px 12px; font-size: 14px; }
+
+  .chat { background: var(--panel); border: 1px solid var(--cian); border-radius: 12px; padding: 10px; display: grid; gap: 8px; box-shadow: 0 0 18px rgba(41,231,255,0.12); }
+  .burbujas { display: grid; gap: 8px; max-height: 380px; overflow: auto; padding: 4px; }
+  .bur { max-width: 88%; padding: 8px 11px; border-radius: 12px; font-size: 15px; line-height: 1.4; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .bur.yo { justify-self: end; background: var(--cian); color: var(--casco); border-bottom-right-radius: 4px; }
+  .bur.fabrica { justify-self: start; background: var(--panel-2); border: 1px solid var(--linea); border-bottom-left-radius: 4px; }
+  .bur.pedido { justify-self: start; background: rgba(57,255,136,0.1); border: 1px solid var(--verde); color: var(--verde); font-size: 14px; }
+  .chat form { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+  .chat textarea { resize: none; background: var(--casco); color: var(--texto); border: 1px solid var(--linea); border-radius: 8px; padding: 8px; font: 500 15px var(--leer); min-height: 44px; }
   [hidden] { display: none !important; }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
@@ -346,9 +355,39 @@ function vistaRadar() {
   return f;
 }
 
+
+// --- Consola de la Fábrica (chat) ---
+let chat = []; try { chat = JSON.parse(sessionStorage.getItem("puente-chat") || "[]"); } catch {}
+const guardaChat = () => { try { sessionStorage.setItem("puente-chat", JSON.stringify(chat.slice(-30))); } catch {} };
+function consola() {
+  const box = el("div", "chat"), bur = el("div", "burbujas");
+  const pinta = () => {
+    bur.replaceChildren();
+    if (!chat.length) bur.append(el("div", "bur fabrica", "Hola, soy la Consola de la Fábrica. Cuéntame qué video o idea traes (o pega un enlace) y lo armamos. Cuando digas \"hazlo\", queda como pedido."));
+    chat.forEach((m) => bur.append(el("div", "bur " + m.rol, m.texto)));
+    bur.scrollTop = bur.scrollHeight;
+  };
+  const form = el("form"), ta = el("textarea"); ta.rows = 2; ta.placeholder = "Ej. quiero una serie de persecuciones de noche"; ta.maxLength = 2000; ta.className = "vistas";
+  const btn = el("button", "btn cian", "Enviar"); btn.type = "submit";
+  form.append(ta, btn);
+  ta.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); form.requestSubmit(); } });
+  form.onsubmit = async (e) => {
+    e.preventDefault(); const t = ta.value.trim(); if (!t) return;
+    if (!quien) { toast("Primero elige quién eres (arriba)"); return; }
+    chat.push({ rol: "yo", texto: t }); ta.value = ""; btn.disabled = true; btn.textContent = "…"; pinta();
+    try {
+      const r = await fetch("api/chat", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ mensajes: chat.filter((m) => m.rol !== "pedido"), quien, pin }) });
+      if (r.status === 401) { pedirPin(); chat.pop(); }
+      else { const d = await r.json(); chat.push({ rol: "fabrica", texto: d.respuesta || "Sin respuesta." }); if (d.pedido) { chat.push({ rol: "pedido", texto: "Pedido creado: " + d.pedido }); await traer(); lecturas(); } }
+    } catch { chat.push({ rol: "fabrica", texto: "No pude conectarme. Revisa la señal (o falta subir el panel a Cloudflare)." }); }
+    btn.disabled = false; btn.textContent = "Enviar"; guardaChat(); pinta();
+  };
+  box.append(bur, form); pinta(); return box;
+}
+
 function vistaMaquinas() {
   const fb = data.fabrica || {}, f = document.createDocumentFragment();
-  f.append(el("h2", null, "Línea de producción"));
+  f.append(el("h2", null, "Consola de la Fábrica"), consola(), el("h2", null, "Línea de producción"));
   const lp = el("div", "linea-prod"); (fb.linea || []).forEach((p, i) => { if (i) lp.append(el("i", null, "→")); lp.append(el("span", null, p)); }); f.append(lp);
   f.append(el("h2", null, "Módulos"));
   const mods = el("div", "modulos");
@@ -386,6 +425,7 @@ function vistaGuia() {
     ["Toca GUARDAR VIDEO y luego COPIAR.", "Abre TikTok, sube el video y pega el texto. Sin música de TikTok: el video ya trae su audio."],
     ["Pícale la palomita TikTok.", "30 minutos después súbelo a YouTube Shorts con su título y pícale YouTube. El otro lo ve al instante."],
     ["Ketone-IQ es distinto.", "Activa Branded content en TikTok y registra el enlace en Vyro. Los demás NO llevan Branded content."],
+    ["¿Idea nueva? Ve a MÁQUINAS → Consola de la Fábrica.", "Platícale como a Claude. Cuando digas \"hazlo\", queda como pedido y Claude lo produce."],
     ["Al día siguiente, anota las vistas.", "Escribe los números en Vistas TikTok / YouTube. El RADAR arma el ranking y Claude decide qué producir más."],
   ];
   const g = el("div", "guia"); pasos.forEach(([a, b], i) => { const p = el("div", "paso"), t = el("div"), pa = el("p", null, a); pa.style.fontWeight = "700"; t.append(pa, el("p", "sub", b)); p.append(el("div", "n", String(i + 1)), t); g.append(p); });
@@ -419,7 +459,7 @@ function reloj() {
 
 function render() {
   lecturas();
-  const act = document.activeElement; if (act && (act.classList.contains("vistas") || act.classList.contains("vistas-n"))) return; // no pisar lo que se escribe
+  const act = document.activeElement; if (act && (act.classList.contains("vistas") || act.classList.contains("vistas-n") || act.tagName === "TEXTAREA")) return; // no pisar lo que se escribe
   const V = { mision: vistaMision, calendario: vistaCalendario, radar: vistaRadar, maquinas: vistaMaquinas, guia: vistaGuia }[tab];
   const y = scrollY; $("#vista").replaceChildren(V()); scrollTo({ top: y });
 }
