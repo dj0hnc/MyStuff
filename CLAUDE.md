@@ -58,7 +58,7 @@ Clips virales para un canal aparte (no para The Rave Couple; guía en `docs/clip
   subtítulos y textos ES/EN) · `npm run fabrica` (producción diaria + calendario) · `npm run stats -- @canal`
   (ganadores y patrón) · `npm run recap -- URL` (escenas de película explicadas con voz IA, sin música).
 
-Tablero de publicación (`panel/`, sitio estático en Cloudflare Pages, se publica solo con cada push a main):
+Tablero de publicación (`panel/` + `functions/`, en https://puente-fabrica.pages.dev; se publica con `npm run panel`, que usa CLOUDFLARE_API_TOKEN/ACCOUNT_ID del `.env`; PIN del panel en PANEL_PIN):
 - `panel/data.json` es la fuente: cada video con serie, fecha/hora de Texas, textos TikTok/YouTube y estado reportado.
 - `panel/videos/` guarda los finales comprimidos (720x1280, crf 26). Para agregar un video: comprimirlo ahí y sumar su fila en `data.json`.
 - Estado compartido (palomitas, vistas, notas, pedidos, bitácora) en `functions/api/estado.js` (Pages Function + KV enlazado como `ESTADO`; `PIN` opcional). Leerlo: `curl https://<proyecto>.pages.dev/api/estado`. Sin KV, el panel cae a modo local.

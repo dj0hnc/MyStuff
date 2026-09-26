@@ -40,12 +40,13 @@ export async function onRequestPost({ request, env }) {
     contents: msgs,
     generationConfig: { responseMimeType: "application/json", temperature: 0.8 },
   };
-  let out = null;
+  let out = null, fallo = "";
   for (const m of MODELOS) {
     const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`, { method: "POST", headers: { "content-type": "application/json", "x-goog-api-key": env.GEMINI_API_KEY }, body: JSON.stringify(body) });
     if (r.ok) { out = await r.json(); break; }
+    fallo = `${m}: ${r.status} ${(await r.text()).slice(0, 200)}`;
   }
-  if (!out) return json({ respuesta: "Gemini está saturado o sin cuota ahorita. Intenta en un rato, o deja tu idea como pedido directo." }, 502);
+  if (!out) return json({ respuesta: "Gemini está saturado o sin cuota ahorita. Intenta en un rato, o deja tu idea como pedido directo.", detalle: fallo }, 502);
 
   let resp;
   try { resp = JSON.parse(out.candidates?.[0]?.content?.parts?.map((p) => p.text).join("") || "{}"); } catch { resp = {}; }
