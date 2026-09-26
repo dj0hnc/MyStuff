@@ -6,6 +6,9 @@
   "voice": "Charon",
   "estilo": "Speak in American English like a gripping documentary narrator revealing classified files. Serious, a little mysterious, brisk pace with short pauses."
  },
+ "estilo": {
+  "accent": "#39FF14"
+ },
  "videos": [
   {
    "id": "ovni-14-shape",

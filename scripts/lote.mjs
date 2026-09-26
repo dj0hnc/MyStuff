@@ -11,7 +11,7 @@
 // Crea: out/lote/<id>.mp4 y out/lote/<archivo>.md con los captions.
 // "voz": {"proveedor":"gemini","voice":"Charon","estilo":"..."} elige la voz del lote (default: la de .env).
 // Cada voz se guarda en out/lote/voz/<id>.* y se reusa mientras el guion no cambie (no gasta cuota al re-renderizar).
-// Sin @ en el video salvo que el JSON traiga "marca" (cuenta solo titula los captions). Sin música y sin efectos: solo la voz. Deja public/guion*, voz*, clips.json como estaban.
+// "estilo": {"accent":"#FF2D2D", ...} cambia colores de la serie (cualquier prop de TikTokPro). Sin @ en el video salvo que el JSON traiga "marca" (cuenta solo titula los captions). Sin música y sin efectos: solo la voz. Deja public/guion*, voz*, clips.json como estaban.
 
 import { existsSync } from "node:fs";
 import { copyFile, mkdir, readFile, readdir, writeFile } from "node:fs/promises";
@@ -21,7 +21,7 @@ import { ytdlp } from "./ytdlp.mjs";
 
 const [archivo, solo] = process.argv.slice(2);
 if (!archivo) { console.error("Uso: npm run lote -- archivo.json [id]"); process.exit(1); }
-const { cuenta = "", marca = "", idioma = "en", textoAbajo = false, voz = {}, videos } = JSON.parse(await readFile(archivo, "utf8"));
+const { cuenta = "", marca = "", idioma = "en", textoAbajo = false, voz = {}, estilo = {}, videos } = JSON.parse(await readFile(archivo, "utf8"));
 const correr = (script, args, env = {}) => execFileSync("node", ["--env-file-if-exists=.env", script, ...args], { stdio: "inherit", env: { ...process.env, ...env } });
 const nombre = basename(archivo, ".json");
 const ffprobe = "node_modules/@remotion/compositor-linux-x64-gnu/ffprobe";
@@ -127,7 +127,7 @@ try {
     }
     if (v.audioReal) await insertarAudioReal(v);
     const salida = `out/lote/${v.id}.mp4`;
-    correr("scripts/render.mjs", [salida, JSON.stringify({ fondoClips: true, segundosPorClip: 3.5, musica: false, efectos: false, bgFrom: "#050505", bgTo: "#0A0A0A", textoAbajo, handle: marca })]);
+    correr("scripts/render.mjs", [salida, JSON.stringify({ fondoClips: true, segundosPorClip: 3.5, musica: false, efectos: false, bgFrom: "#050505", bgTo: "#0A0A0A", textoAbajo, handle: marca, ...estilo })]);
     // Voz a loudness de TikTok (-14 LUFS) con picos a -1.5 dB.
     const tmp = salida.replace(/\.mp4$/, ".tmp.mp4");
     execFileSync("node_modules/@remotion/compositor-linux-x64-gnu/ffmpeg", ["-y", "-loglevel", "error", "-i", salida, "-c:v", "copy", "-af", "loudnorm=I=-14:TP=-1.5:LRA=11", "-ar", "48000", "-c:a", "aac", "-b:a", "192k", tmp]);

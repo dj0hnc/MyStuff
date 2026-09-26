@@ -6,6 +6,9 @@
   "voice": "Charon",
   "estilo": "Speak in American English like an intense, gripping narrator of a real police chase show. Urgent, punchy, fast pace, short dramatic pauses."
  },
+ "estilo": {
+  "accent": "#FF2D2D"
+ },
  "videos": [
   {
    "id": "poli-1-20000lbs",
