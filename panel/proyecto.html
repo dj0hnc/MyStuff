@@ -117,6 +117,8 @@
   .compositor { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: end; max-width: 820px; width: 100%; margin: 0 auto; }
   .compositor textarea { resize: none; max-height: 160px; background: var(--panel); color: var(--texto); border: 1px solid var(--linea); border-radius: 16px; padding: 12px; font: 500 16px/1.4 var(--leer); }
   .compositor .btn { height: 48px; border-radius: 16px; }
+  @media (max-width: 560px) { .ped { grid-template-columns: 1fr; } }
+  :root { --ta-bajo: 84px; } /* pastilla del Taller arriba de las pestañas */
   [hidden] { display: none !important; }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
@@ -137,7 +139,7 @@
 </div></nav>
 <button class="fab" id="fab" type="button">💬 <span id="fabTxt">Platicar</span></button>
 <section class="sala" id="sala" hidden aria-label="Chat">
-  <div class="sala-top"><div><b id="salaNombre"></b><small id="salaSub"></small></div><div class="fila"><button class="btn mini" id="salaNueva" type="button">Nueva plática</button><button class="btn" id="salaCerrar" type="button">Cerrar</button></div></div>
+  <div class="sala-top"><div><b id="salaNombre"></b><small id="salaSub"></small></div><div class="fila"><button class="btn mini" id="salaHist" type="button">Historial</button><button class="btn mini" id="salaNueva" type="button">Nueva</button><button class="btn" id="salaCerrar" type="button">Cerrar</button></div></div>
   <div class="burbujas" id="burbujas" aria-live="polite"></div>
   <div class="chips" id="chips"></div>
   <form class="compositor" id="compositor"><textarea id="entrada" rows="1" maxlength="2000" placeholder="Escribe o pega un enlace…" aria-label="Mensaje"></textarea><button class="btn a" type="submit" id="enviar">Enviar</button></form>
@@ -147,6 +149,8 @@
 <script src="/publicar.js"></script>
 <script src="/crudos.js"></script>
 <script src="/ajustes.js"></script>
+<script src="/historial.js"></script>
+<script src="/taller.js"></script>
 <script>
 // Un solo archivo para los paneles de proyecto (/karen, /rave). La configuración vive en /proyectos/<id>.json
 // y el cerebro del chat en /cerebro/<id>.md. El estado compartido va aparte por proyecto (/api/estado?p=<id>).
@@ -241,7 +245,8 @@ function vistaVideos() {
   const form = el("form", "fila"), inp = el("input", "campo"); inp.placeholder = "Pega aquí el enlace de tu clip (Drive, Dropbox, TikTok)…"; inp.setAttribute("aria-label", "Enlace del clip"); inp.maxLength = 500;
   const bt = el("button", "btn a", "Mandar a editar"); bt.type = "submit"; form.append(inp, bt);
   form.onsubmit = async (e) => { e.preventDefault(); const t = inp.value.trim(); if (!t) return; if (await enviar({ tipo: "pedido", texto: "Editar este clip: " + t })) toast("Mandado a la Fábrica"); };
-  f.append(el("h2", null, "Subir crudos"), el("p", "sub", "Sube tus videos o fotos originales (del tamaño que sea) y di qué quieres. La Fábrica los edita en su siguiente vuelta y aparecen aquí arriba."), crudos(),
+  const ta = el("button", "btn", "🎬 Taller: ver lo que se está renderizando"); ta.type = "button"; ta.onclick = () => Taller.abrir();
+  f.append(ta, el("h2", null, "Subir crudos"), el("p", "sub", "Sube tus videos o fotos originales (del tamaño que sea) y di qué quieres. La Fábrica los edita en su siguiente vuelta y aparecen aquí arriba."), crudos(),
     el("h2", null, "…o pega un enlace"), el("p", "sub", "Si ya está en Google Drive, Dropbox o TikTok."), form);
   return f;
 }
@@ -282,7 +287,12 @@ function filaPedido(p) {
   t.append(document.createTextNode(p.texto), el("small", null, `${p.quien} · ${hace(p.at)}`));
   if (p.nota) { const n = el("div", "nota"); n.innerHTML = "<b>Claude:</b> " + md(p.nota); t.append(n); }
   const sel = el("select"); sel.setAttribute("aria-label", "Estado"); Object.entries(EST).forEach(([k, n]) => sel.append(Object.assign(el("option", null, n), { value: k }))); sel.value = p.estado;
-  sel.onchange = () => enviar({ tipo: "pedido-estado", pid: p.id, estado: sel.value }); r.append(t, sel); return r;
+  sel.onchange = () => enviar({ tipo: "pedido-estado", pid: p.id, estado: sel.value });
+  const acc = document.createElement("div"); acc.style.cssText = "display:flex;gap:6px;align-items:center";
+  const ed = el("button", "btn mini", "✎"), bo = el("button", "btn mini", "🗑"); ed.type = bo.type = "button"; ed.setAttribute("aria-label", "Editar"); bo.setAttribute("aria-label", "Borrar");
+  ed.onclick = () => { const n = prompt("Edita el pedido:", p.texto); if (n?.trim() && n.trim() !== p.texto) enviar({ tipo: "pedido-editar", pid: p.id, texto: n.trim() }); };
+  bo.onclick = () => confirm("¿Borrar este pedido? No se puede deshacer.") && enviar({ tipo: "pedido-borrar", pid: p.id });
+  acc.append(sel, ed, bo); r.append(t, acc); return r;
 }
 
 function vistaIdeas() {
@@ -299,7 +309,8 @@ function vistaIdeas() {
 
 // --- chat ---
 let chat = ls.get(`chat-${P}`, []);
-const guardaChat = () => ls.set(`chat-${P}`, chat.slice(-40));
+let hilo = ls.get(`hilo-${P}`, null); // plática actual en el historial de quien entró
+const guardaChat = () => { ls.set(`chat-${P}`, chat.slice(-40)); ls.set(`hilo-${P}`, hilo); };
 const esc = (t) => t.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const inl = (t) => t.replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").replace(/(^|[\s(])\*(?!\s)([^*]+?)\*/g, "$1<i>$2</i>").replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
 function md(t) { // markdown mínimo y seguro: se escapa todo antes de dar formato
@@ -327,18 +338,23 @@ async function mandar(t) {
   chat.push({ rol: "yo", texto: t }); guardaChat(); pintaChat(true);
   $("#enviar").disabled = true;
   try {
-    const r = await fetch("/api/chat", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ proyecto: P, mensajes: chat.filter((m) => m.rol !== "pedido"), quien }) });
+    const r = await fetch("/api/chat", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ proyecto: P, mensajes: chat, quien, hilo }) });
     if (r.status === 401) return location.reload();
     const d = await r.json();
     chat.push({ rol: "bot", texto: d.respuesta || "Se me fue la señal. ¿Me lo repites?" });
     if (d.pedido) { chat.push({ rol: "pedido", texto: d.pedido }); await traer(); }
+    if (d.hilo) hilo = d.hilo;
   } catch { chat.push({ rol: "bot", texto: "No pude conectarme. Revisa la señal e intenta de nuevo." }); }
   $("#enviar").disabled = false; guardaChat(); pintaChat(false);
 }
-function abrirSala(pregunta) { $("#sala").hidden = false; document.body.style.overflow = "hidden"; pintaChat(false); if (typeof pregunta === "string") mandar(pregunta); else setTimeout(() => $("#entrada").focus(), 50); }
+function abrirSala(pregunta) {
+  $("#sala").hidden = false; document.body.style.overflow = "hidden"; pintaChat(false); if (typeof pregunta === "string") mandar(pregunta); else setTimeout(() => $("#entrada").focus(), 50);
+  if (hilo && typeof pregunta !== "string") Historial.cargar(P, hilo).then((h) => { if (h.mensajes.length >= chat.length) { chat = h.mensajes; guardaChat(); pintaChat(false); } }).catch(() => {}); // la misma plática en otro dispositivo
+}
 function cerrarSala() { $("#sala").hidden = true; document.body.style.overflow = ""; render(); }
 $("#fab").onclick = () => abrirSala(); $("#salaCerrar").onclick = cerrarSala;
-$("#salaNueva").onclick = () => { chat = []; guardaChat(); pintaChat(false); };
+$("#salaNueva").onclick = () => { chat = []; hilo = null; guardaChat(); pintaChat(false); };
+$("#salaHist").onclick = () => Historial.abrir({ p: P, actual: hilo, onAbrir: (h) => { chat = h.mensajes; hilo = h.id; guardaChat(); pintaChat(false); }, onNueva: () => $("#salaNueva").click(), onBorrada: () => $("#salaNueva").click() });
 const entrada = $("#entrada");
 entrada.addEventListener("input", () => { entrada.style.height = "auto"; entrada.style.height = Math.min(160, entrada.scrollHeight) + "px"; });
 entrada.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey && !matchMedia("(pointer: coarse)").matches) { e.preventDefault(); $("#compositor").requestSubmit(); } });

@@ -41,7 +41,7 @@
     "imagen": "node --env-file-if-exists=.env scripts/generar-imagen.mjs",
     "clip": "node --env-file-if-exists=.env scripts/generar-clip-ia.mjs",
     "guion": "node --env-file-if-exists=.env scripts/generar-guion.mjs",
-    "video": "node scripts/render.mjs",
+    "video": "node --env-file-if-exists=.env scripts/render.mjs",
     "revisar": "node --env-file-if-exists=.env scripts/revisar-video.mjs",
     "clips": "node --env-file-if-exists=.env scripts/generar-clips.mjs",
     "traducir": "node --env-file-if-exists=.env scripts/traducir-guion.mjs",
@@ -56,7 +56,8 @@
     "remix": "node --env-file-if-exists=.env scripts/remix.mjs",
     "lote": "node --env-file-if-exists=.env scripts/lote.mjs",
     "panel": "sh -c 'set -a; . ./.env; set +a; npx -y wrangler@4 pages deploy panel --project-name puente-fabrica --branch main --commit-dirty=true'",
-    "check-panel": "node scripts/check-panel.mjs"
+    "check-panel": "node scripts/check-panel.mjs",
+    "taller": "node --env-file-if-exists=.env scripts/taller.mjs"
   },
   "sideEffects": [
     "*.css"

@@ -2,6 +2,7 @@
 // Requiere los clips en public/reedit/nails/pack/*.mp4 (no van a git) y GEMINI_API_KEY (voz Leda tapatía).
 import { writeFile, mkdir, copyFile } from "node:fs/promises";
 import { execSync } from "node:child_process";
+import { renderizar } from "./taller.mjs";
 const A = "public/reedit/nails/pack", FP = "node_modules/@remotion/compositor-linux-x64-gnu/ffprobe", FF = "node_modules/@remotion/compositor-linux-x64-gnu/ffmpeg";
 const dur = (f) => +(+execSync(`${FP} -v error -show_entries format=duration -of csv=p=0 ${f}`).toString()).toFixed(2);
 const CTA = "DM @karenareyesnails";
@@ -42,7 +43,7 @@ for (const v of videos) {
   await writeFile("public/clips.json", JSON.stringify({ fuente: v.id, clips }, null, 1));
   execSync("VOZ_PROVEEDOR=gemini npm run voz", { stdio: "inherit" });
   const props = { titulo: v.titulo, servicios: v.servicios.map(([icono, texto]) => ({ icono, texto })), segundosPorClip: 2.2 };
-  execSync(`npx remotion render Promo out/pack/${v.id}.mp4 --concurrency=4 --crf=22 --props='${JSON.stringify(props)}'`, { stdio: "inherit" });
+  await renderizar("Promo", `out/pack/${v.id}.mp4`, ["--concurrency=4", "--crf=22", `--props=${JSON.stringify(props)}`], { titulo: `Uñas · ${v.hook}`, proyecto: "karen" });
   execSync(`${FF} -y -loglevel error -i out/pack/${v.id}.mp4 -vf scale=720:1280 -c:v libx264 -crf 24 -c:a aac -b:a 160k out/pack/${v.id}-web.mp4`);
   await mkdir("public/reedit/nails/pack/guiones", { recursive: true });
   await copyFile("public/guion.json", `public/reedit/nails/pack/guiones/${v.id}.json`);

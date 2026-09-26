@@ -3,6 +3,8 @@ import { onRequestPost } from "../functions/api/estado.js";
 import { onRequest as crudos } from "../functions/api/crudos/[[ruta]].js";
 import { onRequest as puerta } from "../functions/_middleware.js";
 import { onRequestGet as yoGet, onRequestPost as yoPost } from "../functions/api/yo.js";
+import { onRequest as chats, guardarHilo } from "../functions/api/chats.js";
+import { onRequest as taller } from "../functions/api/taller/[[ruta]].js";
 const kv = new Map(), env = { ESTADO: { get: async (k) => kv.get(k) ?? null, put: async (k, v) => kv.set(k, v) } };
 const post = async (url, body) => (await onRequestPost({ request: new Request(url, { method: "POST", body: JSON.stringify(body) }), env }));
 let fallas = 0; const ok = (c, m) => { console.log((c ? "✓ " : "✗ ") + m); if (!c) fallas++; };
@@ -38,4 +40,29 @@ ok(falsa.status === 401, "cookie falsificada rechazada");
 ok((await puerta({ request: new Request("https://x/api/estado", { headers: { "x-pin": "918514" } }), env: envP, next: siguiente, data: {} })).status === 200, "la rutina entra con x-pin");
 const xss = await (await entrar("<script>alert(1)</script>", "1")).text();
 ok(!xss.includes("alert(1)"), "nombre inventado no se refleja en la página");
+// historial: cada quien ve solo sus pláticas, en la misma memoria
+const hj = await guardarHilo(envP, "juan", "clipper", null, [{ rol: "yo", texto: "ideas de ovnis" }, { rol: "fabrica", texto: "va" }]);
+await guardarHilo(envP, "juan", "clipper", hj, [{ rol: "yo", texto: "ideas de ovnis" }, { rol: "fabrica", texto: "va" }, { rol: "yo", texto: "dale" }, { rol: "pedido", texto: "3 ovnis" }]);
+await guardarHilo(envP, "karen", "clipper", null, [{ rol: "yo", texto: "hola" }]);
+const lj = await (await chats({ request: new Request("https://x/api/chats?p=clipper"), env: envP, data: { usuario: "juan" } })).json();
+const lk = await (await chats({ request: new Request("https://x/api/chats?p=clipper"), env: envP, data: { usuario: "karen" } })).json();
+ok(lj.length === 1 && lj[0].n === 4 && lj[0].titulo === "ideas de ovnis" && lk.length === 1 && lk[0].titulo === "hola", "historial separado: Juan 1 plática (4 msgs), Karen la suya");
+await chats({ request: new Request("https://x/api/chats", { method: "POST", body: JSON.stringify({ p: "clipper", id: hj, titulo: "OVNIs" }) }), env: envP, data: { usuario: "juan" } });
+await chats({ request: new Request(`https://x/api/chats?p=clipper&id=${hj}`, { method: "DELETE" }), env: envP, data: { usuario: "karen" } }); // Karen no puede borrar lo de Juan
+const hjx = await (await chats({ request: new Request(`https://x/api/chats?p=clipper&id=${hj}`), env: envP, data: { usuario: "juan" } })).json();
+ok(hjx.titulo === "OVNIs" && hjx.mensajes.at(-1).rol === "pedido", "renombrar + Karen no toca lo de Juan");
+ok((await chats({ request: new Request("https://x/api/chats?p=clipper"), env: envP, data: {} })).status === 400, "sin nombre no hay historial");
+// pedidos: editar y borrar
+let est = await (await post("https://x/api/estado?p=karen", { tipo: "pedido", texto: "idea 1", quien: "Karen" })).json();
+const pid = est.pedidos[0].id;
+est = await (await post("https://x/api/estado?p=karen", { tipo: "pedido-editar", pid, texto: "idea 1 corregida", quien: "Karen" })).json();
+ok(est.pedidos[0].texto === "idea 1 corregida", "editar pedido");
+est = await (await post("https://x/api/estado?p=karen", { tipo: "pedido-borrar", pid, quien: "Karen" })).json();
+ok(!est.pedidos.some((x) => x.id === pid), "borrar pedido");
+// taller: crear, avanzar, terminar
+const tpost = (b) => taller({ request: new Request("https://x/api/taller", { method: "POST", body: JSON.stringify(b) }), env: envP, params: {} });
+await tpost({ id: "prueba-1", titulo: "Video", estado: "renderizando", pct: 10 }); await tpost({ id: "prueba-1", pct: 250, restante: 30 });
+let tt = (await (await taller({ request: new Request("https://x/api/taller"), env: envP, params: {} })).json()).trabajos[0];
+ok(tt.pct === 100 && tt.restante === 30 && tt.estado === "renderizando" && tt.titulo === "Video", "taller: avance acotado a 100%");
+ok((await tpost({ id: "../x" })).status === 400, "taller: id raro rechazado");
 process.exit(fallas ? 1 : 0);

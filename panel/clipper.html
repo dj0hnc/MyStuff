@@ -208,6 +208,8 @@
     .tripu .btn { padding: 5px 10px; font-size: 12px; }
     .consola .tabs { gap: 4px; } .tab { font-size: 9px; letter-spacing: .04em; padding: 10px 0; }
   }
+  @media (max-width: 560px) { .ped { grid-template-columns: 1fr; } }
+  :root { --ta-bajo: 84px; } /* pastilla del Taller arriba de las pestañas */
   [hidden] { display: none !important; }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
@@ -241,7 +243,7 @@
 </nav>
 <button class="fab" id="fab" type="button" aria-label="Abrir la Consola de la Fábrica"><i></i>CONSOLA</button>
 <section class="sala" id="sala" hidden aria-label="Consola de la Fábrica">
-  <div class="sala-top"><div><b>CONSOLA DE LA FÁBRICA</b><small>Platica ideas; di "hazlo" y queda como pedido.</small></div><div class="fila"><button class="btn mini" id="salaNueva" type="button">Nueva</button><button class="btn" id="salaCerrar" type="button">Cerrar</button></div></div>
+  <div class="sala-top"><div><b>CONSOLA DE LA FÁBRICA</b><small>Platica ideas; di "hazlo" y queda como pedido.</small></div><div class="fila"><button class="btn mini" id="salaHist" type="button">Historial</button><button class="btn mini" id="salaNueva" type="button">Nueva</button><button class="btn" id="salaCerrar" type="button">Cerrar</button></div></div>
   <div class="burbujas" id="burbujas" aria-live="polite"></div>
   <div class="chips" id="chips"></div>
   <form class="compositor" id="compositor"><textarea id="entrada" rows="1" maxlength="2000" placeholder="Escribe tu idea o pega un enlace…" aria-label="Mensaje"></textarea><button class="btn cian" type="submit" id="enviar">Enviar</button></form>
@@ -251,6 +253,8 @@
 <script src="/publicar.js"></script>
 <script src="/crudos.js"></script>
 <script src="/ajustes.js"></script>
+<script src="/historial.js"></script>
+<script src="/taller.js"></script>
 <script>
 const SERIES = {
   ovni: { n: "OVNI", c: "var(--ovni)" }, roswell: { n: "Roswell", c: "var(--archivo)" }, apolo: { n: "NASA", c: "var(--archivo)" },
@@ -497,7 +501,8 @@ let nodoCrudos; // se crea una vez: si el panel se redibuja, la subida en curso 
 const crudos = () => nodoCrudos ||= (() => { const d = el("div"); d.id = "crudos"; Crudos.montar(d, { p: "clipper", quien: () => quien || "Juan", toast }); return d; })();
 function vistaFabrica() {
   const f = document.createDocumentFragment();
-  f.append(el("h2", null, "Subir crudos"), el("p", "sub", "Sube el material original y di qué quieres. La Fábrica lo trabaja en su siguiente vuelta y te contesta en Pedidos."), crudos(),
+  const bt = el("button", "btn", "🎬 Taller: ver lo que se está renderizando"); bt.type = "button"; bt.onclick = () => Taller.abrir();
+  f.append(el("h2", null, "Taller"), bt, el("h2", null, "Subir crudos"), el("p", "sub", "Sube el material original y di qué quieres. La Fábrica lo trabaja en su siguiente vuelta y te contesta en Pedidos."), crudos(),
     el("h2", null, "Redes"), el("p", "sub", "Cada botón te lleva directo a donde se hace la cosa."), hubRedes(), vistaMaquinas(), vistaGuia());
   return f;
 }
@@ -553,7 +558,8 @@ $("#engrane").onclick = abrirAjustes;
 
 // --- Consola de la Fábrica (chat a pantalla completa) ---
 let chat = []; try { chat = JSON.parse(localStorage.getItem("puente-chat") || "[]"); } catch {}
-const guardaChat = () => { try { localStorage.setItem("puente-chat", JSON.stringify(chat.slice(-40))); } catch {} };
+let hilo = ls.get("puente-hilo", null); // plática actual en el historial de quien entró
+const guardaChat = () => { try { localStorage.setItem("puente-chat", JSON.stringify(chat.slice(-40))); } catch {} ls.set("puente-hilo", hilo); };
 const esc = (t) => t.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const inl = (t) => t.replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").replace(/(^|[\s(])\*(?!\s)([^*]+?)\*/g, "$1<i>$2</i>").replace(/`([^`]+)`/g, "<code>$1</code>").replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
 function md(t) { // markdown mínimo y seguro: se escapa todo antes de dar formato
@@ -585,19 +591,24 @@ async function mandar(t) {
   chat.push({ rol: "yo", texto: t }); guardaChat(); pintaChat(true);
   const btn = $("#enviar"); btn.disabled = true;
   try {
-    const r = await fetch("api/chat", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ proyecto: "clipper", mensajes: chat.filter((m) => m.rol !== "pedido"), quien }) });
+    const r = await fetch("api/chat", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ proyecto: "clipper", mensajes: chat, quien, hilo }) });
     if (r.status === 401) { location.reload(); return; }
     const d = await r.json();
     chat.push({ rol: "fabrica", texto: d.respuesta || "Se me fue la señal. ¿Me lo repites?" });
     if (d.pedido) { chat.push({ rol: "pedido", texto: d.pedido }); await traer(); lecturas(); }
+    if (d.hilo) hilo = d.hilo;
   } catch { chat.push({ rol: "fabrica", texto: "No pude conectarme. Revisa la señal e intenta de nuevo." }); }
   btn.disabled = false; guardaChat(); pintaChat(false);
 }
-function abrirSala() { $("#sala").hidden = false; document.body.style.overflow = "hidden"; pintaChat(false); setTimeout(() => $("#entrada").focus(), 50); }
+function abrirSala(pregunta) {
+  $("#sala").hidden = false; document.body.style.overflow = "hidden"; pintaChat(false); setTimeout(() => $("#entrada").focus(), 50);
+  if (hilo && typeof pregunta !== "string") Historial.cargar("clipper", hilo).then((h) => { if (h.mensajes.length >= chat.length) { chat = h.mensajes; guardaChat(); pintaChat(false); } }).catch(() => {}); // la misma plática en otro dispositivo
+}
 function cerrarSala() { $("#sala").hidden = true; document.body.style.overflow = ""; render(); }
 function consola() { const b = el("button", "btn cian", "Abrir la Consola de la Fábrica"); b.type = "button"; b.onclick = abrirSala; return b; }
 $("#fab").onclick = abrirSala; $("#salaCerrar").onclick = cerrarSala;
-$("#salaNueva").onclick = () => { chat = []; guardaChat(); pintaChat(false); };
+$("#salaNueva").onclick = () => { chat = []; hilo = null; guardaChat(); pintaChat(false); };
+$("#salaHist").onclick = () => Historial.abrir({ p: "clipper", actual: hilo, onAbrir: (h) => { chat = h.mensajes; hilo = h.id; guardaChat(); pintaChat(false); }, onNueva: () => $("#salaNueva").click(), onBorrada: () => $("#salaNueva").click() });
 const entrada = $("#entrada");
 entrada.addEventListener("input", () => { entrada.style.height = "auto"; entrada.style.height = Math.min(160, entrada.scrollHeight) + "px"; });
 entrada.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey && !matchMedia("(pointer: coarse)").matches) { e.preventDefault(); $("#compositor").requestSubmit(); } });
@@ -632,7 +643,12 @@ function vistaMaquinas() {
     const r = el("div", "ped"), t = el("div"); t.append(document.createTextNode(p.texto), el("small", null, `${p.quien} · ${hace(p.at)}`));
     if (p.nota) { const n = el("div", "nota"); n.innerHTML = "<b>Claude:</b> " + md(p.nota); t.append(n); }
     const sel = el("select"); sel.setAttribute("aria-label", "Estado del pedido"); Object.entries(EST).forEach(([k, n]) => sel.append(Object.assign(el("option", null, n), { value: k }))); sel.value = p.estado;
-    sel.onchange = () => enviar({ tipo: "pedido-estado", pid: p.id, estado: sel.value }); r.append(t, sel); f.append(r);
+    sel.onchange = () => enviar({ tipo: "pedido-estado", pid: p.id, estado: sel.value });
+    const acc = document.createElement("div"); acc.style.cssText = "display:flex;gap:6px;align-items:center";
+    const ed = el("button", "btn mini", "✎"), bo = el("button", "btn mini", "🗑"); ed.type = bo.type = "button"; ed.setAttribute("aria-label", "Editar"); bo.setAttribute("aria-label", "Borrar");
+    ed.onclick = () => { const n = prompt("Edita el pedido:", p.texto); if (n?.trim() && n.trim() !== p.texto) enviar({ tipo: "pedido-editar", pid: p.id, texto: n.trim() }); };
+    bo.onclick = () => confirm("¿Borrar este pedido? No se puede deshacer.") && enviar({ tipo: "pedido-borrar", pid: p.id });
+    acc.append(sel, ed, bo); r.append(t, acc); f.append(r);
   });
   return f;
 }

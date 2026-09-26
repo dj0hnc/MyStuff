@@ -30,6 +30,7 @@ import { createRequire } from "node:module";
 import { dirname, join, basename } from "node:path";
 import { generateContent, textoDe } from "./gemini.mjs";
 import { ytdlp } from "./ytdlp.mjs";
+import { renderizar } from "./taller.mjs";
 
 const args = process.argv.slice(2);
 const opt = (n, d) => { const i = args.indexOf(`--${n}`); return i >= 0 ? args[i + 1] : d; };
@@ -234,7 +235,7 @@ for (const [k, c] of clips.entries()) {
   meta.push({ archivo: salida, duracion: +durFinal.toFixed(1), viral: c.viral, gancho, titulo_es: c.titulo_es, titulo_en: c.titulo_en, descripcion_es: c.descripcion_es + credito, descripcion_en: c.descripcion_en + credito, hashtags: (c.hashtags ?? []).map((h) => (h.startsWith("#") ? h : `#${h}`)), subs: SUBS ?? "original", fuente: info.url });
   console.log(`\nClip ${n}: ${c.start.toFixed(1)}-${c.end.toFixed(1)} s (${durFinal.toFixed(0)} s tras quitar pausas) viral ${c.viral}/10\n  ${c.titulo_es}\n  ${c.titulo_en}`);
   if (!SIN_RENDER) {
-    execFileSync("npx", ["remotion", "render", "Reedit", salida, "--concurrency=4", "--crf=23", `--props=${JSON.stringify({ edl: edlPath })}`], { stdio: "inherit" });
+    await renderizar("Reedit", salida, ["--concurrency=4", "--crf=23", `--props=${JSON.stringify({ edl: edlPath })}`], { titulo: c.titulo_es || salida });
   }
 }
 await writeFile(`out/clips/${base}.md`, md.join("\n"));

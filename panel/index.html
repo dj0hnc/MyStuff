@@ -70,9 +70,10 @@
     <form id="pinForm"><input name="actual" type="password" inputmode="numeric" autocomplete="current-password" placeholder="PIN actual" required aria-label="PIN actual"><input name="nuevo" type="password" inputmode="numeric" autocomplete="new-password" placeholder="PIN nuevo" required minlength="4" maxlength="12" pattern="\d{4,12}" aria-label="PIN nuevo (4 a 12 números)"><button class="btn" type="submit">Cambiar PIN</button></form>
     <div class="msg" id="pinMsg" aria-live="polite"></div>
     <p class="nota">Instálalo como app: iPhone/iPad → Safari → Compartir → <b>Agregar a inicio</b>. Android → Chrome → ⋮ → <b>Instalar app</b>.</p>
-    <div class="fila"><a class="btn" href="/__salir">Cambiar de persona</a><a class="btn" href="/__salir" style="color:#ff8fa3">Cerrar sesión</a></div>
+    <div class="fila"><button class="btn" type="button" onclick="Taller.abrir()">🎬 Taller</button><a class="btn" href="/__salir">Cambiar de persona</a><a class="btn" href="/__salir" style="color:#ff8fa3">Cerrar sesión</a></div>
   </section>
 </div>
+<script src="/taller.js"></script>
 <script>
 // Inicio personal: quién eres (/api/yo), tus proyectos en tu orden con sus números en vivo, y lo tuyo de hoy.
 const PROY = {

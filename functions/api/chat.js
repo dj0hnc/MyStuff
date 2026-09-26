@@ -1,8 +1,10 @@
 // Chat de los paneles: Gemini con el "cerebro" del proyecto (panel/cerebro/comun.md + <proyecto>.md) y su estado vivo.
-// POST /api/chat {proyecto:"clipper"|"rave"|"karen", mensajes:[{rol:"yo"|"fabrica", texto}], quien} -> {respuesta, pedido?}
+// POST /api/chat {proyecto:"clipper"|"rave"|"karen", mensajes:[{rol:"yo"|"fabrica", texto}], quien, hilo?} -> {respuesta, pedido?, hilo}
+// Cada intercambio queda en el historial de quien entró (chats.js), en el hilo indicado o en uno nuevo.
 // Secretos en Cloudflare: ANTHROPIC_API_KEY (si está, contesta Claude) y/o GEMINI_API_KEY (respaldo). KV: ESTADO (pedidos por proyecto, ver estado.js). El PIN lo cuida _middleware.js.
 
 import { clave, PROYECTOS } from "./estado.js";
+import { guardarHilo } from "./chats.js";
 
 const MODELOS = ["gemini-3.6-flash", "gemini-3.5-flash"];
 const json = (d, s = 200) => new Response(JSON.stringify(d), { status: s, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
@@ -46,13 +48,13 @@ async function contexto(env, origin, p) {
   return `${hechos}\n\nPedidos e ideas guardadas en este panel:\n${pedidos}`;
 }
 
-export async function onRequestPost({ request, env }) {
+export async function onRequestPost({ request, env, data }) {
   if (!env.GEMINI_API_KEY && !env.ANTHROPIC_API_KEY) return json({ error: "sin_clave", respuesta: "Falta conectar mi cerebro: agrega ANTHROPIC_API_KEY o GEMINI_API_KEY en Cloudflare." }, 503);
   let b;
   try { b = await request.json(); } catch { return json({ error: "json_invalido" }, 400); }
   const p = PROYECTOS.includes(b.proyecto) ? b.proyecto : "clipper";
   const quien = String(b.quien || "Alguien").slice(0, 24);
-  const msgs = (Array.isArray(b.mensajes) ? b.mensajes : []).slice(-16).map((m) => ({ role: m.rol === "fabrica" ? "model" : "user", parts: [{ text: String(m.texto || "").slice(0, 2000) }] }));
+  const msgs = (Array.isArray(b.mensajes) ? b.mensajes : []).filter((m) => m.rol !== "pedido").slice(-16).map((m) => ({ role: m.rol === "yo" ? "user" : "model", parts: [{ text: String(m.texto || "").slice(0, 2000) }] }));
   if (!msgs.length || msgs.at(-1).role !== "user") return json({ error: "vacio" }, 400);
 
   const [comun, propio] = await Promise.all([asset(env, request.url, "/cerebro/comun.md"), asset(env, request.url, `/cerebro/${p}.md`)]);
@@ -83,5 +85,11 @@ export async function onRequestPost({ request, env }) {
     e.bitacora = [{ quien, que: `pidió (vía chat): ${pedido.slice(0, 60)}`, at: ahora }, ...(e.bitacora || [])].slice(0, 150);
     await env.ESTADO.put(clave(p), JSON.stringify(e));
   }
-  return json({ respuesta, pedido, motor, ...(motor === "gemini" && fallo ? { detalle: fallo } : {}) });
+  let hilo = null;
+  if (data?.usuario && env.ESTADO) { // historial por persona: lo que mandó el panel + esta respuesta (+ el pedido si hubo)
+    const hist = (Array.isArray(b.mensajes) ? b.mensajes : []).map((m) => ({ rol: m.rol, texto: m.texto }));
+    hist.push({ rol: "fabrica", texto: respuesta }); if (pedido) hist.push({ rol: "pedido", texto: pedido });
+    hilo = await guardarHilo(env, data.usuario, p, typeof b.hilo === "string" ? b.hilo : null, hist).catch(() => null);
+  }
+  return json({ respuesta, pedido, motor, hilo, ...(motor === "gemini" && fallo ? { detalle: fallo } : {}) });
 }

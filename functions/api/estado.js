@@ -3,6 +3,7 @@
 // POST /api/estado  -> {tipo, quien, pin?, ...}:
 //   {tipo:"video", id, cambios:{tiktok,youtube,instagram,vyro,vtt,vyt,nota,link}}
 //   {tipo:"pedido", texto}
+//   {tipo:"pedido-editar", pid, texto} · {tipo:"pedido-borrar", pid}
 //   {tipo:"ajustes", ajustes:{tripulacion, horarios, porDia, ytMin, redes, cuentas:{tiktok,youtube,instagram}}}  (ajustes del proyecto, compartidos)
 //   cambios.links:{tiktok,youtube,instagram} = links de los posts ya publicados (para compartir)
 //   {tipo:"pedido-estado", pid, estado:"nuevo"|"produccion"|"listo", nota?}  (nota = respuesta de Claude, se ve bajo el pedido)
@@ -70,6 +71,10 @@ export async function onRequestPost({ request, env }) {
     if (!p || !["nuevo", "produccion", "listo"].includes(b.estado)) return json({ error: "pedido" }, 400);
     p.estado = b.estado; que = `marcó pedido como ${b.estado}`;
     if (b.nota) { p.nota = texto(b.nota, 1500); que = `respondió: ${p.nota.slice(0, 60)}`; }
+  } else if (b.tipo === "pedido-editar" || b.tipo === "pedido-borrar") {
+    const i = e.pedidos.findIndex((x) => x.id === b.pid); if (i < 0) return json({ error: "pedido" }, 400);
+    if (b.tipo === "pedido-borrar") { que = `borró el pedido: ${e.pedidos[i].texto.slice(0, 50)}`; e.pedidos.splice(i, 1); }
+    else { const t = texto(b.texto, 1500).trim(); if (!t) return json({ error: "vacio" }, 400); e.pedidos[i].texto = t; e.pedidos[i].editado = ahora; que = `editó un pedido: ${t.slice(0, 50)}`; }
   } else if (b.tipo === "ajustes") {
     e.ajustes = limpiarAjustes(b.ajustes); que = "cambió los ajustes";
   } else return json({ error: "tipo" }, 400);

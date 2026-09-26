@@ -6,7 +6,7 @@
 //       npm run video -- out/zorro.mp4 '{"fondoImagen":"img/zorro.jpg"}'
 
 import { readFile } from "node:fs/promises";
-import { execFileSync } from "node:child_process";
+import { renderizar } from "./taller.mjs";
 
 const [salida = "out/tiktok-pro.mp4", extra = "{}"] = process.argv.slice(2);
 
@@ -20,6 +20,4 @@ try {
 }
 props = { ...props, ...JSON.parse(extra) };
 
-execFileSync("npx", ["remotion", "render", "TikTokPro", salida, "--concurrency=4", "--crf=23", `--props=${JSON.stringify(props)}`], {
-  stdio: "inherit",
-});
+await renderizar("TikTokPro", salida, ["--concurrency=4", "--crf=23", `--props=${JSON.stringify(props)}`], { titulo: props.hook || salida }); // avisa el avance al Taller del panel
