@@ -116,10 +116,35 @@
   .paso p { margin: 0; }
   /* Consola de pestañas */
   .consola { position: fixed; left: 0; right: 0; bottom: 0; padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px)); background: rgba(5,8,15,0.94); border-top: 1px solid var(--linea); backdrop-filter: blur(8px); }
-  .consola .tabs { max-width: 1080px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-  .tab { appearance: none; background: var(--panel); color: var(--cian-suave); border: 1px solid var(--linea); border-radius: 10px; padding: 10px 4px; font: 800 11px var(--hud); letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; }
+  .consola .tabs { max-width: 1080px; margin: 0 auto; display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+  .tab { appearance: none; background: var(--panel); color: var(--cian-suave); border: 1px solid var(--linea); border-radius: 10px; padding: 10px 2px; font: 800 10px var(--hud); letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; }
   .tab[aria-selected="true"] { color: var(--casco); background: var(--cian); border-color: var(--cian); box-shadow: 0 0 16px rgba(41,231,255,0.45); }
   .toast { position: fixed; left: 50%; bottom: calc(84px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--cian); color: var(--casco); padding: 8px 14px; border-radius: 8px; font-weight: 700; }
+
+  .enlace { display: inline-flex; align-items: center; gap: 8px; font: 400 13px var(--reloj); color: var(--cian-suave); }
+  .enlace i { width: 10px; height: 10px; border-radius: 50%; background: var(--l, var(--ambar)); box-shadow: 0 0 10px var(--l, var(--ambar)); }
+  .tripu { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .tripu .btn[aria-pressed="true"] { background: var(--cian); color: var(--casco); border-color: var(--cian); }
+  .num { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .num label { display: grid; gap: 3px; font: 700 11px var(--leer); letter-spacing: 0.1em; text-transform: uppercase; color: var(--cian-suave); }
+  .num input { background: var(--casco); color: var(--texto); border: 1px solid var(--linea); border-radius: 8px; padding: 7px 8px; font: 400 16px var(--reloj); width: 100%; }
+  .por { font-size: 12px; color: var(--cian-suave); font-family: var(--reloj); }
+  .ranking { display: grid; gap: 8px; }
+  .rk { display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; align-items: center; background: var(--panel); border: 1px solid var(--linea); border-left: 4px solid var(--c); border-radius: 10px; padding: 8px 12px; }
+  .rk .pos { font: 800 18px var(--hud); color: var(--cian); text-align: center; }
+  .rk .v { font: 400 18px var(--reloj); color: var(--verde); font-variant-numeric: tabular-nums; }
+  .rk small { display: block; color: var(--cian-suave); font-size: 13px; }
+  .barras { display: grid; gap: 8px; }
+  .br { display: grid; grid-template-columns: 110px 1fr 70px; gap: 10px; align-items: center; font-weight: 700; }
+  .br .pista { height: 14px; background: var(--casco); border: 1px solid var(--linea); border-radius: 99px; overflow: hidden; }
+  .br .pista i { display: block; height: 100%; background: var(--c); box-shadow: 0 0 10px var(--c); }
+  .br span:last-child { font-family: var(--reloj); text-align: right; color: var(--cian-suave); }
+  .log { display: grid; gap: 6px; max-height: 360px; overflow: auto; }
+  .log div { background: var(--panel); border: 1px solid var(--linea); border-radius: 8px; padding: 7px 10px; font-size: 14px; }
+  .log b { color: var(--cian); } .log time { float: right; font-family: var(--reloj); color: var(--cian-suave); font-size: 12px; }
+  .ped { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; background: var(--panel); border: 1px solid var(--linea); border-radius: 10px; padding: 8px 12px; }
+  .ped small { display: block; color: var(--cian-suave); font-family: var(--reloj); font-size: 12px; }
+  .aviso-banda { border: 1px solid var(--ambar); background: rgba(255,176,32,0.08); color: var(--ambar); border-radius: 10px; padding: 8px 12px; font-size: 14px; }
   [hidden] { display: none !important; }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
@@ -129,8 +154,9 @@
   <section class="cabina" aria-label="Estado general">
     <div class="top">
       <h1>Puente de mando · <span>La Fábrica</span></h1>
-      <div class="reloj-tx" id="reloj">--:-- TEXAS</div>
+      <div class="fila" style="align-items:center"><span class="enlace" id="enlace"><i></i><span>CONECTANDO…</span></span><div class="reloj-tx" id="reloj">--:-- TEXAS</div></div>
     </div>
+    <div class="tripu" id="tripu"></div>
     <div class="lecturas" id="lecturas"></div>
     <div class="lanzamiento" id="lanzamiento" hidden>
       <div class="cuenta mono" id="cuenta">00:00</div>
@@ -145,6 +171,7 @@
   <div class="tabs" role="tablist">
     <button class="tab" role="tab" data-t="mision" aria-selected="true">Misión</button>
     <button class="tab" role="tab" data-t="calendario" aria-selected="false">Calendario</button>
+    <button class="tab" role="tab" data-t="radar" aria-selected="false">Radar</button>
     <button class="tab" role="tab" data-t="maquinas" aria-selected="false">Máquinas</button>
     <button class="tab" role="tab" data-t="guia" aria-selected="false">Guía</button>
   </div>
@@ -156,33 +183,77 @@ const SERIES = {
   ovni: { n: "OVNI", c: "var(--ovni)" }, roswell: { n: "Roswell", c: "var(--archivo)" }, apolo: { n: "NASA", c: "var(--archivo)" },
   poli: { n: "Persecución", c: "var(--poli)" }, historia: { n: "Historia", c: "var(--historia)" }, ketone: { n: "Ketone-IQ", c: "var(--ketone)" },
 };
+const TRIPULACION = ["JOHNC", "Karen"];
 const LUZ = { ok: "var(--verde)", aviso: "var(--ambar)", off: "var(--rojo)" };
 const DIAS = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
 const $ = (s) => document.querySelector(s);
 const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const ls = { get: (k, d) => { try { const x = localStorage.getItem(k); return x == null ? d : JSON.parse(x); } catch { return d; } }, set: (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} } };
+
 let data = { videos: [], fabrica: {} }, tab = "mision";
+// Estado compartido (servidor). Si no hay servidor, se guarda en este celular y se avisa.
+let srv = { videos: {}, pedidos: [], bitacora: [] }, enLinea = false;
+let quien = ls.get("puente-quien", ""), pin = ls.get("puente-pin", "");
 
-// Estado de cada video en este dispositivo (palomitas y vistas), encima de lo que dice data.json.
-const KEY = "puente-estado-v1";
-let estado = {}; try { estado = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch { estado = {}; }
-const guardarEstado = () => { try { localStorage.setItem(KEY, JSON.stringify(estado)); } catch {} };
-const val = (v, k) => (estado[v.id] && k in estado[v.id] ? estado[v.id][k] : v[k]);
+const val = (v, k) => { const s = srv.videos[v.id]; return s && k in s ? s[k] : v[k]; };
 const hecho = (v) => (v.serie === "ketone" ? !!val(v, "tiktok") : !!(val(v, "tiktok") && val(v, "youtube")));
+const vistas = (v) => (Number(val(v, "vtt")) || 0) + (Number(val(v, "vyt")) || 0);
 
-// Hora de Texas (America/Chicago) sin depender del huso del celular.
 function texas() {
   const p = Object.fromEntries(new Intl.DateTimeFormat("en-US", { timeZone: "America/Chicago", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }).formatToParts(new Date()).map((x) => [x.type, x.value]));
-  return { fecha: `${p.year}-${p.month}-${p.day}`, min: (+p.hour % 24) * 60 + +p.minute, seg: +p.second, hhmm: `${p.hour % 24}:${p.minute}`.padStart(5, "0") };
+  return { fecha: `${p.year}-${p.month}-${p.day}`, min: (+p.hour % 24) * 60 + +p.minute, seg: +p.second, hhmm: `${+p.hour % 24}:${p.minute}`.padStart(5, "0") };
 }
 const aMin = (h) => { const m = /(\d+):(\d+)\s*(AM|PM)/i.exec(h || ""); if (!m) return null; let hh = +m[1] % 12; if (/PM/i.test(m[3])) hh += 12; return hh * 60 + +m[2]; };
 const fmtDia = (iso) => { const d = new Date(iso + "T12:00:00"); return `${DIAS[d.getDay()]} ${d.getDate()} de ${d.toLocaleString("es-MX", { month: "long" })}`; };
+const hace = (iso) => { const m = Math.round((Date.now() - new Date(iso)) / 60000); return m < 1 ? "ahora" : m < 60 ? `hace ${m} min` : m < 1440 ? `hace ${Math.round(m / 60)} h` : `hace ${Math.round(m / 1440)} d`; };
+const fmtN = (n) => (n >= 1e6 ? (n / 1e6).toFixed(1) + "M" : n >= 1e3 ? (n / 1e3).toFixed(1) + "K" : String(n));
 
-function toast(m) { const t = $("#toast"); t.textContent = m; t.hidden = false; clearTimeout(toast.h); toast.h = setTimeout(() => (t.hidden = true), 1600); }
+function toast(m) { const t = $("#toast"); t.textContent = m; t.hidden = false; clearTimeout(toast.h); toast.h = setTimeout(() => (t.hidden = true), 1800); }
 async function copiar(txt, nodo) {
   try { await navigator.clipboard.writeText(txt); toast("Copiado"); }
   catch { const r = document.createRange(); r.selectNodeContents(nodo); const s = getSelection(); s.removeAllRanges(); s.addRange(r); toast("Seleccionado: copia con el menú"); }
 }
 
+// --- enlace con el cerebro ---
+function luzEnlace() {
+  const e = $("#enlace"); e.style.setProperty("--l", enLinea ? "var(--verde)" : "var(--ambar)");
+  e.querySelector("span").textContent = enLinea ? "ENLACE COMPARTIDO" : "MODO LOCAL";
+}
+async function traer() {
+  try {
+    const r = await fetch("api/estado", { cache: "no-store" });
+    if (!r.ok) throw 0;
+    srv = await r.json(); enLinea = true;
+  } catch { enLinea = false; srv = ls.get("puente-local", srv); }
+  luzEnlace();
+}
+async function enviar(cuerpo) {
+  if (!quien) { toast("Primero elige quién eres (arriba)"); return false; }
+  const body = { ...cuerpo, quien, pin };
+  if (!enLinea) { // modo local: se aplica solo en este celular
+    if (body.tipo === "video") { const v = (srv.videos[body.id] ||= {}); Object.assign(v, body.cambios, { por: quien, at: new Date().toISOString() }); }
+    if (body.tipo === "pedido") srv.pedidos.unshift({ id: Math.random().toString(36).slice(2, 10), texto: body.texto, quien, at: new Date().toISOString(), estado: "nuevo" });
+    ls.set("puente-local", srv); render(); return true;
+  }
+  try {
+    const r = await fetch("api/estado", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
+    if (r.status === 401) { pedirPin(); return false; }
+    if (!r.ok) throw 0;
+    srv = await r.json(); render(); return true;
+  } catch { toast("No se guardó. Revisa la señal e intenta otra vez."); return false; }
+}
+function pedirPin() {
+  const nuevo = window.prompt("Este panel pide PIN para hacer cambios. Escríbelo:");
+  if (nuevo) { pin = nuevo.trim(); ls.set("puente-pin", pin); toast("PIN guardado; vuelve a intentar"); }
+}
+
+// --- tripulación ---
+function barraTripu() {
+  const b = $("#tripu"); b.replaceChildren(el("span", "por", "TRIPULANTE:"));
+  TRIPULACION.forEach((n) => { const x = el("button", "btn", n); x.setAttribute("aria-pressed", String(quien === n)); x.onclick = () => { quien = n; ls.set("puente-quien", n); barraTripu(); toast(`Hola, ${n}`); }; b.append(x); });
+}
+
+// --- tarjeta de video ---
 function tarjeta(v) {
   const s = SERIES[v.serie] || { n: v.serie, c: "var(--linea)" };
   const c = el("article", "card" + (hecho(v) ? " hecho" : "")); c.style.setProperty("--c", s.c);
@@ -196,12 +267,14 @@ function tarjeta(v) {
   if (v.nota) b.append(el("div", "nota", v.nota));
   const fila = el("div", "fila"); const dl = el("a", "btn cian", "Guardar video"); dl.href = v.video; dl.download = v.id + ".mp4"; fila.append(dl); b.append(fila);
   const checks = el("div", "checks");
-  const chk = (k, lbl) => { const l = el("label"), i = el("input"); i.type = "checkbox"; i.checked = !!val(v, k); i.onchange = () => { (estado[v.id] ||= {})[k] = i.checked; guardarEstado(); render(); }; l.append(i, document.createTextNode(lbl)); return l; };
+  const chk = (k, lbl) => { const l = el("label"), i = el("input"); i.type = "checkbox"; i.checked = !!val(v, k); i.onchange = async () => { if (!(await enviar({ tipo: "video", id: v.id, cambios: { [k]: i.checked } }))) i.checked = !i.checked; }; l.append(i, document.createTextNode(lbl)); return l; };
   checks.append(chk("tiktok", "TikTok"), v.serie === "ketone" ? chk("vyro", "Registrado en Vyro") : chk("youtube", "YouTube"));
   b.append(checks);
-  const vi = el("input", "vistas"); vi.placeholder = "Vistas / notas (ej. TikTok 1.2K · YT 300)"; vi.value = val(v, "vistas") || "";
-  vi.onchange = () => { (estado[v.id] ||= {}).vistas = vi.value.trim(); guardarEstado(); };
-  b.append(vi);
+  const num = el("div", "num");
+  const campoN = (k, lbl) => { const l = el("label", null, lbl), i = el("input"); i.type = "number"; i.inputMode = "numeric"; i.min = "0"; i.placeholder = "0"; i.className = "vistas-n"; i.value = val(v, k) || ""; i.onchange = () => enviar({ tipo: "video", id: v.id, cambios: { [k]: i.value } }); l.append(i); return l; };
+  num.append(campoN("vtt", "Vistas TikTok"), ...(v.serie === "ketone" ? [] : [campoN("vyt", "Vistas YouTube")]));
+  b.append(num);
+  const sv = srv.videos[v.id]; if (sv && sv.por) b.append(el("div", "por", `Último cambio: ${sv.por} · ${hace(sv.at)}`));
   c.append(vid, b); return c;
 }
 
@@ -215,19 +288,27 @@ function grupoDias(lista) {
   return frag;
 }
 
+// --- vistas ---
 function vistaMision() {
   const t = texas(), f = document.createDocumentFragment();
+  if (!enLinea) f.append(el("div", "aviso-banda", "Modo local: lo que marques se queda en este celular. En cuanto se conecte la memoria compartida, se sincroniza para todos."));
   const hoy = data.videos.filter((v) => v.fecha === t.fecha);
-  f.append(el("h2", null, "Misión de hoy"), el("p", "sub", hoy.length ? "Sube cada uno a su hora. Cuando termines, pícale su palomita." : "Hoy no hay lanzamientos programados."));
+  f.append(el("h2", null, "Misión de hoy"), el("p", "sub", hoy.length ? "Sube cada uno a su hora y pícale su palomita. Todos lo ven al instante." : "Hoy no hay lanzamientos programados."));
   if (hoy.length) { const g = el("div", "grid"); hoy.sort((a, b) => a.orden - b.orden).forEach((v) => g.append(tarjeta(v))); f.append(g); }
   const atrasados = data.videos.filter((v) => v.fecha && v.fecha < t.fecha && !hecho(v));
-  if (atrasados.length) { f.append(el("h2", null, "Atrasados"), el("p", "sub", "Se quedaron sin subir. Súbelos en un hueco libre.")); const g = el("div", "grid"); atrasados.forEach((v) => g.append(tarjeta(v))); f.append(g); }
+  if (atrasados.length) { f.append(el("h2", null, "Atrasados"), el("p", "sub", "Se quedaron sin subir. Métanlos en un hueco libre.")); const g = el("div", "grid"); atrasados.forEach((v) => g.append(tarjeta(v))); f.append(g); }
+  if (srv.bitacora?.length) { f.append(el("h2", null, "Bitácora")); f.append(bitacora(8)); }
   return f;
 }
 
+function bitacora(n) {
+  const d = el("div", "log");
+  (srv.bitacora || []).slice(0, n).forEach((x) => { const r = el("div"), t = el("time", null, hace(x.at)); r.append(t, el("b", null, x.quien + " "), document.createTextNode(x.que)); d.append(r); });
+  return d;
+}
+
 function vistaCalendario() {
-  const f = document.createDocumentFragment();
-  const barra = el("div", "fila");
+  const f = document.createDocumentFragment(), barra = el("div", "fila");
   const selE = el("select"); selE.setAttribute("aria-label", "Estado"); [["pend", "Pendientes"], ["todos", "Todos"], ["hechos", "Ya subidos"]].forEach(([k, n]) => { const o = el("option", null, n); o.value = k; selE.append(o); });
   const selS = el("select"); selS.setAttribute("aria-label", "Serie"); selS.append(Object.assign(el("option", null, "Todas las series"), { value: "" }));
   Object.entries(SERIES).forEach(([k, s]) => selS.append(Object.assign(el("option", null, s.n), { value: k })));
@@ -240,6 +321,28 @@ function vistaCalendario() {
     cont.replaceChildren(l.length ? grupoDias(l) : el("div", "vacio", "Nada en este filtro."));
   };
   selE.onchange = selS.onchange = pinta; barra.append(selE, selS); f.append(el("h2", null, "Calendario de lanzamientos"), barra, cont); pinta();
+  return f;
+}
+
+function vistaRadar() {
+  const f = document.createDocumentFragment(), conV = data.videos.filter((v) => vistas(v) > 0);
+  const total = data.videos.reduce((a, v) => a + vistas(v), 0);
+  f.append(el("h2", null, "Radar de rendimiento"), el("p", "sub", conV.length ? `Vistas totales anotadas: ${fmtN(total)}. Lo que más jala se produce más.` : "Todavía no hay vistas anotadas. Escríbanlas en cada video (Vistas TikTok / YouTube) y aquí aparece el ranking."));
+  if (conV.length) {
+    f.append(el("h2", null, "Top videos"));
+    const rk = el("div", "ranking");
+    conV.sort((a, b) => vistas(b) - vistas(a)).slice(0, 10).forEach((v, i) => {
+      const s = SERIES[v.serie] || {}, r = el("div", "rk"); r.style.setProperty("--c", s.c);
+      const t = el("div"); t.append(document.createTextNode(v.titulo)); t.append(el("small", null, `${s.n} · TikTok ${fmtN(Number(val(v, "vtt")) || 0)} · YT ${fmtN(Number(val(v, "vyt")) || 0)}`));
+      r.append(el("div", "pos", String(i + 1)), t, el("div", "v", fmtN(vistas(v)))); rk.append(r);
+    });
+    f.append(rk, el("h2", null, "Promedio por serie"));
+    const prom = Object.entries(SERIES).map(([k, s]) => { const vs = data.videos.filter((v) => v.serie === k && vistas(v) > 0); return { s, n: vs.length, p: vs.length ? vs.reduce((a, v) => a + vistas(v), 0) / vs.length : 0 }; }).filter((x) => x.n);
+    const max = Math.max(...prom.map((x) => x.p), 1), bs = el("div", "barras");
+    prom.sort((a, b) => b.p - a.p).forEach(({ s, n, p }) => { const r = el("div", "br"), pista = el("div", "pista"), i = el("i"); r.style.setProperty("--c", s.c); i.style.width = Math.max(3, (p / max) * 100) + "%"; pista.append(i); r.append(el("span", null, s.n), pista, el("span", null, fmtN(Math.round(p)))); bs.append(r); });
+    f.append(bs);
+  }
+  f.append(el("h2", null, "Bitácora completa"), srv.bitacora?.length ? bitacora(150) : el("div", "vacio", "Aquí sale todo lo que hace la tripulación."));
   return f;
 }
 
@@ -257,42 +360,50 @@ function vistaMaquinas() {
   });
   f.append(mods, el("h2", null, "Conexiones"));
   const cs = el("div", "conexiones");
-  (fb.conexiones || []).forEach((c) => { const d = el("div", "con"), luz = el("span", "luz"); luz.style.setProperty("--l", LUZ[c.estado] || "var(--linea)"); const t = el("div"); t.append(el("b", null, c.nombre), el("small", null, c.detalle)); d.append(luz, t); cs.append(d); });
+  const todas = [{ nombre: "Memoria compartida del panel", estado: enLinea ? "ok" : "aviso", detalle: enLinea ? "Todos ven los mismos cambios al instante" : "Falta enlazar el KV en Cloudflare (ver Guía)" }, ...(fb.conexiones || [])];
+  todas.forEach((c) => { const d = el("div", "con"), luz = el("span", "luz"); luz.style.setProperty("--l", LUZ[c.estado] || "var(--linea)"); const t = el("div"); t.append(el("b", null, c.nombre), el("small", null, c.detalle)); d.append(luz, t); cs.append(d); });
   f.append(cs);
   if (fb.enCola?.length) { f.append(el("h2", null, "En producción")); const ul = el("ul", "lista"); fb.enCola.forEach((x) => ul.append(el("li", null, x))); f.append(ul); }
-  f.append(el("h2", null, "Pedidos a la fábrica"), el("p", "sub", "¿Viste un video o tema que quieres? Escríbelo aquí y se abre como pedido en GitHub, donde Claude lo recoge."));
-  const fila = el("div", "fila"); const inp = el("input", "vistas"); inp.placeholder = "Ej. más persecuciones de noche, o pega un enlace";
-  const btn = el("a", "btn cian", "Enviar pedido"); btn.target = "_blank"; btn.rel = "noopener";
-  const upd = () => { btn.href = "https://github.com/dj0hnc/MyStuff/issues/new?labels=pedido&title=" + encodeURIComponent("Pedido: " + (inp.value.trim() || "video nuevo")) + "&body=" + encodeURIComponent(inp.value.trim()); };
-  inp.oninput = upd; upd(); fila.append(inp, btn); f.append(fila);
+  f.append(el("h2", null, "Pedidos a la fábrica"), el("p", "sub", "Escriban qué video quieren o peguen un enlace. Claude lee esta lista y lo produce."));
+  const fila = el("div", "fila"), inp = el("input", "vistas"); inp.placeholder = "Ej. más persecuciones de noche, o pega un enlace"; inp.maxLength = 500;
+  const btn = el("button", "btn cian", "Enviar pedido"); btn.onclick = async () => { const t = inp.value.trim(); if (!t) return; if (await enviar({ tipo: "pedido", texto: t })) { inp.value = ""; toast("Pedido enviado"); } };
+  fila.append(inp, btn); f.append(fila);
+  const EST = { nuevo: "Nuevo", produccion: "En producción", listo: "Listo" };
+  (srv.pedidos || []).slice(0, 30).forEach((p) => {
+    const r = el("div", "ped"), t = el("div"); t.append(document.createTextNode(p.texto), el("small", null, `${p.quien} · ${hace(p.at)}`));
+    const sel = el("select"); sel.setAttribute("aria-label", "Estado del pedido"); Object.entries(EST).forEach(([k, n]) => sel.append(Object.assign(el("option", null, n), { value: k }))); sel.value = p.estado;
+    sel.onchange = () => enviar({ tipo: "pedido-estado", pid: p.id, estado: sel.value }); r.append(t, sel); f.append(r);
+  });
   return f;
 }
 
 function vistaGuia() {
   const f = document.createDocumentFragment();
-  f.append(el("h2", null, "Cómo subir un video"), el("p", "sub", "Para JOHNC y Karen. Toma 2 minutos por video."));
+  f.append(el("h2", null, "Cómo subir un video"), el("p", "sub", "Para JOHNC y Karen. 2 minutos por video."));
   const pasos = [
-    ["Abre MISIÓN.", "Ahí salen los videos de hoy en orden, con su hora de Texas. El reloj de arriba cuenta cuánto falta para el siguiente."],
-    ["Toca GUARDAR VIDEO.", "Se baja a tu celular (en iPhone: mantén presionado y elige Descargar si hace falta)."],
-    ["Toca COPIAR en el texto de TikTok.", "Abre TikTok, sube el video y pega el texto. Sin música de TikTok: el video ya trae su audio."],
-    ["Pícale la palomita TikTok.", "30 minutos después súbelo a YouTube Shorts: copia el título y el texto, y pícale YouTube."],
+    ["Elige quién eres arriba (JOHNC o Karen).", "Así la bitácora sabe quién hizo cada cosa."],
+    ["Abre MISIÓN.", "Salen los videos de hoy en orden, con su hora de Texas. El reloj ámbar cuenta cuánto falta para el siguiente."],
+    ["Toca GUARDAR VIDEO y luego COPIAR.", "Abre TikTok, sube el video y pega el texto. Sin música de TikTok: el video ya trae su audio."],
+    ["Pícale la palomita TikTok.", "30 minutos después súbelo a YouTube Shorts con su título y pícale YouTube. El otro lo ve al instante."],
     ["Ketone-IQ es distinto.", "Activa Branded content en TikTok y registra el enlace en Vyro. Los demás NO llevan Branded content."],
-    ["Anota las vistas.", "Al día siguiente escribe las vistas en la cajita del video. Con eso se decide qué se produce después."],
+    ["Al día siguiente, anota las vistas.", "Escribe los números en Vistas TikTok / YouTube. El RADAR arma el ranking y Claude decide qué producir más."],
   ];
-  const g = el("div", "guia"); pasos.forEach(([a, b], i) => { const p = el("div", "paso"), t = el("div"); t.append(el("p", null, a)); t.lastChild.style.fontWeight = "700"; t.append(el("p", "sub", b)); p.append(el("div", "n", String(i + 1)), t); g.append(p); });
+  const g = el("div", "guia"); pasos.forEach(([a, b], i) => { const p = el("div", "paso"), t = el("div"), pa = el("p", null, a); pa.style.fontWeight = "700"; t.append(pa, el("p", "sub", b)); p.append(el("div", "n", String(i + 1)), t); g.append(p); });
   f.append(g, el("h2", null, "Accesos rápidos"));
   const fila = el("div", "fila");
   [["Subir a TikTok", "https://www.tiktok.com/upload"], ["Subir a YouTube", "https://www.youtube.com/upload"], ["Analytics TikTok", "https://www.tiktok.com/tiktokstudio/analytics"], ["YouTube Studio", "https://studio.youtube.com"], ["Vyro", "https://vyro.com"]]
     .forEach(([n, u]) => { const a = el("a", "btn", n); a.href = u; a.target = "_blank"; a.rel = "noopener"; fila.append(a); });
-  f.append(fila, el("p", "sub", "Las palomitas y vistas se guardan en este celular. Datos actualizados por Claude: " + (data.actualizado || "-")));
+  f.append(fila, el("p", "sub", `Estado: ${enLinea ? "enlace compartido activo" : "modo local (falta enlazar la memoria en Cloudflare)"}. Videos actualizados por Claude: ${data.actualizado || "-"}.`));
   return f;
 }
 
 function lecturas() {
   const t = texas(), total = data.videos.length, sub = data.videos.filter(hecho).length;
   const hoyPend = data.videos.filter((v) => v.fecha === t.fecha && !hecho(v)).length;
+  const tv = data.videos.reduce((a, v) => a + vistas(v), 0);
   const L = $("#lecturas"); L.replaceChildren();
-  [["Videos", total, ""], ["En órbita", sub, "verde"], ["Por lanzar", total - sub, ""], ["Hoy", hoyPend, "ambar"]].forEach(([n, x, cl]) => { const d = el("div", "lectura " + cl); d.append(el("b", null, String(x)), el("span", null, n)); L.append(d); });
+  [["En órbita", `${sub}/${total}`, "verde"], ["Hoy por lanzar", hoyPend, "ambar"], ["Vistas anotadas", fmtN(tv), ""], ["Pedidos nuevos", (srv.pedidos || []).filter((p) => p.estado === "nuevo").length, ""]]
+    .forEach(([n, x, cl]) => { const d = el("div", "lectura " + cl); d.append(el("b", null, String(x)), el("span", null, n)); L.append(d); });
 }
 
 function reloj() {
@@ -308,18 +419,25 @@ function reloj() {
 
 function render() {
   lecturas();
-  const V = { mision: vistaMision, calendario: vistaCalendario, maquinas: vistaMaquinas, guia: vistaGuia }[tab];
-  const act = document.activeElement; if (act && act.classList.contains("vistas")) return;
-  $("#vista").replaceChildren(V());
+  const act = document.activeElement; if (act && (act.classList.contains("vistas") || act.classList.contains("vistas-n"))) return; // no pisar lo que se escribe
+  const V = { mision: vistaMision, calendario: vistaCalendario, radar: vistaRadar, maquinas: vistaMaquinas, guia: vistaGuia }[tab];
+  const y = scrollY; $("#vista").replaceChildren(V()); scrollTo({ top: y });
 }
 
 document.querySelectorAll(".tab").forEach((b) => b.addEventListener("click", () => {
   tab = b.dataset.t; document.querySelectorAll(".tab").forEach((x) => x.setAttribute("aria-selected", String(x === b)));
-  scrollTo({ top: 0 }); render();
+  render(); scrollTo({ top: 0 });
 }));
 
-fetch("data.json", { cache: "no-store" }).then((r) => r.json()).then((d) => { data = d; render(); reloj(); setInterval(reloj, 1000); })
-  .catch(() => { $("#vista").replaceChildren(el("div", "vacio", "No se pudo cargar la lista. Revisa tu conexión y recarga.")); });
+(async () => {
+  barraTripu();
+  try { data = await (await fetch("data.json", { cache: "no-store" })).json(); }
+  catch { $("#vista").replaceChildren(el("div", "vacio", "No se pudo cargar la lista. Revisa tu conexión y recarga.")); return; }
+  await traer(); render(); reloj(); setInterval(reloj, 1000);
+  // Sincroniza con la tripulación cada 15 s (y al volver a la pestaña).
+  setInterval(async () => { if (document.visibilityState === "visible") { await traer(); render(); } }, 15000);
+  document.addEventListener("visibilitychange", async () => { if (document.visibilityState === "visible") { await traer(); render(); } });
+})();
 </script>
 </body>
 </html>

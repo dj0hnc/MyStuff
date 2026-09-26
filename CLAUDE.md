@@ -61,7 +61,7 @@ Clips virales para un canal aparte (no para The Rave Couple; guía en `docs/clip
 Tablero de publicación (`panel/`, sitio estático en Cloudflare Pages, se publica solo con cada push a main):
 - `panel/data.json` es la fuente: cada video con serie, fecha/hora de Texas, textos TikTok/YouTube y estado reportado.
 - `panel/videos/` guarda los finales comprimidos (720x1280, crf 26). Para agregar un video: comprimirlo ahí y sumar su fila en `data.json`.
-- Palomitas y vistas se guardan en el celular de quien lo usa (localStorage); los pedidos llegan como issues con la etiqueta `pedido`.
+- Estado compartido (palomitas, vistas, notas, pedidos, bitácora) en `functions/api/estado.js` (Pages Function + KV enlazado como `ESTADO`; `PIN` opcional). Leerlo: `curl https://<proyecto>.pages.dev/api/estado`. Sin KV, el panel cae a modo local.
 
 ## Composiciones (`src/Root.tsx`)
 - `TikTokPro`: gancho (Bebas Neue) → subtítulos palabra a palabra (Montserrat) con visualizador →
