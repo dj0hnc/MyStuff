@@ -58,12 +58,16 @@ Clips virales para un canal aparte (no para The Rave Couple; guía en `docs/clip
   subtítulos y textos ES/EN) · `npm run fabrica` (producción diaria + calendario) · `npm run stats -- @canal`
   (ganadores y patrón) · `npm run recap -- URL` (escenas de película explicadas con voz IA, sin música).
 
-Tablero de publicación (`panel/` + `functions/`, en https://puente-fabrica.pages.dev; se publica con `npm run panel`, que usa CLOUDFLARE_API_TOKEN/ACCOUNT_ID del `.env`; PIN del panel en PANEL_PIN):
-- `panel/data.json` es la fuente: cada video con serie, fecha/hora de Texas, textos TikTok/YouTube y estado reportado.
-- `panel/videos/` guarda los finales comprimidos (720x1280, crf 26). Para agregar un video: comprimirlo ahí y sumar su fila en `data.json`.
-- Estado compartido (palomitas, vistas, notas, pedidos, bitácora) en `functions/api/estado.js` (Pages Function + KV enlazado como `ESTADO`). Leerlo: `curl -H "x-pin: $PANEL_PIN" https://puente-fabrica.pages.dev/api/estado`. Sin KV, el panel cae a modo local.
-- Puerta: `functions/_middleware.js` pide el secreto `PIN` de Cloudflare para todo el sitio (cookie de 180 días o header `x-pin`); sin `PIN` queda abierto. Cambiar el PIN = editar el secreto en Cloudflare y volver a desplegar.
-- Consola de la Fábrica: `functions/api/chat.js` (Gemini con secreto `GEMINI_API_KEY` en Cloudflare) platica ideas (thinkingLevel low para que no se coma los tokens; dos vueltas por los 503) y crea pedidos en el mismo KV; Claude los produce y los marca `listo`.
+Tablero "Puente de mando" (`panel/` + `functions/`, en https://puente-fabrica.pages.dev; se publica con `npm run panel`, que usa CLOUDFLARE_API_TOKEN/ACCOUNT_ID del `.env`):
+- Tres proyectos que NO se mezclan, cada uno con su panel y su chat: `/` es el lobby; `/clipper` (`panel/clipper.html`, clips virales + Ketone),
+  `/rave` y `/karen` (una sola página `panel/proyecto.html` configurada por `panel/proyectos/<id>.json`; el middleware sirve `/proyecto` en esas rutas).
+- Cerebro del chat: `panel/cerebro/comun.md` (quiénes somos, reglas) + `panel/cerebro/<proyecto>.md` (historia, números, qué funciona).
+  **Cuando algo cambie (videos nuevos, números, pendientes), actualiza el .md del proyecto y despliega**: el chat solo sabe lo que dice ahí.
+- `panel/data.json` es la fuente de los videos de clips (serie, fecha/hora de Texas, textos TikTok/YouTube); `panel/videos/` los finales 720x1280 crf 26.
+- Estado compartido en `functions/api/estado.js` (KV `ESTADO`): clips en la clave `v1`, los otros en `v1:rave` y `v1:karen` (`/api/estado?p=karen`).
+  Leerlo: `curl -H "x-pin: $PANEL_PIN" "https://puente-fabrica.pages.dev/api/estado?p=karen"`.
+- Puerta: `functions/_middleware.js` pide el secreto `PIN` de Cloudflare para todo el sitio (cookie de 180 días o header `x-pin`). Cambiar el PIN = editar el secreto en Cloudflare y volver a desplegar.
+- Chat: `functions/api/chat.js` (Gemini, secreto `GEMINI_API_KEY`; esquema JSON + lector tolerante porque Gemini mete saltos crudos; thinkingLevel low; dos vueltas por los 503). Cuando dicen "hazlo/apúntalo" crea el pedido en el KV de ese proyecto; Claude lo produce y lo marca `listo`.
 
 ## Composiciones (`src/Root.tsx`)
 - `TikTokPro`: gancho (Bebas Neue) → subtítulos palabra a palabra (Montserrat) con visualizador →

@@ -43,7 +43,7 @@ export async function onRequest({ request, env, next }) {
 
   const cookie = request.headers.get("cookie") || "";
   const ok = cookie.includes(`puente=${await firma(env.PIN)}`) || request.headers.get("x-pin") === String(env.PIN);
-  if (ok) return next();
+  if (ok) return /^\/(karen|rave)\/?$/.test(url.pathname) ? env.ASSETS.fetch(new URL("/proyecto", url)) : next(); // una sola página para los paneles de proyecto
   if (url.pathname.startsWith("/api/")) return new Response(JSON.stringify({ error: "pin" }), { status: 401, headers: { "content-type": "application/json" } });
   return html(PUERTA(""), 401);
 }

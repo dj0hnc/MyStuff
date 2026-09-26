@@ -1,5 +1,5 @@
 // Cerebro compartido del Puente de mando (Cloudflare Pages Function + KV).
-// GET  /api/estado  -> estado completo {videos, pedidos, bitacora}
+// GET  /api/estado[?p=rave|karen]  -> estado completo {videos, pedidos, bitacora} de ese proyecto (sin p: clips)
 // POST /api/estado  -> {tipo, quien, pin?, ...}:
 //   {tipo:"video", id, cambios:{tiktok,youtube,vyro,vtt,vyt,nota}}
 //   {tipo:"pedido", texto}
@@ -7,18 +7,20 @@
 // Requiere un KV enlazado como ESTADO. El PIN lo cuida functions/_middleware.js.
 // ponytail: un solo documento en KV, último que escribe gana; sobra para 2-3 personas. Si crece, pasar a D1.
 
-const CLAVE = "v1";
+export const PROYECTOS = ["clipper", "rave", "karen"];
+export const clave = (p) => (p && p !== "clipper" && PROYECTOS.includes(p) ? `v1:${p}` : "v1"); // clips se queda en "v1" (la rutina ya lo lee)
+const deUrl = (request) => clave(new URL(request.url).searchParams.get("p"));
 const vacio = () => ({ videos: {}, pedidos: [], bitacora: [] });
 const json = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
 const texto = (x, max) => String(x ?? "").slice(0, max);
 
-async function leer(env) {
-  try { return { ...vacio(), ...(JSON.parse((await env.ESTADO.get(CLAVE)) || "{}")) }; } catch { return vacio(); }
+async function leer(env, k) {
+  try { return { ...vacio(), ...(JSON.parse((await env.ESTADO.get(k)) || "{}")) }; } catch { return vacio(); }
 }
 
-export async function onRequestGet({ env }) {
+export async function onRequestGet({ request, env }) {
   if (!env.ESTADO) return json({ error: "sin_kv" }, 503);
-  return json(await leer(env));
+  return json(await leer(env, deUrl(request)));
 }
 
 export async function onRequestPost({ request, env }) {
@@ -27,7 +29,7 @@ export async function onRequestPost({ request, env }) {
   try { b = await request.json(); } catch { return json({ error: "json_invalido" }, 400); }
   const quien = texto(b.quien, 24) || "Alguien";
   const ahora = new Date().toISOString();
-  const e = await leer(env);
+  const k = deUrl(request), e = await leer(env, k);
   let que = "";
 
   if (b.tipo === "video") {
@@ -51,6 +53,6 @@ export async function onRequestPost({ request, env }) {
   } else return json({ error: "tipo" }, 400);
 
   if (que) e.bitacora = [{ quien, que, at: ahora }, ...e.bitacora].slice(0, 150);
-  await env.ESTADO.put(CLAVE, JSON.stringify(e));
+  await env.ESTADO.put(k, JSON.stringify(e));
   return json(e);
 }

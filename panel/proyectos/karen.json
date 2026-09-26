@@ -1,0 +1,31 @@
+{
+  "nombre": "Karen",
+  "titulo": "Estudio de <span>Karen</span>",
+  "lema": "Tus temas, tus ideas, tu canal. Solo tuyo.",
+  "colores": { "--a": "#ff5fa2", "--b": "#ffc857" },
+  "tripulacion": ["Karen", "Juan"],
+  "chatNombre": "TU PRODUCTORA",
+  "chatSub": "Te conoce a ti y a tu canal. Dile \"apúntalo\" y se guarda.",
+  "fab": "Platicar",
+  "saludo": "¡Hola{quien}! 💖 Soy **tu productora**. Me sé tu canal de memoria: lo que te pega (ser **mexicana en Texas**, familia y humor), tus números y tu estudio de uñas.\n- Pídeme ideas para grabar hoy, de 8 a 15 segundos.\n- Te doy el gancho exacto, las tomas, el texto y los hashtags.\n- Cuando te guste una, dime **\"apúntalo\"** y queda guardada.",
+  "ideas": ["¿Qué grabo hoy?", "3 ideas de Mexicana en Texas", "Un video con los niños", "Promo para mis uñas", "¿Cómo llego a los 10K?", "Ideas para Día de Muertos"],
+  "meta": { "titulo": "Meta: Creator Rewards de TikTok", "actual": 8310, "objetivo": 10000, "unidad": "seguidores", "texto": "Pide 10K seguidores + 100K vistas en 30 días. Te faltan ~1,700. Números del 23 de sep." },
+  "lecturas": [["8.3K", "Seguidores"], ["292.8K", "Tu video más visto (la INE)"], ["8-15 s", "La duración que más te jala"], ["#mexicana", "El hashtag que mejor te funciona"]],
+  "botonGrande": ["¿Qué grabo hoy?", "Toca y te doy 3 ideas listas para grabar con tu cel, con gancho, tomas, texto y hashtags.", "¿Qué grabo hoy? Dame 3 ideas de 8 a 15 segundos que pueda grabar hoy mismo."],
+  "temasSub": "Salen de tus números: lo que más te pega, arriba. Toca \"Dame ideas de esto\" y el chat te arma todo.",
+  "temas": [
+    { "n": "Mexicana en Texas", "c": "#ff5fa2", "por": "Tus 3 virales son esto. 299 videos, 1,251 vistas promedio.", "ejemplos": ["Cosas que solo entiende una mexicana en Texas", "Trámites, palabras, comida: México vs Texas", "Cosas de México que en Texas nadie entiende"] },
+    { "n": "Familia y los niños", "c": "#ffc857", "por": "Lo que más rinde por video (2,848) y casi no lo usas: solo 13 videos.", "ejemplos": ["Un día normal con los niños, versión mexicana", "Lo que mis hijos dicen en inglés y yo en español", "Gym con los niños, parte 2"] },
+    { "n": "Volver a México", "c": "#5be49b", "por": "Nostalgia: el mismo hilo que tu video de la INE.", "ejemplos": ["Lo que más extraño de México", "Lo primero que hago cuando llego a México", "Cuenta regresiva para el viaje"] },
+    { "n": "Humor de todos los días", "c": "#8ab4ff", "por": "238 videos, 1,113 promedio. Funciona mejor si lo amarras a ser mexicana.", "ejemplos": ["Videollamada con la familia en México vs mi vida aquí", "Cuando Juan pone psytrance y yo country", "Ojalá fuera chiste, parte 2"] },
+    { "n": "Uñas · @karenareyesnails", "c": "#ff9ecb", "por": "Tu estudio en Princeton, TX. Solo español y sin precios. Ya hay 5 promos hechas.", "ejemplos": ["Antes y después en 10 segundos", "Diseño de temporada (Halloween, Día de Muertos)", "Un día en mi estudio"] },
+    { "n": "Gym (con enfoque)", "c": "#b39ddb", "por": "Es tu tema con más videos (344) pero de los que menos rinden. Mejor mezclado con familia o humor.", "ejemplos": ["Gym de mamá mexicana", "Entrenando con los niños"] }
+  ],
+  "pasos": [
+    ["Toca \"Platicar\" (abajo a la derecha).", "Pídele ideas como a una amiga: \"¿qué grabo hoy?\", \"algo con los niños\", \"promo de uñas\"."],
+    ["Graba con tu cel o tus Ray-Ban.", "8 a 15 segundos, con el gancho en los primeros 2 segundos."],
+    ["Dile \"apúntalo\" o guárdala en IDEAS.", "Si quieres que la Fábrica te lo edite, pega el enlace de tu clip (Google Drive, iCloud o Dropbox)."],
+    ["Publica con 3 a 5 hashtags específicos.", "#mexicana #mexico funcionan; #fyp y #viral no ayudan."]
+  ],
+  "enlaces": [["Mi TikTok", "https://www.tiktok.com/@karena.reyes"], ["Mis uñas", "https://www.tiktok.com/@karenareyesnails"], ["Subir a TikTok", "https://www.tiktok.com/upload"], ["Analytics", "https://www.tiktok.com/tiktokstudio/analytics"]]
+}
