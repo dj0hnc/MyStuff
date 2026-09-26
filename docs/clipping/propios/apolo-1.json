@@ -13,24 +13,24 @@
    "kicker": "NASA FILE",
    "cta": "Follow for more files",
    "frases": [
-    "November 1962. Walter Cronkite asks astronaut Gordon Cooper about UFOs. Listen to his answer.",
+    "November 1962. Walter Cronkite asks astronaut Gordon Cooper about UFOs.",
+    "Cooper says well-qualified people have seen objects with no logical explanation. Then he adds this.",
     "Months later, Cooper flew the longest mission of Project Mercury.",
     "This interview is now part of NASA's official UAP files.",
     "Do you agree with him?"
    ],
    "audioReal": {
     "src": "public/reedit/propios/https_www_dvidshub_net_video_1010337.mp4",
-    "desde": 16.8,
-    "hasta": 31.0,
-    "despuesDe": 1
+    "desde": 40.0,
+    "hasta": 61.0,
+    "despuesDe": 2
    },
    "palabrasClave": [
     "Cronkite",
-    "Gordon",
     "Cooper",
     "UFOs",
-    "qualified",
-    "explanation",
+    "planets",
+    "life",
     "NASA"
    ],
    "fondos": [
