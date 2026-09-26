@@ -278,6 +278,9 @@ let quien = ls.get("puente-quien", ""), pin = ls.get("puente-pin", "");
 
 const val = (v, k) => { const s = srv.videos[v.id]; return s && k in s ? s[k] : v[k]; };
 const hecho = (v) => !!val(v, "tiktok"); // publicado = ya está en TikTok; YouTube/IG se terminan desde "Recién publicados"
+const hd = (v) => (v.hd && !val(v, "sinHd") ? v.hd : null); // el 1080 en la nube, si no se liberó
+// Ya publicado en todas sus redes: su 1080 se puede liberar (Ketone: TikTok + Vyro)
+const completo = (v) => (v.serie === "ketone" ? !!(val(v, "tiktok") && val(v, "vyro")) : redesOn().every((r) => val(v, r)));
 const vistas = (v) => (Number(val(v, "vtt")) || 0) + (Number(val(v, "vyt")) || 0);
 
 function texas() {
@@ -345,7 +348,7 @@ function tarjeta(v) {
   if (v.ytTitle) b.append(campo("Título YouTube", v.ytTitle));
   if (v.nota) b.append(el("div", "nota", v.nota));
   const fila = el("div", "fila"), pb = el("button", "btn pub", "Publicar ▶"); pb.type = "button"; pb.onclick = () => publicar(v);
-  const dl = el("a", "btn", v.hd ? "Guardar 1080p" : "Guardar"); dl.href = v.hd ? `/api/crudos/bajar?key=${encodeURIComponent(v.hd)}&descargar=1` : v.video; dl.download = v.id + ".mp4"; fila.append(pb, dl); b.append(fila);
+  const dl = el("a", "btn", hd(v) ? "Guardar 1080p" : "Guardar"); dl.href = hd(v) ? `/api/crudos/bajar?key=${encodeURIComponent(hd(v))}&descargar=1` : v.video; dl.download = v.id + ".mp4"; fila.append(pb, dl); b.append(fila);
   const checks = el("div", "checks");
   const chk = (k, lbl) => { const l = el("label"), i = el("input"); i.type = "checkbox"; i.checked = !!val(v, k); i.onchange = async () => { if (!(await enviar({ tipo: "video", id: v.id, cambios: { [k]: i.checked } }))) i.checked = !i.checked; }; l.append(i, document.createTextNode(lbl)); return l; };
   checks.append(chk("tiktok", "TikTok"), ...(v.serie === "ketone" ? [chk("vyro", "Registrado en Vyro")] : [["youtube", "YouTube"], ["instagram", "Instagram"]].filter(([k]) => redesOn().includes(k)).map(([k, n]) => chk(k, n))));
@@ -442,7 +445,7 @@ function vistaCalendario() {
 // --- publicar en 1 toque (panel/publicar.js) ---
 function publicar(v) {
   const ket = v.serie === "ketone";
-  Publicar.abrir({ titulo: v.titulo, video: v.video, hd: v.hd, mb: v.mb, dur: v.dur, textos: { tiktok: v.caption, youtube: v.ytTitle || v.caption, instagram: v.caption },
+  Publicar.abrir({ titulo: v.titulo, video: v.video, hd: hd(v), mb: v.mb, dur: v.dur, textos: { tiktok: v.caption, youtube: v.ytTitle || v.caption, instagram: v.caption },
     redes: ket ? ["tiktok"] : redesOn(),
     links: val(v, "links") || (val(v, "link") ? { tiktok: val(v, "link") } : {}), onLink: (red, u) => enviar({ tipo: "video", id: v.id, cambios: { links: { [red]: u } } }), nota: ket ? "Ketone-IQ: en TikTok activa Branded content y agrega un sonido de la Commercial Music Library." : (!hecho(v) && v.hora ? `En la cola le toca: ${fmtDia(v.fecha)}, TikTok ${v.hora} · YouTube ${v.horaYT}. Si lo publicas ya, la cola se reacomoda.` : ""),
     vyro: ket ? { registrado: !!val(v, "vyro"), onRegistrado: () => enviar({ tipo: "video", id: v.id, cambios: { vyro: true } }) } : null,
@@ -500,7 +503,11 @@ function hubRedes() {
 let nodoCrudos; // se crea una vez: si el panel se redibuja, la subida en curso sigue y no se pierde su barra
 const crudos = () => nodoCrudos ||= (() => { const d = el("div"); d.id = "crudos"; Crudos.montar(d, { p: "clipper", quien: () => quien || "Juan", toast }); return d; })();
 function vistaFabrica() {
-  const f = document.createDocumentFragment();
+  const f = document.createDocumentFragment(), esp = el("div");
+  Crudos.espacio(esp, { p: "clipper", toast, publicados: () => data.videos.filter((v) => hd(v) && completo(v)).map((v) => ({ id: v.id, titulo: v.titulo, hd: v.hd })),
+    editados: () => new Set((srv.pedidos || []).filter((x) => x.estado === "listo" && x.crudo).map((x) => x.crudo)),
+    onLiberado: (id) => enviar({ tipo: "video", id, cambios: { sinHd: true } }) });
+  f.append(el("h2", null, "Espacio"), esp);
   const bt = el("button", "btn", "🎬 Taller: ver lo que se está renderizando"); bt.type = "button"; bt.onclick = () => Taller.abrir();
   f.append(el("h2", null, "Taller"), bt, el("h2", null, "Subir crudos"), el("p", "sub", "Sube el material original y di qué quieres. La Fábrica lo trabaja en su siguiente vuelta y te contesta en Pedidos."), crudos(),
     el("h2", null, "Redes"), el("p", "sub", "Cada botón te lleva directo a donde se hace la cosa."), hubRedes(), vistaMaquinas(), vistaGuia());

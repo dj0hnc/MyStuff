@@ -2,6 +2,7 @@
 // Cada archivo se parte en pedazos de 25 MB y se suben de 3 en 3 a R2 (/api/crudos). Si se va la señal, espera a que regrese;
 // si se cierra la página, al volver a elegir el mismo archivo retoma desde el último pedazo (R2 guarda la subida 7 días).
 // Crudos.montar(nodo, {p, quien: () => "Juan", toast})
+// Crudos.espacio(nodo, {p, publicados: () => [{id, titulo, hd}], editados: () => Set(keys de crudos ya editados), onLiberado(id), toast})
 (() => {
   const PARTE = 25 * 1024 * 1024, A_LA_VEZ = 3, INTENTOS = 10;
   const css = `
@@ -67,7 +68,7 @@
       subiendo++; let lock = null; try { lock = await navigator.wakeLock?.request("screen"); } catch {} // que no se apague la pantalla a media subida
       let ini = previo;
       try {
-        if (!ini) { ini = { ...(await postJ("/iniciar", { p: o.p, nombre: f.name, tipo: f.type, nota: nota.value.trim(), quien: o.quien() })), partes: [] }; ls.set(huella, ini); }
+        if (!ini) { ini = { ...(await postJ("/iniciar", { p: o.p, nombre: f.name, tipo: f.type, tam: f.size, nota: nota.value.trim(), quien: o.quien() })), partes: [] }; ls.set(huella, ini); }
         const total = Math.max(1, Math.ceil(f.size / PARTE)), hechas = new Set(ini.partes.map((x) => x.n)), t0 = Date.now(), base = hechas.size;
         const pendientes = Array.from({ length: total }, (_, k) => k + 1).filter((n) => !hechas.has(n));
         const pinta = () => { const sub = Math.min(f.size, hechas.size * PARTE), vel = ((hechas.size - base) * PARTE) / Math.max(1, (Date.now() - t0) / 1000); i.style.width = (hechas.size / total) * 100 + "%"; info.textContent = `${mb(sub)} de ${mb(f.size)}${hechas.size > base ? ` · ${mb(vel)}/s` : ""}`; };
@@ -91,7 +92,7 @@
         if (e.status === 503) { aviso.textContent = AVISO_R2; aviso.hidden = false; it.remove(); ls.set(huella, null); }
         else if (e.cancelado) { if (ini) postJ("/cancelar", { key: ini.key, id: ini.id }).catch(() => {}); ls.set(huella, null); info.textContent = "Cancelado."; acc.replaceChildren(); }
         else { // se queda guardado para retomar
-          if (e.status === 404 || e.status === 400) ls.set(huella, null); // la subida ya no existe en R2: empezará de cero
+          if (e.status === 404 || e.status === 400 || e.status === 507) ls.set(huella, null); // la subida ya no existe en R2 (o no cabe): empezará de cero
           info.textContent = `Se detuvo: ${e.message}.`; const re = h("button", "cr-b si", "Reintentar"); re.type = "button"; re.onclick = () => subir(f, it).then(cargar); acc.replaceChildren(re);
         }
       } finally { subiendo--; lock?.release?.().catch(() => {}); }
@@ -119,5 +120,43 @@
     }
     cargar();
   }
-  window.Crudos = { montar };
+  // --- Espacio: cuánto se usa del plan gratis (10 GB) y qué se puede liberar sin perder nada importante ---
+  const cssE = `.es{display:grid;gap:10px}.es-barra{height:14px;border-radius:99px;background:rgba(127,127,160,.25);overflow:hidden}.es-barra i{display:block;height:100%;border-radius:99px}
+  .es-num{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-weight:700}.es-num small{opacity:.75;font-weight:600}
+  .es-fila{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:8px 10px;border-radius:12px;border:1px solid rgba(127,127,160,.3);background:rgba(0,0,0,.2);font-size:14px}
+  .es-fila small{display:block;opacity:.75}.es h4{margin:6px 0 0;font-size:14px}`;
+  const st2 = document.createElement("style"); st2.textContent = cssE; document.head.append(st2);
+  function espacio(nodo, o) {
+    const pinta = async () => {
+      let e; try { e = await api("/espacio"); } catch (x) { nodo.replaceChildren(h("small", null, x.status === 503 ? "Falta activar el almacenamiento (R2)." : "No se pudo leer el espacio.")); return; }
+      const pct = (e.total / e.limite) * 100, color = pct < 70 ? "#35d07f" : pct < 90 ? "#ffb020" : "#ff4d6d";
+      const raiz = h("div", "es"), barra = h("div", "es-barra"), i = h("i"); i.style.width = Math.max(1, Math.min(100, pct)) + "%"; i.style.background = color; barra.append(i);
+      const num = h("div", "es-num"); num.append(h("span", null, `${mb(e.total)} de ${mb(e.limite)} usados`), h("small", null, `${pct.toFixed(0)}% · gratis hasta 10 GB`));
+      const det = h("small", null, `Aquí: crudos ${mb(e.carpetas[o.p] || 0)} · finales 1080 ${mb(e.carpetas["finales/" + o.p] || 0)} · todo el Puente ${mb(e.total)}`); det.style.opacity = ".8";
+      raiz.append(num, barra, det);
+      if (pct >= 80) raiz.append(h("div", "cr-aviso", "Se está llenando: libera lo ya publicado o los crudos ya editados para que las subidas no se detengan."));
+      const pub = (o.publicados?.() || []).filter((v) => e.finales[v.hd] != null);
+      if (pub.length) {
+        const total = pub.reduce((a, v) => a + e.finales[v.hd], 0), todos = h("button", "cr-b si", `Liberar todos (${mb(total)})`); todos.type = "button";
+        raiz.append(h("h4", null, `Ya publicados en todas sus redes · ${pub.length}`), h("small", null, "Se borra su copia en 1080 de la nube; la vista previa se queda en la videoteca."));
+        todos.onclick = async () => { if (!confirm(`¿Liberar el 1080 de ${pub.length} videos ya publicados (${mb(total)})?`)) return; todos.disabled = true; for (const v of pub) await liberar(v); pinta(); };
+        raiz.append(todos);
+        pub.slice(0, 30).forEach((v) => { const f = h("div", "es-fila"), t = h("div"), b = h("button", "cr-b", "Liberar"); b.type = "button"; t.append(document.createTextNode(v.titulo), h("small", null, `1080 · ${mb(e.finales[v.hd])}`)); b.onclick = async () => { b.disabled = true; await liberar(v); pinta(); }; f.append(t, b); raiz.append(f); });
+      }
+      const ed = o.editados?.() || new Set();
+      if (ed.size) {
+        const l = (await api(`?p=${o.p}`).catch(() => ({ crudos: [] }))).crudos.filter((c) => ed.has(c.key));
+        if (l.length) {
+          raiz.append(h("h4", null, `Crudos ya editados · ${l.length}`), h("small", null, "La Fábrica ya los trabajó: se pueden borrar."));
+          l.forEach((c) => { const f = h("div", "es-fila"), t = h("div"), b = h("button", "cr-b", "Borrar"); b.type = "button"; t.append(document.createTextNode(c.nombre || c.key.split("/").pop()), h("small", null, mb(c.tam))); b.onclick = async () => { if (!confirm("¿Borrar este crudo? No se puede deshacer.")) return; b.disabled = true; await api(`?key=${encodeURIComponent(c.key)}`, { method: "DELETE" }).catch(() => {}); o.toast?.("Borrado"); pinta(); }; f.append(t, b); raiz.append(f); });
+        }
+      }
+      if (!pub.length && !ed.size && pct < 80) raiz.append(h("small", null, "Todo en orden: no hay nada que liberar por ahora."));
+      nodo.replaceChildren(raiz);
+    };
+    const liberar = async (v) => { await api(`?key=${encodeURIComponent(v.hd)}`, { method: "DELETE" }).catch(() => {}); await o.onLiberado?.(v.id); o.toast?.("Espacio liberado"); };
+    pinta();
+    return { refrescar: pinta };
+  }
+  window.Crudos = { montar, espacio };
 })();

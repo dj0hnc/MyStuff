@@ -9,10 +9,26 @@
 //   GET    /api/crudos/bajar?key[&descargar=1] (acepta Range: se ve en el panel, se baja con curl o como archivo)
 // Finales en 1080: iniciar con {carpeta:"finales", nombre:"<id>.mp4"} guarda en finales/<p>/<id>.mp4 (se reemplaza al volver a subir, sin pedido).
 //   DELETE /api/crudos?key
+//   GET    /api/crudos/espacio   -> {total, limite, carpetas:{"clipper":b,"finales/clipper":b,...}, finales:{key:tam}}  (cuánto se usa del plan gratis)
+// Antes de iniciar una subida se revisa que quepa (con {tam}); si no, responde 507 sin_espacio.
 // El PIN lo cuida _middleware.js.
 import { clave, PROYECTOS } from "../estado.js";
 
 const json = (d, s = 200) => new Response(JSON.stringify(d), { status: s, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
+const LIMITE = 10 * 1024 ** 3, MARGEN = 0.95; // plan gratis de R2: 10 GB; no dejamos pasar del 95%
+// Recalcula el uso real recorriendo R2 (cabe de sobra en unos miles de objetos) y lo deja en KV para revisar rápido antes de subir.
+async function espacio(env) {
+  const carpetas = {}, finales = {}; let total = 0, cursor;
+  do {
+    const l = await env.CRUDOS.list({ cursor, limit: 1000 });
+    for (const o of l.objects) { const k = o.key.startsWith("finales/") ? o.key.split("/").slice(0, 2).join("/") : o.key.split("/")[0]; carpetas[k] = (carpetas[k] || 0) + o.size; total += o.size; if (o.key.startsWith("finales/")) finales[o.key] = o.size; }
+    cursor = l.truncated ? l.cursor : null;
+  } while (cursor);
+  const e = { total, limite: LIMITE, carpetas, finales, at: new Date().toISOString() };
+  await env.ESTADO?.put("espacio", JSON.stringify({ total, at: e.at }));
+  return e;
+}
+const usado = async (env) => { try { return JSON.parse((await env.ESTADO.get("espacio")) || "null")?.total ?? (await espacio(env)).total; } catch { return 0; } };
 const keyOk = (k) => typeof k === "string" && PROYECTOS.some((p) => k.startsWith(p + "/") || k.startsWith(`finales/${p}/`)) && !k.includes("..") && k.length < 300;
 
 // Links directos donde se pueda (así la rutina baja el archivo con curl sin página intermedia).
@@ -48,9 +64,12 @@ export async function onRequest({ request, env, params }) {
       const l = await env.CRUDOS.list({ prefix: p + "/", include: ["customMetadata", "httpMetadata"], limit: 500 });
       return json({ crudos: l.objects.map((o) => ({ key: o.key, tam: o.size, at: o.uploaded, tipo: o.httpMetadata?.contentType || "", ...o.customMetadata })).sort((a, b) => String(b.at).localeCompare(String(a.at))) });
     }
+    if (ruta === "espacio" && m === "GET") return json(await espacio(env));
     if (ruta === "iniciar" && m === "POST") {
       const b = await request.json(), p = PROYECTOS.includes(b.p) ? b.p : null;
       if (!p) return json({ error: "proyecto" }, 400);
+      const tam = Number(b.tam) || 0, u = await usado(env);
+      if (tam && u + tam > LIMITE * MARGEN) return json({ error: "sin_espacio", mensaje: `No cabe: quedan ${((LIMITE * MARGEN - u) / 1073741824).toFixed(1)} GB y el archivo pesa ${(tam / 1073741824).toFixed(1)} GB. Libera espacio en "Espacio" (videos ya publicados o crudos ya editados).` }, 507);
       const nombre = String(b.nombre || "crudo").normalize("NFKD").replace(/[^\w.-]+/g, "-").slice(-80);
       const key = b.carpeta === "finales" ? `finales/${p}/${nombre}` : `${p}/${new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-")}-${nombre}`;
       const up = await env.CRUDOS.createMultipartUpload(key, { httpMetadata: { contentType: String(b.tipo || "application/octet-stream").slice(0, 80) }, customMetadata: { nombre: String(b.nombre || nombre).slice(0, 120), nota: String(b.nota || "").slice(0, 500), quien: String(b.quien || "").slice(0, 24) } });
@@ -66,6 +85,7 @@ export async function onRequest({ request, env, params }) {
       const b = await request.json();
       if (!keyOk(b.key) || !Array.isArray(b.partes)) return json({ error: "terminar" }, 400);
       const obj = await env.CRUDOS.resumeMultipartUpload(b.key, b.id).complete(b.partes.map((x) => ({ partNumber: Number(x.n), etag: String(x.etag) })).sort((a, c) => a.partNumber - c.partNumber));
+      await env.ESTADO?.put("espacio", JSON.stringify({ total: (await usado(env)) + obj.size, at: new Date().toISOString() })); // uso aproximado al momento
       if (b.key.startsWith("finales/")) return json({ key: b.key, tam: obj.size }); // un final no es pedido
       const p = b.key.split("/")[0], quien = String(b.quien || "Alguien").slice(0, 24);
       const mb = (obj.size / 1048576).toFixed(0), nombre = b.key.split("/").pop();
@@ -92,7 +112,9 @@ export async function onRequest({ request, env, params }) {
     }
     if (ruta === "" && m === "DELETE") {
       const key = url.searchParams.get("key"); if (!keyOk(key)) return json({ error: "key" }, 400);
-      await env.CRUDOS.delete(key); return json({ ok: true });
+      const o = await env.CRUDOS.head(key); await env.CRUDOS.delete(key);
+      if (o) await env.ESTADO?.put("espacio", JSON.stringify({ total: Math.max(0, (await usado(env)) - o.size), at: new Date().toISOString() }));
+      return json({ ok: true, liberado: o?.size || 0 });
     }
     return json({ error: "ruta" }, 404);
   } catch (e) { return json({ error: "r2", mensaje: String(e.message || e).slice(0, 200) }, 500); }

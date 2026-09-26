@@ -64,6 +64,14 @@ est = await (await post("https://x/api/estado?p=rave", { tipo: "pedido", texto: 
 ok(est.pedidos[0].estado === "idea", "idea guardada como idea (no va a producción)");
 est = await (await post("https://x/api/estado?p=rave", { tipo: "pedido-estado", pid: est.pedidos[0].id, estado: "nuevo", quien: "Juan" })).json();
 ok(est.pedidos[0].estado === "nuevo" && est.bitacora[0].que.startsWith("aprobó"), "aprobar idea → pedido nuevo");
+// espacio: medidor y freno antes de subir (almacenamiento de mentira con 9.6 GB usados)
+const kvE = new Map(), envE = { ESTADO: { get: async (k) => kvE.get(k) ?? null, put: async (k, v) => kvE.set(k, v) }, CRUDOS: { list: async () => ({ objects: [{ key: "karen/a.mov", size: 8e9 }, { key: "finales/clipper/x.mp4", size: 1.6e9 }], truncated: false }), head: async () => ({ size: 1.6e9 }), delete: async () => {} } };
+const esp = await (await crudos({ request: new Request("https://x/api/crudos/espacio"), env: envE, params: { ruta: ["espacio"] } })).json();
+ok(esp.total === 9.6e9 && esp.carpetas["finales/clipper"] === 1.6e9 && esp.finales["finales/clipper/x.mp4"] === 1.6e9, "espacio: total y desglose");
+const lleno = await crudos({ request: new Request("https://x/api/crudos/iniciar", { method: "POST", body: JSON.stringify({ p: "karen", nombre: "grande.mov", tam: 1e9 }) }), env: envE, params: { ruta: ["iniciar"] } });
+ok(lleno.status === 507, "no deja empezar una subida que no cabe");
+await crudos({ request: new Request("https://x/api/crudos?key=finales/clipper/x.mp4", { method: "DELETE" }), env: envE, params: {} });
+ok(JSON.parse(kvE.get("espacio")).total === 8e9, "liberar un 1080 descuenta el espacio");
 // taller: crear, avanzar, terminar
 const tpost = (b) => taller({ request: new Request("https://x/api/taller", { method: "POST", body: JSON.stringify(b) }), env: envP, params: {} });
 await tpost({ id: "prueba-1", titulo: "Video", estado: "renderizando", pct: 10 }); await tpost({ id: "prueba-1", pct: 250, restante: 30 });

@@ -228,7 +228,7 @@ function listos() {
     const fig = el("figure"), vid = el("video"); vid.src = v.video + "#t=1"; vid.preload = "metadata"; vid.muted = true; vid.playsInline = true;
     const b = el("button", "btn mini a", "Publicar ▶"); b.type = "button";
     const id = (v.id || v.video.split("/").pop().replace(/\.\w+$/, "")).replace(/[^\w-]/g, "-"), sv = () => srv.videos?.[id] || {};
-    b.onclick = () => Publicar.abrir({ titulo: v.titulo, video: v.video, hd: v.hd, mb: v.mb, dur: v.dur, textos: { tiktok: v.caption, youtube: v.ytTitle || v.titulo, instagram: v.caption }, redes: v.redes || cfg.redes,
+    b.onclick = () => Publicar.abrir({ titulo: v.titulo, video: v.video, hd: v.hd && !sv().sinHd ? v.hd : null, mb: v.mb, dur: v.dur, textos: { tiktok: v.caption, youtube: v.ytTitle || v.titulo, instagram: v.caption }, redes: v.redes || cfg.redes,
       hecho: { tiktok: !!sv().tiktok, youtube: !!sv().youtube, instagram: !!sv().instagram }, links: sv().links || {},
       onHecho: (red) => enviar({ tipo: "video", id, cambios: { [red]: true } }), onLink: (red, u) => enviar({ tipo: "video", id, cambios: { links: { [red]: u } } }) });
     if (Object.values(sv()).some((x) => x === true)) b.textContent = "Publicado ✓ · otra red";
@@ -247,7 +247,12 @@ function vistaVideos() {
   const bt = el("button", "btn a", "Mandar a editar"); bt.type = "submit"; form.append(inp, bt);
   form.onsubmit = async (e) => { e.preventDefault(); const t = inp.value.trim(); if (!t) return; if (await enviar({ tipo: "pedido", texto: "Editar este clip: " + t })) toast("Mandado a la Fábrica"); };
   const ta = el("button", "btn", "🎬 Taller: ver lo que se está renderizando"); ta.type = "button"; ta.onclick = () => Taller.abrir();
-  f.append(ta, el("h2", null, "Subir crudos"), el("p", "sub", "Sube tus videos o fotos originales (del tamaño que sea) y di qué quieres. La Fábrica los edita en su siguiente vuelta y aparecen aquí arriba."), crudos(),
+  const esp = el("div"), idDe = (v) => (v.id || v.video.split("/").pop().replace(/\.\w+$/, "")).replace(/[^\w-]/g, "-");
+  Crudos.espacio(esp, { p: P, toast,
+    publicados: () => (cfg.videos || []).filter((v) => { const s = srv.videos?.[idDe(v)] || {}; return v.hd && !s.sinHd && cfg.redes.every((r) => s[r]); }).map((v) => ({ id: idDe(v), titulo: v.titulo, hd: v.hd })),
+    editados: () => new Set((srv.pedidos || []).filter((x) => x.estado === "listo" && x.crudo).map((x) => x.crudo)),
+    onLiberado: (id) => enviar({ tipo: "video", id, cambios: { sinHd: true } }) });
+  f.append(ta, el("h2", null, "Espacio"), esp, el("h2", null, "Subir crudos"), el("p", "sub", "Sube tus videos o fotos originales (del tamaño que sea) y di qué quieres. La Fábrica los edita en su siguiente vuelta y aparecen aquí arriba."), crudos(),
     el("h2", null, "…o pega un enlace"), el("p", "sub", "Si ya está en Google Drive, Dropbox o TikTok."), form);
   return f;
 }

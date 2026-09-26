@@ -1,7 +1,7 @@
 // Cerebro compartido del Puente de mando (Cloudflare Pages Function + KV).
 // GET  /api/estado[?p=rave|karen]  -> estado completo {videos, pedidos, bitacora} de ese proyecto (sin p: clips)
 // POST /api/estado  -> {tipo, quien, pin?, ...}:
-//   {tipo:"video", id, cambios:{tiktok,youtube,instagram,vyro,vtt,vyt,nota,link}}
+//   {tipo:"video", id, cambios:{tiktok,youtube,instagram,vyro,vtt,vyt,nota,link,sinHd}}
 //   {tipo:"pedido", texto, estado?:"idea"}   (flujo: idea -> nuevo (aprobado, la rutina lo produce) -> produccion -> listo)
 //   {tipo:"pedido-editar", pid, texto} · {tipo:"pedido-borrar", pid}
 //   {tipo:"ajustes", ajustes:{tripulacion, horarios, porDia, ytMin, redes, cuentas:{tiktok,youtube,instagram}}}  (ajustes del proyecto, compartidos)
@@ -59,6 +59,7 @@ export async function onRequestPost({ request, env }) {
     }
     for (const k of ["vtt", "vyt"]) if (k in c) { const n = Math.max(0, Math.floor(Number(c[k]) || 0)); v[k] = n; que = `anotó ${n.toLocaleString("es-MX")} vistas ${k === "vtt" ? "TikTok" : "YouTube"} en ${id}`; }
     if ("nota" in c) { v.nota = texto(c.nota, 400); que = `dejó nota en ${id}`; }
+    if ("sinHd" in c) { v.sinHd = !!c.sinHd; if (c.sinHd) que = `liberó el 1080 de ${id} (queda la vista previa)`; }
     v.por = quien; v.at = ahora;
   } else if (b.tipo === "pedido") {
     const t = texto(b.texto, 500).trim();

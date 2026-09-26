@@ -18,7 +18,7 @@ const api = async (ruta, opt = {}) => {
 };
 
 const tam = statSync(archivo).size, dur = +Number(execFileSync(FP, ["-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", archivo])).toFixed(1);
-const ini = await api("/iniciar", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ p, carpeta: "finales", nombre: `${id}.mp4`, tipo: "video/mp4", quien: "Claude" }) });
+const ini = await api("/iniciar", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ p, carpeta: "finales", nombre: `${id}.mp4`, tipo: "video/mp4", tam, quien: "Claude" }) });
 const fd = openSync(archivo, "r"), partes = [], total = Math.ceil(tam / PARTE);
 for (let n = 1; n <= total; n++) {
   const buf = Buffer.alloc(Math.min(PARTE, tam - (n - 1) * PARTE)); readSync(fd, buf, 0, buf.length, (n - 1) * PARTE);
