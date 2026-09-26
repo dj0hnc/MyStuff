@@ -58,9 +58,10 @@ export async function onRequestPost({ request, env }) {
   const [comun, propio] = await Promise.all([asset(env, request.url, "/cerebro/comun.md"), asset(env, request.url, `/cerebro/${p}.md`)]);
   const hoy = new Date().toLocaleDateString("es-MX", { timeZone: "America/Chicago", weekday: "long", day: "numeric", month: "long", year: "numeric" });
   const system = `${propio}\n\n${comun}\n\n${FORMATO}\n\nHoy (Texas): ${hoy}. Hablas con: ${quien}.${await contexto(env, request.url, p)}`;
-  let resp = null, fallo = "";
+  let resp = null, fallo = "", motor = "claude";
   if (env.ANTHROPIC_API_KEY) { try { resp = await claude(env, system.replace(/\nResponde SOLO JSON:.*$/s, "\nEntrega tu respuesta con la herramienta responder."), msgs); } catch (e) { fallo = e.message; } }
   if (!resp && env.GEMINI_API_KEY) {
+    motor = "gemini";
     const body = { systemInstruction: { parts: [{ text: system }] }, contents: msgs,
       generationConfig: { responseMimeType: "application/json", responseSchema: ESQUEMA, temperature: 0.9, maxOutputTokens: 4096, thinkingConfig: { thinkingLevel: "low" } } };
     for (const m of [...MODELOS, ...MODELOS]) { // segunda vuelta: Gemini da 503 seguido cuando está saturado
@@ -82,5 +83,5 @@ export async function onRequestPost({ request, env }) {
     e.bitacora = [{ quien, que: `pidió (vía chat): ${pedido.slice(0, 60)}`, at: ahora }, ...(e.bitacora || [])].slice(0, 150);
     await env.ESTADO.put(clave(p), JSON.stringify(e));
   }
-  return json({ respuesta, pedido });
+  return json({ respuesta, pedido, motor, ...(motor === "gemini" && fallo ? { detalle: fallo } : {}) });
 }
