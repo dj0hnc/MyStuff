@@ -4,7 +4,7 @@
 //   {tipo:"video", id, cambios:{tiktok,youtube,vyro,vtt,vyt,nota}}
 //   {tipo:"pedido", texto}
 //   {tipo:"pedido-estado", pid, estado:"nuevo"|"produccion"|"listo"}
-// Requiere un KV enlazado como ESTADO. Si hay variable PIN, los POST deben traerla.
+// Requiere un KV enlazado como ESTADO. El PIN lo cuida functions/_middleware.js.
 // ponytail: un solo documento en KV, último que escribe gana; sobra para 2-3 personas. Si crece, pasar a D1.
 
 const CLAVE = "v1";
@@ -25,7 +25,6 @@ export async function onRequestPost({ request, env }) {
   if (!env.ESTADO) return json({ error: "sin_kv" }, 503);
   let b;
   try { b = await request.json(); } catch { return json({ error: "json_invalido" }, 400); }
-  if (env.PIN && String(b.pin || "") !== String(env.PIN)) return json({ error: "pin" }, 401);
   const quien = texto(b.quien, 24) || "Alguien";
   const ahora = new Date().toISOString();
   const e = await leer(env);

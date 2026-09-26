@@ -146,14 +146,33 @@
   .ped small { display: block; color: var(--cian-suave); font-family: var(--reloj); font-size: 12px; }
   .aviso-banda { border: 1px solid var(--ambar); background: rgba(255,176,32,0.08); color: var(--ambar); border-radius: 10px; padding: 8px 12px; font-size: 14px; }
 
-  .chat { background: var(--panel); border: 1px solid var(--cian); border-radius: 12px; padding: 10px; display: grid; gap: 8px; box-shadow: 0 0 18px rgba(41,231,255,0.12); }
-  .burbujas { display: grid; gap: 8px; max-height: 380px; overflow: auto; padding: 4px; }
-  .bur { max-width: 88%; padding: 8px 11px; border-radius: 12px; font-size: 15px; line-height: 1.4; white-space: pre-wrap; overflow-wrap: anywhere; }
-  .bur.yo { justify-self: end; background: var(--cian); color: var(--casco); border-bottom-right-radius: 4px; }
-  .bur.fabrica { justify-self: start; background: var(--panel-2); border: 1px solid var(--linea); border-bottom-left-radius: 4px; }
-  .bur.pedido { justify-self: start; background: rgba(57,255,136,0.1); border: 1px solid var(--verde); color: var(--verde); font-size: 14px; }
-  .chat form { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
-  .chat textarea { resize: none; background: var(--casco); color: var(--texto); border: 1px solid var(--linea); border-radius: 8px; padding: 8px; font: 500 15px var(--leer); min-height: 44px; }
+  .fab { position: fixed; right: 16px; bottom: calc(76px + env(safe-area-inset-bottom, 0px)); z-index: 20; display: inline-flex; align-items: center; gap: 8px; padding: 12px 16px; border-radius: 999px; border: 1px solid var(--cian); background: rgba(5,8,15,0.92); color: var(--cian); font: 800 12px var(--hud); letter-spacing: 0.12em; cursor: pointer; box-shadow: 0 0 22px rgba(41,231,255,0.35); }
+  .fab i { width: 9px; height: 9px; border-radius: 50%; background: var(--verde); box-shadow: 0 0 10px var(--verde); }
+  .sala { position: fixed; inset: 0; z-index: 40; display: grid; grid-template-rows: auto 1fr auto auto; background: radial-gradient(900px 500px at 50% -150px, #0d2440 0%, transparent 60%), var(--casco); padding: calc(10px + env(safe-area-inset-top, 0px)) 16px calc(10px + env(safe-area-inset-bottom, 0px)); }
+  .sala-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--linea); max-width: 820px; width: 100%; margin: 0 auto; }
+  .sala-top b { font: 800 14px var(--hud); letter-spacing: 0.14em; color: var(--cian); }
+  .sala-top small { display: block; color: var(--cian-suave); font-size: 13px; }
+  .burbujas { overflow: auto; display: flex; flex-direction: column; gap: 12px; padding: 14px 2px; max-width: 820px; width: 100%; margin: 0 auto; }
+  .bur { max-width: 92%; padding: 10px 13px; border-radius: 14px; font-size: 16px; line-height: 1.5; overflow-wrap: anywhere; }
+  .bur p { margin: 0 0 8px; } .bur p:last-child { margin-bottom: 0; }
+  .bur ul { margin: 4px 0 8px; padding-left: 20px; display: grid; gap: 4px; }
+  .bur h4 { margin: 6px 0; font: 800 13px var(--hud); letter-spacing: 0.08em; color: var(--cian); }
+  .bur b { color: #fff; } .bur code { font-family: var(--reloj); background: var(--casco); padding: 1px 5px; border-radius: 4px; }
+  .bur a { color: var(--cian); }
+  .bur.yo { align-self: flex-end; background: var(--cian); color: var(--casco); border-bottom-right-radius: 4px; white-space: pre-wrap; }
+  .bur.fabrica { align-self: flex-start; background: var(--panel); border: 1px solid var(--linea); border-bottom-left-radius: 4px; }
+  .bur .quien { display: block; font: 800 10px var(--hud); letter-spacing: 0.14em; color: var(--cian); margin-bottom: 4px; }
+  .bur.pedido { align-self: flex-start; background: rgba(57,255,136,0.1); border: 1px solid var(--verde); color: var(--verde); font-weight: 700; }
+  .pensando { align-self: flex-start; display: inline-flex; gap: 5px; padding: 12px 14px; border-radius: 14px; background: var(--panel); border: 1px solid var(--linea); }
+  .pensando span { width: 7px; height: 7px; border-radius: 50%; background: var(--cian); animation: late 1s infinite ease-in-out; }
+  .pensando span:nth-child(2) { animation-delay: 0.15s; } .pensando span:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes late { 0%, 80%, 100% { opacity: 0.25; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-4px); } }
+  .chips { display: flex; gap: 8px; overflow-x: auto; padding: 6px 0; max-width: 820px; width: 100%; margin: 0 auto; }
+  .chips button { flex: none; border: 1px solid var(--linea); background: var(--panel); color: var(--texto); border-radius: 999px; padding: 8px 12px; font: 600 14px var(--leer); cursor: pointer; }
+  .chips button:hover { border-color: var(--cian); }
+  .compositor { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: end; max-width: 820px; width: 100%; margin: 0 auto; }
+  .compositor textarea { resize: none; max-height: 160px; background: var(--panel); color: var(--texto); border: 1px solid var(--linea); border-radius: 14px; padding: 12px; font: 500 16px/1.4 var(--leer); }
+  .compositor .btn { height: 48px; border-radius: 14px; }
   [hidden] { display: none !important; }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
@@ -185,6 +204,13 @@
     <button class="tab" role="tab" data-t="guia" aria-selected="false">Guía</button>
   </div>
 </nav>
+<button class="fab" id="fab" type="button" aria-label="Abrir la Consola de la Fábrica"><i></i>CONSOLA</button>
+<section class="sala" id="sala" hidden aria-label="Consola de la Fábrica">
+  <div class="sala-top"><div><b>CONSOLA DE LA FÁBRICA</b><small>Platica ideas; di "hazlo" y queda como pedido.</small></div><div class="fila"><button class="btn mini" id="salaNueva" type="button">Nueva</button><button class="btn" id="salaCerrar" type="button">Cerrar</button></div></div>
+  <div class="burbujas" id="burbujas" aria-live="polite"></div>
+  <div class="chips" id="chips"></div>
+  <form class="compositor" id="compositor"><textarea id="entrada" rows="1" maxlength="2000" placeholder="Escribe tu idea o pega un enlace…" aria-label="Mensaje"></textarea><button class="btn cian" type="submit" id="enviar">Enviar</button></form>
+</section>
 <div class="toast" id="toast" hidden></div>
 
 <script>
@@ -251,10 +277,7 @@ async function enviar(cuerpo) {
     srv = await r.json(); render(); return true;
   } catch { toast("No se guardó. Revisa la señal e intenta otra vez."); return false; }
 }
-function pedirPin() {
-  const nuevo = window.prompt("Este panel pide PIN para hacer cambios. Escríbelo:");
-  if (nuevo) { pin = nuevo.trim(); ls.set("puente-pin", pin); toast("PIN guardado; vuelve a intentar"); }
-}
+function pedirPin() { location.reload(); } // la puerta del sitio vuelve a pedir el PIN
 
 // --- tripulación ---
 function barraTripu() {
@@ -356,34 +379,58 @@ function vistaRadar() {
 }
 
 
-// --- Consola de la Fábrica (chat) ---
-let chat = []; try { chat = JSON.parse(sessionStorage.getItem("puente-chat") || "[]"); } catch {}
-const guardaChat = () => { try { sessionStorage.setItem("puente-chat", JSON.stringify(chat.slice(-30))); } catch {} };
-function consola() {
-  const box = el("div", "chat"), bur = el("div", "burbujas");
-  const pinta = () => {
-    bur.replaceChildren();
-    if (!chat.length) bur.append(el("div", "bur fabrica", "Hola, soy la Consola de la Fábrica. Cuéntame qué video o idea traes (o pega un enlace) y lo armamos. Cuando digas \"hazlo\", queda como pedido."));
-    chat.forEach((m) => bur.append(el("div", "bur " + m.rol, m.texto)));
-    bur.scrollTop = bur.scrollHeight;
-  };
-  const form = el("form"), ta = el("textarea"); ta.rows = 2; ta.placeholder = "Ej. quiero una serie de persecuciones de noche"; ta.maxLength = 2000; ta.className = "vistas";
-  const btn = el("button", "btn cian", "Enviar"); btn.type = "submit";
-  form.append(ta, btn);
-  ta.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); form.requestSubmit(); } });
-  form.onsubmit = async (e) => {
-    e.preventDefault(); const t = ta.value.trim(); if (!t) return;
-    if (!quien) { toast("Primero elige quién eres (arriba)"); return; }
-    chat.push({ rol: "yo", texto: t }); ta.value = ""; btn.disabled = true; btn.textContent = "…"; pinta();
-    try {
-      const r = await fetch("api/chat", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ mensajes: chat.filter((m) => m.rol !== "pedido"), quien, pin }) });
-      if (r.status === 401) { pedirPin(); chat.pop(); }
-      else { const d = await r.json(); chat.push({ rol: "fabrica", texto: d.respuesta || "Sin respuesta." }); if (d.pedido) { chat.push({ rol: "pedido", texto: "Pedido creado: " + d.pedido }); await traer(); lecturas(); } }
-    } catch { chat.push({ rol: "fabrica", texto: "No pude conectarme. Revisa la señal (o falta subir el panel a Cloudflare)." }); }
-    btn.disabled = false; btn.textContent = "Enviar"; guardaChat(); pinta();
-  };
-  box.append(bur, form); pinta(); return box;
+// --- Consola de la Fábrica (chat a pantalla completa) ---
+let chat = []; try { chat = JSON.parse(localStorage.getItem("puente-chat") || "[]"); } catch {}
+const guardaChat = () => { try { localStorage.setItem("puente-chat", JSON.stringify(chat.slice(-40))); } catch {} };
+const esc = (t) => t.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const inl = (t) => t.replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").replace(/(^|[\s(])\*(?!\s)([^*]+?)\*/g, "$1<i>$2</i>").replace(/`([^`]+)`/g, "<code>$1</code>").replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+function md(t) { // markdown mínimo y seguro: se escapa todo antes de dar formato
+  let out = "", lista = false;
+  esc(String(t)).split("\n").forEach((l) => {
+    const li = /^\s*(?:[-*•]|\d+[.)])\s+(.*)/.exec(l);
+    if (li) { if (!lista) { out += "<ul>"; lista = true; } out += "<li>" + inl(li[1]) + "</li>"; return; }
+    if (lista) { out += "</ul>"; lista = false; }
+    if (/^#{1,4}\s/.test(l)) out += "<h4>" + inl(l.replace(/^#+\s/, "")) + "</h4>"; else if (l.trim()) out += "<p>" + inl(l) + "</p>";
+  });
+  return out + (lista ? "</ul>" : "");
 }
+const IDEAS = ["¿Qué video hago hoy?", "¿Cómo vamos según el Radar?", "Ideas de OVNIs nuevos", "3 persecuciones de noche", "Una serie tipo Roswell", "¿Qué le falta al canal para crecer?"];
+function pintaChat(pensando) {
+  const bur = $("#burbujas"); bur.replaceChildren();
+  if (!chat.length) { const b = el("div", "bur fabrica"); b.innerHTML = '<span class="quien">FÁBRICA</span>' + md(`¡Qué onda${quien ? ", " + quien : ""}! Soy la **Consola de la Fábrica**.\n- Cuéntame qué video quieres, o pega un enlace.\n- Te propongo ganchos, fuentes y por qué pegaría.\n- Cuando digas **"hazlo"**, queda como pedido y Claude lo produce.`); bur.append(b); }
+  chat.forEach((m) => {
+    if (m.rol === "yo") return bur.append(el("div", "bur yo", m.texto));
+    if (m.rol === "pedido") return bur.append(el("div", "bur pedido", "✓ Pedido creado: " + m.texto));
+    const b = el("div", "bur fabrica"); b.innerHTML = '<span class="quien">FÁBRICA</span>' + md(m.texto); bur.append(b);
+  });
+  if (pensando) { const p = el("div", "pensando"); p.setAttribute("aria-label", "La Fábrica está pensando"); p.append(el("span"), el("span"), el("span")); bur.append(p); }
+  bur.scrollTop = bur.scrollHeight;
+  const ch = $("#chips"); ch.replaceChildren(); (chat.length ? IDEAS.slice(0, 3) : IDEAS).forEach((t) => { const x = el("button", null, t); x.type = "button"; x.onclick = () => mandar(t); ch.append(x); });
+}
+async function mandar(t) {
+  t = t.trim(); if (!t) return;
+  if (!quien) { toast("Primero elige quién eres (arriba)"); return; }
+  chat.push({ rol: "yo", texto: t }); guardaChat(); pintaChat(true);
+  const btn = $("#enviar"); btn.disabled = true;
+  try {
+    const r = await fetch("api/chat", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ mensajes: chat.filter((m) => m.rol !== "pedido"), quien }) });
+    if (r.status === 401) { location.reload(); return; }
+    const d = await r.json();
+    chat.push({ rol: "fabrica", texto: d.respuesta || "Se me fue la señal. ¿Me lo repites?" });
+    if (d.pedido) { chat.push({ rol: "pedido", texto: d.pedido }); await traer(); lecturas(); }
+  } catch { chat.push({ rol: "fabrica", texto: "No pude conectarme. Revisa la señal e intenta de nuevo." }); }
+  btn.disabled = false; guardaChat(); pintaChat(false);
+}
+function abrirSala() { $("#sala").hidden = false; document.body.style.overflow = "hidden"; pintaChat(false); setTimeout(() => $("#entrada").focus(), 50); }
+function cerrarSala() { $("#sala").hidden = true; document.body.style.overflow = ""; render(); }
+function consola() { const b = el("button", "btn cian", "Abrir la Consola de la Fábrica"); b.type = "button"; b.onclick = abrirSala; return b; }
+$("#fab").onclick = abrirSala; $("#salaCerrar").onclick = cerrarSala;
+$("#salaNueva").onclick = () => { chat = []; guardaChat(); pintaChat(false); };
+const entrada = $("#entrada");
+entrada.addEventListener("input", () => { entrada.style.height = "auto"; entrada.style.height = Math.min(160, entrada.scrollHeight) + "px"; });
+entrada.addEventListener("keydown", (e) => { if (e.key === "Enter" && !e.shiftKey && !matchMedia("(pointer: coarse)").matches) { e.preventDefault(); $("#compositor").requestSubmit(); } });
+$("#compositor").onsubmit = (e) => { e.preventDefault(); const t = entrada.value; entrada.value = ""; entrada.style.height = "auto"; mandar(t); };
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("#sala").hidden) cerrarSala(); });
 
 function vistaMaquinas() {
   const fb = data.fabrica || {}, f = document.createDocumentFragment();
@@ -425,7 +472,7 @@ function vistaGuia() {
     ["Toca GUARDAR VIDEO y luego COPIAR.", "Abre TikTok, sube el video y pega el texto. Sin música de TikTok: el video ya trae su audio."],
     ["Pícale la palomita TikTok.", "30 minutos después súbelo a YouTube Shorts con su título y pícale YouTube. El otro lo ve al instante."],
     ["Ketone-IQ es distinto.", "Activa Branded content en TikTok y registra el enlace en Vyro. Los demás NO llevan Branded content."],
-    ["¿Idea nueva? Ve a MÁQUINAS → Consola de la Fábrica.", "Platícale como a Claude. Cuando digas \"hazlo\", queda como pedido y Claude lo produce."],
+    ["¿Idea nueva? Toca el botón CONSOLA (abajo a la derecha).", "Platícale como a Claude. Cuando digas \"hazlo\", queda como pedido y Claude lo produce."],
     ["Al día siguiente, anota las vistas.", "Escribe los números en Vistas TikTok / YouTube. El RADAR arma el ranking y Claude decide qué producir más."],
   ];
   const g = el("div", "guia"); pasos.forEach(([a, b], i) => { const p = el("div", "paso"), t = el("div"), pa = el("p", null, a); pa.style.fontWeight = "700"; t.append(pa, el("p", "sub", b)); p.append(el("div", "n", String(i + 1)), t); g.append(p); });
@@ -459,6 +506,7 @@ function reloj() {
 
 function render() {
   lecturas();
+  if (!$("#sala").hidden) return;
   const act = document.activeElement; if (act && (act.classList.contains("vistas") || act.classList.contains("vistas-n") || act.tagName === "TEXTAREA")) return; // no pisar lo que se escribe
   const V = { mision: vistaMision, calendario: vistaCalendario, radar: vistaRadar, maquinas: vistaMaquinas, guia: vistaGuia }[tab];
   const y = scrollY; $("#vista").replaceChildren(V()); scrollTo({ top: y });

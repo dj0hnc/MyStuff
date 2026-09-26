@@ -61,8 +61,9 @@ Clips virales para un canal aparte (no para The Rave Couple; guía en `docs/clip
 Tablero de publicación (`panel/` + `functions/`, en https://puente-fabrica.pages.dev; se publica con `npm run panel`, que usa CLOUDFLARE_API_TOKEN/ACCOUNT_ID del `.env`; PIN del panel en PANEL_PIN):
 - `panel/data.json` es la fuente: cada video con serie, fecha/hora de Texas, textos TikTok/YouTube y estado reportado.
 - `panel/videos/` guarda los finales comprimidos (720x1280, crf 26). Para agregar un video: comprimirlo ahí y sumar su fila en `data.json`.
-- Estado compartido (palomitas, vistas, notas, pedidos, bitácora) en `functions/api/estado.js` (Pages Function + KV enlazado como `ESTADO`; `PIN` opcional). Leerlo: `curl https://<proyecto>.pages.dev/api/estado`. Sin KV, el panel cae a modo local.
-- Consola de la Fábrica: `functions/api/chat.js` (Gemini con secreto `GEMINI_API_KEY` en Cloudflare) platica ideas y crea pedidos en el mismo KV; Claude los produce y los marca `listo`.
+- Estado compartido (palomitas, vistas, notas, pedidos, bitácora) en `functions/api/estado.js` (Pages Function + KV enlazado como `ESTADO`). Leerlo: `curl -H "x-pin: $PANEL_PIN" https://puente-fabrica.pages.dev/api/estado`. Sin KV, el panel cae a modo local.
+- Puerta: `functions/_middleware.js` pide el secreto `PIN` de Cloudflare para todo el sitio (cookie de 180 días o header `x-pin`); sin `PIN` queda abierto. Cambiar el PIN = editar el secreto en Cloudflare y volver a desplegar.
+- Consola de la Fábrica: `functions/api/chat.js` (Gemini con secreto `GEMINI_API_KEY` en Cloudflare) platica ideas (thinkingLevel low para que no se coma los tokens; dos vueltas por los 503) y crea pedidos en el mismo KV; Claude los produce y los marca `listo`.
 
 ## Composiciones (`src/Root.tsx`)
 - `TikTokPro`: gancho (Bebas Neue) → subtítulos palabra a palabra (Montserrat) con visualizador →
