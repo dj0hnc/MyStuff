@@ -192,7 +192,7 @@ const SERIES = {
   ovni: { n: "OVNI", c: "var(--ovni)" }, roswell: { n: "Roswell", c: "var(--archivo)" }, apolo: { n: "NASA", c: "var(--archivo)" },
   poli: { n: "Persecución", c: "var(--poli)" }, historia: { n: "Historia", c: "var(--historia)" }, ketone: { n: "Ketone-IQ", c: "var(--ketone)" },
 };
-const TRIPULACION = ["JOHNC", "Karen"];
+const TRIPULACION = ["Juan", "Karen"];
 const LUZ = { ok: "var(--verde)", aviso: "var(--ambar)", off: "var(--rojo)" };
 const DIAS = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
 const $ = (s) => document.querySelector(s);
@@ -418,9 +418,9 @@ function vistaMaquinas() {
 
 function vistaGuia() {
   const f = document.createDocumentFragment();
-  f.append(el("h2", null, "Cómo subir un video"), el("p", "sub", "Para JOHNC y Karen. 2 minutos por video."));
+  f.append(el("h2", null, "Cómo subir un video"), el("p", "sub", "Para Juan y Karen. 2 minutos por video."));
   const pasos = [
-    ["Elige quién eres arriba (JOHNC o Karen).", "Así la bitácora sabe quién hizo cada cosa."],
+    ["Elige quién eres arriba (Juan o Karen).", "Así la bitácora sabe quién hizo cada cosa."],
     ["Abre MISIÓN.", "Salen los videos de hoy en orden, con su hora de Texas. El reloj ámbar cuenta cuánto falta para el siguiente."],
     ["Toca GUARDAR VIDEO y luego COPIAR.", "Abre TikTok, sube el video y pega el texto. Sin música de TikTok: el video ya trae su audio."],
     ["Pícale la palomita TikTok.", "30 minutos después súbelo a YouTube Shorts con su título y pícale YouTube. El otro lo ve al instante."],

@@ -5,7 +5,7 @@
 const MODELOS = ["gemini-3.6-flash", "gemini-3.5-flash"];
 const json = (d, s = 200) => new Response(JSON.stringify(d), { status: s, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
 
-const REGLAS = `Eres la Consola de la Fábrica de @dj0hnclipper (TikTok y YouTube Shorts en inglés). Hablas con JOHNC o Karen en español mexicano, directo, corto y con buena onda.
+const REGLAS = `Eres la Consola de la Fábrica de @dj0hnclipper (TikTok y YouTube Shorts en inglés). Hablas con Juan o Karen en español mexicano, directo, corto y con buena onda.
 Qué produce la Fábrica (Claude la opera; tú propones y armas pedidos):
 - OVNI: videos oficiales del Pentágono (war.gov/DVIDS, 169 archivos), FBI y NASA, narrados con datos del reporte oficial. Texto abajo para no tapar el objeto.
 - Roswell/NASA: documentos desclasificados y audios reales de astronautas.
