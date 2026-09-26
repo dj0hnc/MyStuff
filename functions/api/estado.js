@@ -1,7 +1,7 @@
 // Cerebro compartido del Puente de mando (Cloudflare Pages Function + KV).
 // GET  /api/estado[?p=rave|karen]  -> estado completo {videos, pedidos, bitacora} de ese proyecto (sin p: clips)
 // POST /api/estado  -> {tipo, quien, pin?, ...}:
-//   {tipo:"video", id, cambios:{tiktok,youtube,vyro,vtt,vyt,nota}}
+//   {tipo:"video", id, cambios:{tiktok,youtube,instagram,vyro,vtt,vyt,nota}}
 //   {tipo:"pedido", texto}
 //   {tipo:"pedido-estado", pid, estado:"nuevo"|"produccion"|"listo", nota?}  (nota = respuesta de Claude, se ve bajo el pedido)
 // Requiere un KV enlazado como ESTADO. El PIN lo cuida functions/_middleware.js.
@@ -36,7 +36,8 @@ export async function onRequestPost({ request, env }) {
     const id = texto(b.id, 80);
     if (!/^[\w-]+$/.test(id)) return json({ error: "id" }, 400);
     const c = b.cambios || {}, v = (e.videos[id] ||= {});
-    for (const k of ["tiktok", "youtube", "vyro"]) if (k in c) { v[k] = !!c[k]; if (c[k]) que = `${k === "vyro" ? "registró en Vyro" : "subió a " + (k === "tiktok" ? "TikTok" : "YouTube")} ${id}`; }
+    const RED = { tiktok: "subió a TikTok", youtube: "subió a YouTube", instagram: "subió a Instagram", vyro: "registró en Vyro" };
+    for (const k of Object.keys(RED)) if (k in c) { v[k] = !!c[k]; if (c[k]) que = `${RED[k]} ${id}`; }
     for (const k of ["vtt", "vyt"]) if (k in c) { const n = Math.max(0, Math.floor(Number(c[k]) || 0)); v[k] = n; que = `anotó ${n.toLocaleString("es-MX")} vistas ${k === "vtt" ? "TikTok" : "YouTube"} en ${id}`; }
     if ("nota" in c) { v.nota = texto(c.nota, 400); que = `dejó nota en ${id}`; }
     v.por = quien; v.at = ahora;

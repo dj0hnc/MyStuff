@@ -30,6 +30,12 @@
   .puerta b { font: 800 clamp(22px, 5.5vw, 28px)/1.05 "Orbitron", sans-serif; letter-spacing: .04em; }
   .puerta small { color: var(--suave); font-size: 15px; }
   .puerta .ir { margin-top: auto; font-weight: 700; color: var(--c); }
+  .hoy { display: grid; gap: 8px; }
+  .hoy a { display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 14px; border: 1px solid #ffb020; background: rgba(255,176,32,.08); color: var(--texto); text-decoration: none; }
+  .hoy a:hover { background: rgba(255,176,32,.16); }
+  .hoy b { font: 800 18px "Orbitron", sans-serif; color: #ffb020; }
+  .hoy small { color: var(--suave); display: block; }
+  .cifras { font: 700 14px "Rajdhani", sans-serif; color: var(--texto); }
   .nota { border: 1px dashed var(--linea); border-radius: 14px; padding: 12px 14px; color: var(--suave); font-size: 15px; }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
@@ -37,12 +43,34 @@
 <body>
 <div class="wrap">
   <header><h1>Puente de <span>Mando</span></h1><p>Tres proyectos, cada uno con su panel y su chat. No se mezclan.</p></header>
+  <section class="hoy" id="hoy" aria-label="Lo de hoy" hidden></section>
   <nav class="puertas" aria-label="Paneles">
-    <a class="puerta" href="/clipper" style="--c:#29e7ff"><span class="quien">JUAN · DINERO RÁPIDO</span><b>Fábrica de Clips</b><small>@dj0hnclipper y @j0_clip1. OVNIs, Roswell, NASA, persecuciones, historias y Ketone-IQ. Calendario, textos y radar.</small><span class="ir">Entrar →</span></a>
+    <a class="puerta" href="/clipper" style="--c:#29e7ff"><span class="quien">JUAN · DINERO RÁPIDO</span><b>Fábrica de Clips</b><small>@dj0hnclipper y @j0_clip1. OVNIs, Roswell, NASA, persecuciones, historias y Ketone-IQ.</small><span class="cifras" id="cifras"></span><span class="ir">Entrar →</span></a>
     <a class="puerta" href="/rave" style="--c:#39ff14"><span class="quien">JUAN + KAREN</span><b>The Rave Couple</b><small>@theravecouple.official. El regreso de Juan, Karen protagonista, Old School. Episodios y series.</small><span class="ir">Entrar →</span></a>
     <a class="puerta" href="/karen" style="--c:#ff5fa2"><span class="quien">SOLO KAREN</span><b>Estudio de Karen</b><small>@karena.reyes y @karenareyesnails. Mexicana en Texas, familia, humor y su estudio de uñas.</small><span class="ir">Entrar →</span></a>
   </nav>
   <p class="nota">Tip: guarda tu puerta en la pantalla de inicio del cel (Compartir → Agregar a inicio) y entras directo.</p>
 </div>
+<script>
+// Lo de hoy, en vivo: qué toca publicar y cuántos videos hay. Cada renglón lleva directo al video.
+(async () => {
+  try {
+    const [d, e] = await Promise.all([fetch("/data.json", { cache: "no-store" }).then((r) => r.json()), fetch("/api/estado", { cache: "no-store" }).then((r) => (r.ok ? r.json() : { videos: {} })).catch(() => ({ videos: {} }))]);
+    const hoy = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Chicago" }).format(new Date());
+    const sub = (v) => { const s = e.videos?.[v.id] || {}; return "tiktok" in s ? s.tiktok : v.tiktok; };
+    const pend = d.videos.filter((v) => !sub(v)).length;
+    document.getElementById("cifras").textContent = `${d.videos.length} videos en la videoteca · ${pend} por publicar`;
+    const hoyL = d.videos.filter((v) => v.fecha === hoy && !sub(v)).sort((a, b) => (a.orden || 0) - (b.orden || 0));
+    const box = document.getElementById("hoy");
+    hoyL.slice(0, 4).forEach((v) => {
+      const a = document.createElement("a"); a.href = "/clipper#mision";
+      const b = document.createElement("b"); b.textContent = v.hora || "Hoy";
+      const t = document.createElement("div"); t.textContent = v.titulo; const sm = document.createElement("small"); sm.textContent = "Fábrica de Clips · toca para publicar"; t.append(sm);
+      const ir = document.createElement("span"); ir.textContent = "▶"; a.append(b, t, ir); box.append(a);
+    });
+    box.hidden = !hoyL.length;
+  } catch {}
+})();
+</script>
 </body>
 </html>

@@ -28,8 +28,22 @@ ${error ? `<div class="err">${error}</div>` : ""}
 <button type="submit">ENTRAR</button>
 </form></body></html>`;
 
+// Pages no responde "Range" en los estáticos y Safari (iPhone) no reproduce un video sin 206. Se corta aquí.
+// ponytail: carga el mp4 entero en memoria para cortarlo; sobra con finales de 720p (~5 MB). Si pesan >50 MB, pasar a R2.
+async function conRango(request, res) {
+  const m = /^bytes=(\d*)-(\d*)$/.exec(request.headers.get("range") || "");
+  if (res.status !== 200) return res;
+  if (!m || (m[1] === "" && m[2] === "")) { const r = new Response(res.body, res); r.headers.set("accept-ranges", "bytes"); return r; }
+  const buf = await res.arrayBuffer(), n = buf.byteLength;
+  const a = m[1] === "" ? Math.max(0, n - Number(m[2])) : Number(m[1]);
+  const b = m[1] === "" || m[2] === "" ? n - 1 : Math.min(Number(m[2]), n - 1);
+  if (a > b || a >= n) return new Response(null, { status: 416, headers: { "content-range": `bytes */${n}` } });
+  const h = new Headers(res.headers); h.set("content-range", `bytes ${a}-${b}/${n}`); h.set("content-length", String(b - a + 1)); h.set("accept-ranges", "bytes");
+  return new Response(buf.slice(a, b + 1), { status: 206, headers: h });
+}
+
 export async function onRequest({ request, env, next }) {
-  if (!env.PIN) return next();
+  if (!env.PIN) return next(); // ponytail: sin PIN tampoco hay cortes por rango; hoy siempre hay PIN
   const url = new URL(request.url);
 
   if (url.pathname === "/__entrar" && request.method === "POST") {
@@ -43,7 +57,10 @@ export async function onRequest({ request, env, next }) {
 
   const cookie = request.headers.get("cookie") || "";
   const ok = cookie.includes(`puente=${await firma(env.PIN)}`) || request.headers.get("x-pin") === String(env.PIN);
-  if (ok) return /^\/(karen|rave)\/?$/.test(url.pathname) ? env.ASSETS.fetch(new URL("/proyecto", url)) : next(); // una sola página para los paneles de proyecto
+  if (ok) {
+    if (/^\/(karen|rave)\/?$/.test(url.pathname)) return env.ASSETS.fetch(new URL("/proyecto", url)); // una sola página para los paneles de proyecto
+    return url.pathname.endsWith(".mp4") ? conRango(request, await next()) : next();
+  }
   if (url.pathname.startsWith("/api/")) return new Response(JSON.stringify({ error: "pin" }), { status: 401, headers: { "content-type": "application/json" } });
   return html(PUERTA(""), 401);
 }

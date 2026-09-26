@@ -72,6 +72,10 @@
   .listos figure { margin: 0; background: var(--panel); border: 1px solid var(--linea); border-radius: 14px; padding: 8px; display: grid; gap: 6px; }
   .listos video { width: 100%; aspect-ratio: 9/16; object-fit: cover; border-radius: 10px; background: #000; }
   .listos figcaption { font-size: 13px; font-weight: 700; }
+  .lectura, .meta.ir { cursor: pointer; } .lectura:hover, .meta.ir:hover { border-color: var(--a); }
+  .hub { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+  .cuenta-red { background: var(--panel); border: 1px solid var(--linea); border-left: 4px solid var(--c, var(--a)); border-radius: 14px; padding: 12px; display: grid; gap: 8px; }
+  .cuenta-red small { color: var(--suave); }
   select, .campo { background: var(--panel-2); color: var(--texto); border: 1px solid var(--linea); border-radius: 12px; padding: 10px; font: 600 15px var(--leer); }
   .campo { flex: 1; min-width: 200px; }
   .log { display: grid; gap: 6px; }
@@ -82,7 +86,7 @@
   .paso .n { font: 400 28px/1 var(--tit); color: var(--a); text-align: center; }
   .paso p { margin: 0; }
   .tabs-bar { position: fixed; left: 0; right: 0; bottom: 0; padding: 8px 12px calc(8px + env(safe-area-inset-bottom, 0px)); background: color-mix(in srgb, var(--fondo) 94%, transparent); border-top: 1px solid var(--linea); backdrop-filter: blur(8px); z-index: 10; }
-  .tabs { max-width: 980px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .tabs { max-width: 980px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
   .tab { appearance: none; background: var(--panel); color: var(--suave); border: 1px solid var(--linea); border-radius: 12px; padding: 11px 4px; font: 800 13px var(--leer); letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; }
   .tab[aria-selected="true"] { background: var(--a); color: #16080f; border-color: var(--a); }
   .fab { position: fixed; right: 16px; bottom: calc(80px + env(safe-area-inset-bottom, 0px)); z-index: 20; display: inline-flex; align-items: center; gap: 8px; padding: 13px 18px; border-radius: 999px; border: 0; background: var(--a); color: #16080f; font: 800 14px var(--leer); cursor: pointer; box-shadow: 0 8px 28px color-mix(in srgb, var(--a) 45%, transparent); }
@@ -126,6 +130,7 @@
 </div>
 <nav class="tabs-bar" aria-label="Secciones"><div class="tabs" role="tablist">
   <button class="tab" role="tab" data-t="inicio" aria-selected="true">Inicio</button>
+  <button class="tab" role="tab" data-t="videos" aria-selected="false">Videos</button>
   <button class="tab" role="tab" data-t="temas" aria-selected="false">Temas</button>
   <button class="tab" role="tab" data-t="ideas" aria-selected="false">Ideas</button>
 </div></nav>
@@ -138,6 +143,7 @@
 </section>
 <div class="toast" id="toast" hidden></div>
 
+<script src="/publicar.js"></script>
 <script>
 // Un solo archivo para los paneles de proyecto (/karen, /rave). La configuración vive en /proyectos/<id>.json
 // y el cerebro del chat en /cerebro/<id>.md. El estado compartido va aparte por proyecto (/api/estado?p=<id>).
@@ -175,28 +181,50 @@ function vistaInicio() {
     const m = el("section", "meta"), pct = Math.min(100, (cfg.meta.actual / cfg.meta.objetivo) * 100), barra = el("div", "barra"), i = el("i");
     i.style.width = pct.toFixed(1) + "%"; barra.append(i);
     const num = el("div", "num", cfg.meta.actual.toLocaleString("es-MX")); num.append(el("small", null, ` / ${cfg.meta.objetivo.toLocaleString("es-MX")} ${cfg.meta.unidad}`));
-    m.append(el("div", "lbl", cfg.meta.titulo), num, barra, el("p", "sub", cfg.meta.texto)); f.append(m);
+    m.append(el("div", "lbl", cfg.meta.titulo), num, barra, el("p", "sub", cfg.meta.texto + (cfg.meta.url ? " Toca para ver tus estadísticas." : "")));
+    if (cfg.meta.url) { m.classList.add("ir"); m.tabIndex = 0; m.setAttribute("role", "link"); m.onclick = () => ir(cfg.meta.url); }
+    f.append(m);
   }
-  const L = el("div", "lecturas"); cfg.lecturas.forEach(([x, n]) => { const d = el("div", "lectura"); d.append(el("b", null, x), el("span", null, n)); L.append(d); }); f.append(L);
-  if (cfg.videos?.length) { // videos que la Fábrica terminó para este proyecto
-    f.append(el("h2", null, "Listos para subir"));
-    const g = el("div", "listos");
-    cfg.videos.slice().reverse().forEach((v) => {
-      const fig = el("figure"), vid = el("video"); vid.src = v.video; vid.controls = true; vid.playsInline = true; vid.preload = "metadata";
-      const fila = el("div", "fila"), dl = el("a", "btn mini a", "Guardar"); dl.href = v.video; dl.download = ""; fila.append(dl);
-      if (v.caption) { const c = el("button", "btn mini", "Copiar texto"); c.type = "button"; c.onclick = async () => { try { await navigator.clipboard.writeText(v.caption); toast("Texto copiado"); } catch { toast(v.caption); } }; fila.append(c); }
-      fig.append(vid, el("figcaption", null, v.titulo), fila); g.append(fig);
-    });
-    f.append(g);
-  }
+  const L = el("div", "lecturas");
+  cfg.lecturas.forEach(([x, n, destino]) => { const d = el("div", "lectura"); d.append(el("b", null, x), el("span", null, n)); if (destino) { d.tabIndex = 0; d.setAttribute("role", "link"); d.onclick = () => ir(destino); d.onkeydown = (e) => e.key === "Enter" && ir(destino); } L.append(d); });
+  f.append(L);
+  if (cfg.videos?.length) f.append(el("h2", null, "Listos para subir"), listos());
   f.append(grande(cfg.botonGrande[0], cfg.botonGrande[1], () => abrirSala(cfg.botonGrande[2])));
   const pend = (srv.pedidos || []).filter((p) => p.estado !== "listo");
   f.append(el("h2", null, "Ideas en marcha"));
   if (pend.length) pend.slice(0, 5).forEach((p) => f.append(filaPedido(p))); else f.append(el("div", "vacio", "Todavía no hay ideas guardadas. Platica con el chat y dile \"apúntalo\"."));
   f.append(el("h2", null, "Cómo se usa"));
   cfg.pasos.forEach(([a, b], i) => { const p = el("div", "paso"), t = el("div"), pa = el("p", null, a); pa.style.fontWeight = "800"; t.append(pa, el("p", "sub", b)); p.append(el("div", "n", String(i + 1)), t); f.append(p); });
-  const fila = el("div", "fila"); cfg.enlaces.forEach(([n, u]) => { const a = el("a", "btn", n); a.href = u; a.target = "_blank"; a.rel = "noopener"; fila.append(a); }); f.append(el("h2", null, "Accesos"), fila);
+  f.append(el("h2", null, "Redes"), hub());
   if (srv.bitacora?.length) { f.append(el("h2", null, "Últimos movimientos")); const d = el("div", "log"); srv.bitacora.slice(0, 6).forEach((x) => { const r = el("div"); r.append(el("time", null, hace(x.at)), el("b", null, x.quien + " "), document.createTextNode(x.que)); d.append(r); }); f.append(d); }
+  return f;
+}
+
+function ir(destino) { if (/^https?:/.test(destino)) window.open(destino, "_blank", "noopener"); else irTab(destino.replace("#", "")); }
+function hub() { // cada botón abre el lugar exacto de la red
+  const g = el("div", "hub");
+  cfg.cuentas.forEach((c) => { const d = el("div", "cuenta-red"), fila = el("div", "fila"); if (c.c) d.style.setProperty("--c", c.c); c.l.forEach(([n, u]) => { const a = el("a", "btn mini", n); a.href = u; a.target = "_blank"; a.rel = "noopener"; fila.append(a); }); const t = el("b", null, c.n); d.append(t, el("small", null, c.d), fila); g.append(d); });
+  return g;
+}
+function listos() {
+  const g = el("div", "listos");
+  (cfg.videos || []).slice().reverse().forEach((v) => {
+    const fig = el("figure"), vid = el("video"); vid.src = v.video + "#t=1"; vid.preload = "metadata"; vid.muted = true; vid.playsInline = true;
+    const b = el("button", "btn mini a", "Publicar ▶"); b.type = "button";
+    b.onclick = () => Publicar.abrir({ titulo: v.titulo, video: v.video, textos: { tiktok: v.caption, youtube: v.ytTitle || v.titulo, instagram: v.caption }, redes: v.redes || cfg.redes });
+    fig.append(vid, el("figcaption", null, v.titulo), b); g.append(fig);
+  });
+  return g;
+}
+function vistaVideos() {
+  const f = document.createDocumentFragment(), n = (cfg.videos || []).length;
+  f.append(el("h2", null, `Videos · ${n}`));
+  if (n) f.append(el("p", "sub", "Toca Publicar: en el cel se abre tu menú Compartir con el video y el texto ya va copiado."), listos());
+  else f.append(el("div", "vacio", cfg.videosVacio));
+  const form = el("form", "fila"), inp = el("input", "campo"); inp.placeholder = "Pega aquí el enlace de tu clip (Drive, Dropbox, TikTok)…"; inp.setAttribute("aria-label", "Enlace del clip"); inp.maxLength = 500;
+  const bt = el("button", "btn a", "Mandar a editar"); bt.type = "submit"; form.append(inp, bt);
+  form.onsubmit = async (e) => { e.preventDefault(); const t = inp.value.trim(); if (!t) return; if (await enviar({ tipo: "pedido", texto: "Editar este clip: " + t })) toast("Mandado a la Fábrica"); };
+  f.append(el("h2", null, "Mandar un clip a editar"), el("p", "sub", "Súbelo a Google Drive o Dropbox con acceso por enlace. Claude lo edita en su siguiente vuelta (7:53, 11:53, 3:53 y 7:53) y aparece aquí."), form);
   return f;
 }
 
@@ -283,11 +311,18 @@ document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("#sal
 function render() {
   if (!$("#sala").hidden) return;
   const act = document.activeElement; if (act && act.classList.contains("campo")) return; // no pisar lo que se escribe
-  const y = scrollY; $("#vista").replaceChildren({ inicio: vistaInicio, temas: vistaTemas, ideas: vistaIdeas }[tab]()); scrollTo({ top: y });
+  const y = scrollY; $("#vista").replaceChildren((VISTAS[tab] || vistaInicio)()); scrollTo({ top: y });
 }
-document.querySelectorAll(".tab").forEach((b) => b.addEventListener("click", () => {
-  tab = b.dataset.t; document.querySelectorAll(".tab").forEach((x) => x.setAttribute("aria-selected", String(x === b))); render(); scrollTo({ top: 0 });
-}));
+const VISTAS = { inicio: vistaInicio, videos: vistaVideos, temas: vistaTemas, ideas: vistaIdeas };
+function irTab(t) {
+  tab = VISTAS[t] ? t : "inicio"; history.replaceState(null, "", "#" + tab);
+  document.querySelectorAll(".tab").forEach((x) => x.setAttribute("aria-selected", String(x.dataset.t === tab)));
+  if (!$("#sala").hidden) cerrarSala(); render(); scrollTo({ top: 0 });
+}
+document.querySelectorAll(".tab").forEach((b) => b.addEventListener("click", () => irTab(b.dataset.t)));
+addEventListener("hashchange", () => location.hash.slice(1) !== tab && irTab(location.hash.slice(1)));
+tab = VISTAS[location.hash.slice(1)] ? location.hash.slice(1) : "inicio";
+document.querySelectorAll(".tab").forEach((x) => x.setAttribute("aria-selected", String(x.dataset.t === tab)));
 
 (async () => {
   try { cfg = await (await fetch(`/proyectos/${P}.json`, { cache: "no-store" })).json(); }
@@ -298,7 +333,7 @@ document.querySelectorAll(".tab").forEach((b) => b.addEventListener("click", () 
   $("#salaNombre").textContent = cfg.chatNombre; $("#salaSub").textContent = cfg.chatSub; $("#fabTxt").textContent = cfg.fab || "Platicar";
   quien = ls.get(`quien-${P}`, cfg.tripulacion[0]); barraTripu();
   await traer(); render();
-  setInterval(async () => { if (document.visibilityState === "visible") { await traer(); render(); } }, 15000);
+  setInterval(async () => { if (document.visibilityState !== "visible") return; const antes = JSON.stringify(srv); await traer(); if (JSON.stringify(srv) !== antes) render(); }, 15000);
 })();
 </script>
 </body>

@@ -1,0 +1,85 @@
+// Publicar en 1 toque (lo usan los 3 paneles). En el cel manda el archivo al menú Compartir del sistema,
+// de donde TikTok, YouTube e Instagram lo abren directo en su editor; el texto va copiado para pegarlo.
+// En compu baja el video y abre la página de subida. Publicar.abrir({titulo, video, textos:{tiktok,youtube,instagram}, redes, nota, hecho:{red:bool}, onHecho(red)})
+// ponytail: no hay API directa; TikTok/Meta piden app auditada y YouTube deja privado lo subido por apps sin verificar. El menú Compartir no pide permisos.
+(() => {
+  const REDES = {
+    tiktok: { n: "TikTok", i: "♪", c: "#ff2d55", subir: "https://www.tiktok.com/upload", pista: "Pega el texto en la descripción. Sin música de TikTok: el video ya trae su audio." },
+    youtube: { n: "YouTube Shorts", i: "▶", c: "#ff0000", subir: "https://www.youtube.com/upload", pista: "Pega el texto en el título. Si lo subes desde el cel sale como Short solo." },
+    instagram: { n: "Instagram Reels", i: "◎", c: "#c13584", subir: "https://www.instagram.com/", pista: "Elige Reel y pega el texto en la descripción." },
+  };
+  const css = `
+  .pub-fondo{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.6);display:grid;align-items:end;justify-items:center}
+  .pub{width:min(560px,100%);max-height:92vh;overflow:auto;background:#0e0f16;color:#f2f4ff;border:1px solid #2a2f45;border-bottom:0;border-radius:20px 20px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px));display:grid;gap:12px;font:600 16px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}
+  .pub-top{display:grid;grid-template-columns:72px 1fr auto;gap:12px;align-items:center}
+  .pub video{width:72px;aspect-ratio:9/16;object-fit:cover;border-radius:10px;background:#000}
+  .pub h3{margin:0;font-size:17px;line-height:1.25}
+  .pub small{color:#9aa3c7;font-weight:600}
+  .pub-x{appearance:none;background:#1b1f30;color:#f2f4ff;border:1px solid #2a2f45;border-radius:999px;width:40px;height:40px;font-size:20px;cursor:pointer}
+  .pub-red{appearance:none;display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;text-align:left;width:100%;padding:12px;border-radius:14px;border:1px solid #2a2f45;background:#151827;color:inherit;font:inherit;cursor:pointer}
+  .pub-red:hover{border-color:var(--rc)}
+  .pub-red i{width:44px;height:44px;border-radius:12px;background:var(--rc);display:grid;place-items:center;font-style:normal;font-weight:900;color:#fff;font-size:22px}
+  .pub-red b{display:block}.pub-red small{display:block;font-size:13px}
+  .pub-red.hecho{border-color:#35d07f}.pub-red.hecho::after{content:"✓ publicado";color:#35d07f;font-size:13px}
+  .pub-txt{background:#151827;border:1px solid #2a2f45;border-radius:12px;padding:10px;font-size:14px;white-space:pre-wrap;overflow-wrap:anywhere}
+  .pub-fila{display:flex;flex-wrap:wrap;gap:8px}
+  .pub-btn{appearance:none;flex:1;min-width:130px;padding:12px;border-radius:12px;border:1px solid #2a2f45;background:#1b1f30;color:#f2f4ff;font:800 14px system-ui,sans-serif;cursor:pointer;text-align:center;text-decoration:none}
+  .pub-btn.si{background:#35d07f;border-color:#35d07f;color:#04120a}
+  .pub-aviso{font-size:14px;color:#ffc857}
+  .pub :focus-visible{outline:2px solid #ffc857;outline-offset:2px}`;
+  const st = document.createElement("style"); st.textContent = css; document.head.append(st);
+  const h = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+  const copiar = (t) => (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).catch(() => {});
+  const movil = matchMedia("(pointer: coarse)").matches;
+
+  function abrir(o) {
+    const redes = o.redes || ["tiktok", "youtube", "instagram"];
+    let archivo = null;
+    const fondo = h("div", "pub-fondo"), hoja = h("div", "pub"); hoja.setAttribute("role", "dialog"); hoja.setAttribute("aria-label", "Publicar " + o.titulo);
+    const cerrar = () => { fondo.remove(); document.removeEventListener("keydown", esc); };
+    const esc = (e) => e.key === "Escape" && cerrar();
+    fondo.onclick = (e) => e.target === fondo && cerrar(); document.addEventListener("keydown", esc);
+
+    const vid = h("video"); vid.src = o.video; vid.muted = true; vid.playsInline = true; vid.autoplay = true; vid.loop = true;
+    const x = h("button", "pub-x", "×"); x.type = "button"; x.setAttribute("aria-label", "Cerrar"); x.onclick = cerrar;
+    const tt = h("div"); tt.append(h("h3", null, o.titulo), h("small", null, "Toca la red: se copia el texto y se abre para subir."));
+    const top = h("div", "pub-top"); top.append(vid, tt, x);
+    const estado = h("small", null, movil ? "Preparando el video…" : ""); estado.setAttribute("aria-live", "polite");
+    hoja.append(top); if (o.nota) hoja.append(h("div", "pub-aviso", o.nota)); hoja.append(estado);
+
+    // Se baja al abrir para que el toque siguiente pueda compartir sin perder el permiso del gesto.
+    if (movil && navigator.canShare) fetch(o.video).then((r) => r.blob()).then((b) => {
+      const f = new File([b], (o.titulo || "video").replace(/[^\w-]+/g, "-").slice(0, 40) + ".mp4", { type: "video/mp4" });
+      if (navigator.canShare({ files: [f] })) { archivo = f; estado.textContent = "Listo: al tocar una red se abre tu menú Compartir con el video."; }
+      else estado.textContent = "";
+    }).catch(() => (estado.textContent = ""));
+
+    const confirmar = (red) => {
+      const c = h("div", "pub-fila"), si = h("button", "pub-btn si", `Sí, ya quedó en ${REDES[red].n}`), no = h("button", "pub-btn", "Todavía no");
+      si.type = no.type = "button"; si.onclick = () => { o.onHecho?.(red); btns[red].classList.add("hecho"); c.remove(); }; no.onclick = () => c.remove();
+      c.append(si, no); hoja.append(c); c.scrollIntoView({ block: "nearest" });
+    };
+    const btns = {};
+    redes.forEach((red) => {
+      const R = REDES[red], txt = o.textos?.[red] || o.textos?.tiktok || "";
+      const b = h("button", "pub-red" + (o.hecho?.[red] ? " hecho" : "")); b.type = "button"; b.style.setProperty("--rc", R.c);
+      const t = h("div"); t.append(h("b", null, `Subir a ${R.n}`), h("small", null, R.pista));
+      b.append(h("i", null, R.i), t);
+      b.onclick = async () => {
+        copiar(txt); // mismo toque: el texto queda listo para pegar
+        if (archivo) { try { await navigator.share({ files: [archivo] }); return confirmar(red); } catch (e) { if (e.name === "AbortError") return; } }
+        const a = h("a"); a.href = o.video; a.download = ""; document.body.append(a); a.click(); a.remove();
+        window.open(R.subir, "_blank", "noopener");
+        confirmar(red);
+      };
+      btns[red] = b; hoja.append(b);
+    });
+    const texto = o.textos?.tiktok || "";
+    if (texto) { const box = h("div", "pub-txt", texto); hoja.append(box); }
+    const fila = h("div", "pub-fila"), g = h("a", "pub-btn", "Guardar video"), c = h("button", "pub-btn", "Copiar texto");
+    g.href = o.video; g.download = ""; c.type = "button"; c.onclick = () => { copiar(texto); c.textContent = "¡Copiado!"; };
+    fila.append(g, c); hoja.append(fila);
+    fondo.append(hoja); document.body.append(fondo); x.focus();
+  }
+  window.Publicar = { abrir, REDES };
+})();

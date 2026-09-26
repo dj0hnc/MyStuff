@@ -2,28 +2,204 @@
   "nombre": "The Rave Couple",
   "titulo": "The Rave <span>Couple</span>",
   "lema": "The Rave Couple will never die 👽",
-  "colores": { "--a": "#39ff14", "--b": "#ffb020", "--fondo": "#060a07", "--panel": "#0d1510", "--panel-2": "#132019", "--linea": "#23402b", "--suave": "#a9c9b1", "--texto": "#eefbef" },
-  "tripulacion": ["Juan", "Karen"],
+  "colores": {
+    "--a": "#39ff14",
+    "--b": "#ffb020",
+    "--fondo": "#060a07",
+    "--panel": "#0d1510",
+    "--panel-2": "#132019",
+    "--linea": "#23402b",
+    "--suave": "#a9c9b1",
+    "--texto": "#eefbef"
+  },
+  "tripulacion": [
+    "Juan",
+    "Karen"
+  ],
   "chatNombre": "DIRECTOR CREATIVO",
   "chatSub": "Se sabe su historia. Piensa en episodios, no en videos sueltos.",
   "fab": "Platicar",
   "saludo": "¡Qué onda{quien}! 👽 Soy el **director creativo de The Rave Couple**. Me sé la historia: Tribe 2011, el regalo del FLX4, el regreso de Juan y Karen de protagonista.\n- Te armo el siguiente episodio: gancho, escenas, qué grabar y con qué cámara, audio y caption.\n- Si tienes clips, pega el enlace de la nube y digo cómo editarlos.\n- Dime **\"hazlo\"** y queda como pedido.",
-  "ideas": ["¿Cuál es el siguiente episodio?", "Plan del episodio 3: primer beat", "Ideas de Old School Files", "Karen aprende a mezclar: episodio 1", "¿Por qué el video 1 pegó tanto?", "Plan del mes"],
-  "lecturas": [["168", "Seguidores (17 sep)"], ["22.9K", "El regalo del FLX4"], ["4", "Videos publicados"], ["8-32 s", "Donde se va la gente"]],
-  "botonGrande": ["Siguiente episodio", "Toca y te armo el episodio que sigue con escenas, cámaras, audio y caption.", "¿Cuál debe ser el siguiente episodio de The Rave Couple y cómo lo grabamos?"],
+  "ideas": [
+    "¿Cuál es el siguiente episodio?",
+    "Plan del episodio 3: primer beat",
+    "Ideas de Old School Files",
+    "Karen aprende a mezclar: episodio 1",
+    "¿Por qué el video 1 pegó tanto?",
+    "Plan del mes"
+  ],
+  "lecturas": [
+    [
+      "168",
+      "Seguidores (17 sep)",
+      "https://www.tiktok.com/@theravecouple.official"
+    ],
+    [
+      "22.9K",
+      "El regalo del FLX4",
+      "https://www.tiktok.com/@theravecouple.official"
+    ],
+    [
+      "4",
+      "Videos publicados",
+      "#videos"
+    ],
+    [
+      "8-32 s",
+      "Donde se va la gente",
+      "#temas"
+    ]
+  ],
+  "botonGrande": [
+    "Siguiente episodio",
+    "Toca y te armo el episodio que sigue con escenas, cámaras, audio y caption.",
+    "¿Cuál debe ser el siguiente episodio de The Rave Couple y cómo lo grabamos?"
+  ],
   "temasSub": "Las series de la marca. Toca \"Dame ideas de esto\" y el chat arma el episodio.",
   "temas": [
-    { "n": "DJ Journey · el regreso", "c": "#39ff14", "por": "Lo que pegó: 22.9K con el regalo. Siguen el unboxing y el primer beat tras 3.5 años.", "ejemplos": ["Ep. 2: unboxing (corto, sin tramos muertos)", "Ep. 3: primer sonido, primer beat, primera transición"] },
-    { "n": "Karen's DJ Journey", "c": "#ffb020", "por": "Karen protagonista: primeras mezclas, errores, clases con Juan.", "ejemplos": ["Primera clase: qué es un beatmatch", "Karen vs Juan: misma canción, dos mezclas"] },
-    { "n": "Old School Files", "c": "#6fc3ff", "por": "Nostalgia psy 2000-2005 y los raves de Guadalajara.", "ejemplos": ["Historias que solo los Old School recuerdan", "Tribe Festival 2011: donde nos conocimos"] },
-    { "n": "Rave Couple Life", "c": "#ff5fa2", "por": "Humor de pareja: ella country, él psytrance.", "ejemplos": ["Domingo en casa, versión 30 segundos", "Quién pone la música en el carro"] },
-    { "n": "Música que tiene droga", "c": "#c77dff", "por": "El show de Karen dentro de la marca.", "ejemplos": ["Karen reacciona a un clásico del psy", "La canción que le cambió la noche"] }
+    {
+      "n": "DJ Journey · el regreso",
+      "c": "#39ff14",
+      "por": "Lo que pegó: 22.9K con el regalo. Siguen el unboxing y el primer beat tras 3.5 años.",
+      "ejemplos": [
+        "Ep. 2: unboxing (corto, sin tramos muertos)",
+        "Ep. 3: primer sonido, primer beat, primera transición"
+      ]
+    },
+    {
+      "n": "Karen's DJ Journey",
+      "c": "#ffb020",
+      "por": "Karen protagonista: primeras mezclas, errores, clases con Juan.",
+      "ejemplos": [
+        "Primera clase: qué es un beatmatch",
+        "Karen vs Juan: misma canción, dos mezclas"
+      ]
+    },
+    {
+      "n": "Old School Files",
+      "c": "#6fc3ff",
+      "por": "Nostalgia psy 2000-2005 y los raves de Guadalajara.",
+      "ejemplos": [
+        "Historias que solo los Old School recuerdan",
+        "Tribe Festival 2011: donde nos conocimos"
+      ]
+    },
+    {
+      "n": "Rave Couple Life",
+      "c": "#ff5fa2",
+      "por": "Humor de pareja: ella country, él psytrance.",
+      "ejemplos": [
+        "Domingo en casa, versión 30 segundos",
+        "Quién pone la música en el carro"
+      ]
+    },
+    {
+      "n": "Música que tiene droga",
+      "c": "#c77dff",
+      "por": "El show de Karen dentro de la marca.",
+      "ejemplos": [
+        "Karen reacciona a un clásico del psy",
+        "La canción que le cambió la noche"
+      ]
+    }
   ],
   "pasos": [
-    ["Pide el episodio al chat.", "Te dice qué grabar, con qué cámara (GoPro, Ray-Ban, cel) y cuánto debe durar."],
-    ["Graben y suban los crudos a la nube.", "Pega el enlace en IDEAS o en el chat. Los crudos no van al repo."],
-    ["La Fábrica edita.", "Cortes al compás, drop con imagen, voz nivelada, pocos textos grandes. Cero música IA."],
-    ["Pendiente de ustedes:", "Enlace con los crudos del unboxing y el primer beat, y los WAV limpios de los tracks."]
+    [
+      "Pide el episodio al chat.",
+      "Te dice qué grabar, con qué cámara (GoPro, Ray-Ban, cel) y cuánto debe durar."
+    ],
+    [
+      "Graben y suban los crudos a la nube.",
+      "Pega el enlace en IDEAS o en el chat. Los crudos no van al repo."
+    ],
+    [
+      "La Fábrica edita.",
+      "Cortes al compás, drop con imagen, voz nivelada, pocos textos grandes. Cero música IA."
+    ],
+    [
+      "Pendiente de ustedes:",
+      "Enlace con los crudos del unboxing y el primer beat, y los WAV limpios de los tracks."
+    ]
   ],
-  "enlaces": [["TikTok", "https://www.tiktok.com/@theravecouple.official"], ["Subir a TikTok", "https://www.tiktok.com/upload"], ["Analytics", "https://www.tiktok.com/tiktokstudio/analytics"]]
+  "redes": [
+    "tiktok",
+    "instagram",
+    "youtube"
+  ],
+  "videos": [],
+  "videosVacio": "Aquí aparecen los episodios editados. Los reedits del video 3 y 4 se hicieron en sesiones pasadas y no quedaron guardados en la nube: pega abajo el enlace de los crudos y la Fábrica los vuelve a sacar.",
+  "cuentas": [
+    {
+      "n": "TikTok · @theravecouple.official",
+      "c": "#39ff14",
+      "d": "El canal de los dos",
+      "l": [
+        [
+          "Perfil",
+          "https://www.tiktok.com/@theravecouple.official"
+        ],
+        [
+          "Subir",
+          "https://www.tiktok.com/upload"
+        ],
+        [
+          "Estadísticas",
+          "https://www.tiktok.com/tiktokstudio/analytics"
+        ],
+        [
+          "Comentarios",
+          "https://www.tiktok.com/tiktokstudio/comment"
+        ]
+      ]
+    },
+    {
+      "n": "Instagram",
+      "c": "#c13584",
+      "d": "Reels",
+      "l": [
+        [
+          "Abrir",
+          "https://www.instagram.com/"
+        ],
+        [
+          "Estadísticas",
+          "https://www.instagram.com/accounts/insights/"
+        ]
+      ]
+    },
+    {
+      "n": "YouTube",
+      "c": "#ff0000",
+      "d": "Shorts y episodios largos",
+      "l": [
+        [
+          "Subir",
+          "https://www.youtube.com/upload"
+        ],
+        [
+          "Studio",
+          "https://studio.youtube.com"
+        ]
+      ]
+    },
+    {
+      "n": "Música y escena",
+      "c": "#ffb020",
+      "d": "Tendencias psy y electrónica",
+      "l": [
+        [
+          "Beatport Psy-Trance",
+          "https://www.beatport.com/genre/psy-trance/13"
+        ],
+        [
+          "#psytrance",
+          "https://www.tiktok.com/tag/psytrance"
+        ],
+        [
+          "#ravecouple",
+          "https://www.tiktok.com/tag/ravecouple"
+        ]
+      ]
+    }
+  ]
 }

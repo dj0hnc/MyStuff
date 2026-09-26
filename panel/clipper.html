@@ -173,6 +173,27 @@
   .compositor { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: end; max-width: 820px; width: 100%; margin: 0 auto; }
   .compositor textarea { resize: none; max-height: 160px; background: var(--panel); color: var(--texto); border: 1px solid var(--linea); border-radius: 14px; padding: 12px; font: 500 16px/1.4 var(--leer); }
   .compositor .btn { height: 48px; border-radius: 14px; }
+  .lectura, .lanzamiento { cursor: pointer; } .lectura:hover, .lanzamiento:hover { border-color: var(--cian); }
+  .btn.pub { background: var(--verde); border-color: var(--verde); color: var(--casco); }
+  .buscar { display: grid; gap: 8px; }
+  .buscar input { width: 100%; background: var(--panel); color: var(--texto); border: 1px solid var(--linea); border-radius: 10px; padding: 11px 12px; font: 600 16px var(--leer); }
+  .filtros { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; }
+  .filtros button { flex: none; border: 1px solid var(--linea); background: var(--panel); color: var(--cian-suave); border-radius: 999px; padding: 6px 12px; font: 700 13px var(--leer); cursor: pointer; }
+  .filtros button[aria-pressed="true"] { background: var(--c, var(--cian)); color: var(--casco); border-color: var(--c, var(--cian)); }
+  .teca { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+  .vt { position: relative; appearance: none; padding: 0; border: 1px solid var(--linea); border-radius: 12px; overflow: hidden; background: var(--panel); color: var(--texto); cursor: pointer; text-align: left; font: inherit; display: grid; }
+  .vt:hover { border-color: var(--c); box-shadow: 0 0 14px color-mix(in srgb, var(--c) 40%, transparent); }
+  .vt video { width: 100%; aspect-ratio: 9/16; object-fit: cover; background: #000; pointer-events: none; display: block; }
+  .vt .pie { padding: 8px; display: grid; gap: 4px; border-top: 3px solid var(--c); }
+  .vt .pie b { font-size: 14px; line-height: 1.2; }
+  .vt .redes { display: flex; gap: 4px; flex-wrap: wrap; }
+  .vt .redes span { font: 700 10px var(--reloj); padding: 1px 5px; border-radius: 4px; border: 1px solid var(--linea); color: var(--cian-suave); }
+  .vt .redes span.si { background: var(--verde); color: var(--casco); border-color: var(--verde); }
+  .vt .cuando { position: absolute; top: 6px; left: 6px; background: rgba(5,8,15,.85); border: 1px solid var(--linea); border-radius: 6px; padding: 2px 6px; font: 400 11px var(--reloj); color: var(--ambar); }
+  .hub { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 10px; }
+  .cuenta-red { background: var(--panel); border: 1px solid var(--linea); border-left: 4px solid var(--c); border-radius: 12px; padding: 12px; display: grid; gap: 8px; }
+  .cuenta-red b { font: 800 14px var(--hud); letter-spacing: .06em; }
+  .cuenta-red small { color: var(--cian-suave); }
   [hidden] { display: none !important; }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
@@ -198,10 +219,10 @@
 <nav class="consola" aria-label="Secciones">
   <div class="tabs" role="tablist">
     <button class="tab" role="tab" data-t="mision" aria-selected="true">Misión</button>
+    <button class="tab" role="tab" data-t="videoteca" aria-selected="false">Videoteca</button>
     <button class="tab" role="tab" data-t="calendario" aria-selected="false">Calendario</button>
     <button class="tab" role="tab" data-t="radar" aria-selected="false">Radar</button>
-    <button class="tab" role="tab" data-t="maquinas" aria-selected="false">Máquinas</button>
-    <button class="tab" role="tab" data-t="guia" aria-selected="false">Guía</button>
+    <button class="tab" role="tab" data-t="fabrica" aria-selected="false">Fábrica</button>
   </div>
 </nav>
 <button class="fab" id="fab" type="button" aria-label="Abrir la Consola de la Fábrica"><i></i>CONSOLA</button>
@@ -213,6 +234,7 @@
 </section>
 <div class="toast" id="toast" hidden></div>
 
+<script src="/publicar.js"></script>
 <script>
 const SERIES = {
   ovni: { n: "OVNI", c: "var(--ovni)" }, roswell: { n: "Roswell", c: "var(--archivo)" }, apolo: { n: "NASA", c: "var(--archivo)" },
@@ -288,7 +310,7 @@ function barraTripu() {
 // --- tarjeta de video ---
 function tarjeta(v) {
   const s = SERIES[v.serie] || { n: v.serie, c: "var(--linea)" };
-  const c = el("article", "card" + (hecho(v) ? " hecho" : "")); c.style.setProperty("--c", s.c);
+  const c = el("article", "card" + (hecho(v) ? " hecho" : "")); c.style.setProperty("--c", s.c); c.id = "v-" + v.id;
   const vid = el("video"); vid.src = v.video; vid.preload = "metadata"; vid.controls = true; vid.playsInline = true;
   const b = el("div", "cuerpo");
   const meta = el("div", "meta"); meta.append(el("span", "chip", s.n), el("span", "hora", v.hora ? `TikTok ${v.hora} · YT ${v.horaYT || "-"}` : "En espera"));
@@ -297,10 +319,11 @@ function tarjeta(v) {
   b.append(campo("Texto TikTok / descripción", v.caption));
   if (v.ytTitle) b.append(campo("Título YouTube", v.ytTitle));
   if (v.nota) b.append(el("div", "nota", v.nota));
-  const fila = el("div", "fila"); const dl = el("a", "btn cian", "Guardar video"); dl.href = v.video; dl.download = v.id + ".mp4"; fila.append(dl); b.append(fila);
+  const fila = el("div", "fila"), pb = el("button", "btn pub", "Publicar ▶"); pb.type = "button"; pb.onclick = () => publicar(v);
+  const dl = el("a", "btn", "Guardar"); dl.href = v.video; dl.download = v.id + ".mp4"; fila.append(pb, dl); b.append(fila);
   const checks = el("div", "checks");
   const chk = (k, lbl) => { const l = el("label"), i = el("input"); i.type = "checkbox"; i.checked = !!val(v, k); i.onchange = async () => { if (!(await enviar({ tipo: "video", id: v.id, cambios: { [k]: i.checked } }))) i.checked = !i.checked; }; l.append(i, document.createTextNode(lbl)); return l; };
-  checks.append(chk("tiktok", "TikTok"), v.serie === "ketone" ? chk("vyro", "Registrado en Vyro") : chk("youtube", "YouTube"));
+  checks.append(chk("tiktok", "TikTok"), ...(v.serie === "ketone" ? [chk("vyro", "Registrado en Vyro")] : [chk("youtube", "YouTube"), chk("instagram", "Instagram")]));
   b.append(checks);
   const num = el("div", "num");
   const campoN = (k, lbl) => { const l = el("label", null, lbl), i = el("input"); i.type = "number"; i.inputMode = "numeric"; i.min = "0"; i.placeholder = "0"; i.className = "vistas-n"; i.value = val(v, k) || ""; i.onchange = () => enviar({ tipo: "video", id: v.id, cambios: { [k]: i.value } }); l.append(i); return l; };
@@ -353,6 +376,64 @@ function vistaCalendario() {
     cont.replaceChildren(l.length ? grupoDias(l) : el("div", "vacio", "Nada en este filtro."));
   };
   selE.onchange = selS.onchange = pinta; barra.append(selE, selS); f.append(el("h2", null, "Calendario de lanzamientos"), barra, cont); pinta();
+  return f;
+}
+
+// --- publicar en 1 toque (panel/publicar.js) ---
+function publicar(v) {
+  const ket = v.serie === "ketone";
+  Publicar.abrir({ titulo: v.titulo, video: v.video, textos: { tiktok: v.caption, youtube: v.ytTitle || v.caption, instagram: v.caption },
+    redes: ket ? ["tiktok"] : ["tiktok", "youtube", "instagram"], nota: ket ? "Ketone-IQ: en TikTok activa Branded content y luego registra el enlace en Vyro." : (v.hora ? `Hora sugerida: TikTok ${v.hora} · YouTube ${v.horaYT || "-"} (Texas)` : ""),
+    hecho: { tiktok: !!val(v, "tiktok"), youtube: !!val(v, "youtube"), instagram: !!val(v, "instagram") },
+    onHecho: (red) => enviar({ tipo: "video", id: v.id, cambios: { [red]: true } }) });
+}
+
+function vistaVideoteca() {
+  const f = document.createDocumentFragment(), st = (vistaVideoteca.st ||= { q: "", serie: "", est: "" });
+  const total = data.videos.length, subidos = data.videos.filter(hecho).length;
+  f.append(el("h2", null, `Videoteca · ${total} videos`), el("p", "sub", `${subidos} ya publicados, ${total - subidos} por publicar. Toca uno para publicarlo en TikTok, YouTube o Instagram.`));
+  const bx = el("div", "buscar"), q = el("input", "vistas"); q.type = "search"; q.placeholder = "Buscar: roswell, navy, amazon…"; q.value = st.q; q.setAttribute("aria-label", "Buscar video");
+  const fs = el("div", "filtros"), fe = el("div", "filtros"), grid = el("div", "teca");
+  const boton = (cont, txt, activo, color, fn) => { const b = el("button", null, txt); b.type = "button"; b.setAttribute("aria-pressed", String(activo)); if (color) b.style.setProperty("--c", color); b.onclick = fn; cont.append(b); };
+  const pinta = () => {
+    fs.replaceChildren(); fe.replaceChildren();
+    boton(fs, "Todas", !st.serie, "", () => { st.serie = ""; pinta(); });
+    Object.entries(SERIES).forEach(([k, s]) => { const n = data.videos.filter((v) => v.serie === k).length; if (n) boton(fs, `${s.n} ${n}`, st.serie === k, s.c, () => { st.serie = k; pinta(); }); });
+    [["", "Todos"], ["pend", "Por publicar"], ["hechos", "Publicados"]].forEach(([k, n]) => boton(fe, n, st.est === k, "", () => { st.est = k; pinta(); }));
+    const t = st.q.toLowerCase().trim();
+    const l = data.videos.filter((v) => (!st.serie || v.serie === st.serie) && (!st.est || (st.est === "hechos") === hecho(v)) && (!t || (v.titulo + " " + v.caption + " " + v.serie).toLowerCase().includes(t)));
+    grid.replaceChildren(...(l.length ? l.map(miniatura) : [el("div", "vacio", "Nada con ese filtro.")]));
+  };
+  q.oninput = () => { st.q = q.value; pinta(); };
+  bx.append(q, fs, fe); f.append(bx, grid); pinta();
+  return f;
+}
+function miniatura(v) {
+  const s = SERIES[v.serie] || { n: v.serie, c: "var(--linea)" }, b = el("button", "vt"); b.type = "button"; b.style.setProperty("--c", s.c); b.setAttribute("aria-label", `Publicar ${v.titulo}`);
+  const vid = el("video"); vid.src = v.video + "#t=1"; vid.preload = "metadata"; vid.muted = true; vid.playsInline = true;
+  const pie = el("div", "pie"), redes = el("div", "redes");
+  (v.serie === "ketone" ? [["tiktok", "TT"], ["vyro", "VYRO"]] : [["tiktok", "TT"], ["youtube", "YT"], ["instagram", "IG"]]).forEach(([k, n]) => redes.append(el("span", val(v, k) ? "si" : "", n)));
+  pie.append(el("span", "chip", s.n), el("b", null, v.titulo), redes);
+  b.append(vid, pie); if (v.fecha) b.append(el("span", "cuando", `${v.fecha.slice(5)} ${v.hora || ""}`));
+  b.onclick = () => publicar(v); return b;
+}
+
+// Centro de redes: cada botón abre el lugar exacto (perfil, subir, estadísticas, comentarios).
+const CUENTAS = [
+  { n: "TikTok · @dj0hnclipper", c: "#ff2d55", d: "Clips en inglés + Ketone-IQ", l: [["Perfil", "https://www.tiktok.com/@dj0hnclipper"], ["Subir", "https://www.tiktok.com/upload"], ["Estadísticas", "https://www.tiktok.com/tiktokstudio/analytics"], ["Comentarios", "https://www.tiktok.com/tiktokstudio/comment"]] },
+  { n: "YouTube · @j0_clip1", c: "#ff0000", d: "Shorts (todo menos Ketone)", l: [["Canal", "https://www.youtube.com/@j0_clip1/shorts"], ["Subir", "https://www.youtube.com/upload"], ["Estadísticas", "https://studio.youtube.com/channel/analytics"], ["Comentarios", "https://studio.youtube.com/channel/comments"]] },
+  { n: "Instagram", c: "#c13584", d: "Reels: mismo video, más alcance", l: [["Abrir", "https://www.instagram.com/"], ["Estadísticas", "https://www.instagram.com/accounts/insights/"]] },
+  { n: "Vyro · Ketone-IQ", c: "#6fc3ff", d: "Registrar posts y ver pagos", l: [["Abrir Vyro", "https://vyro.com"]] },
+  { n: "Ideas y tendencias", c: "#ffd60a", d: "Qué se está moviendo hoy", l: [["TikTok Creative Center", "https://ads.tiktok.com/business/creativecenter/inspiration/popular/hashtag/pc/en"], ["Google Trends", "https://trends.google.com/trending?geo=US"], ["DVIDS · UAP", "https://www.dvidshub.net/search/?q=UAP&filter%5Btype%5D=video"]] },
+];
+function hubRedes() {
+  const g = el("div", "hub");
+  CUENTAS.forEach((c) => { const d = el("div", "cuenta-red"), fila = el("div", "fila"); d.style.setProperty("--c", c.c); c.l.forEach(([n, u]) => { const a = el("a", "btn mini", n); a.href = u; a.target = "_blank"; a.rel = "noopener"; fila.append(a); }); d.append(el("b", null, c.n), el("small", null, c.d), fila); g.append(d); });
+  return g;
+}
+function vistaFabrica() {
+  const f = document.createDocumentFragment();
+  f.append(el("h2", null, "Redes"), el("p", "sub", "Cada botón te lleva directo a donde se hace la cosa."), hubRedes(), vistaMaquinas(), vistaGuia());
   return f;
 }
 
@@ -450,7 +531,8 @@ function vistaMaquinas() {
   todas.forEach((c) => { const d = el("div", "con"), luz = el("span", "luz"); luz.style.setProperty("--l", LUZ[c.estado] || "var(--linea)"); const t = el("div"); t.append(el("b", null, c.nombre), el("small", null, c.detalle)); d.append(luz, t); cs.append(d); });
   f.append(cs);
   if (fb.enCola?.length) { f.append(el("h2", null, "En producción")); const ul = el("ul", "lista"); fb.enCola.forEach((x) => ul.append(el("li", null, x))); f.append(ul); }
-  f.append(el("h2", null, "Pedidos a la fábrica"), el("p", "sub", "Escriban qué video quieren o peguen un enlace. Claude lee esta lista y lo produce."));
+  const hp = el("h2", null, "Pedidos a la fábrica"); hp.id = "pedidos";
+  f.append(hp, el("p", "sub", "Escriban qué video quieren o peguen un enlace. Claude los revisa 4 veces al día y contesta aquí mismo."));
   const fila = el("div", "fila"), inp = el("input", "vistas"); inp.placeholder = "Ej. más persecuciones de noche, o pega un enlace"; inp.maxLength = 500;
   const btn = el("button", "btn cian", "Enviar pedido"); btn.onclick = async () => { const t = inp.value.trim(); if (!t) return; if (await enviar({ tipo: "pedido", texto: t })) { inp.value = ""; toast("Pedido enviado"); } };
   fila.append(inp, btn); f.append(fila);
@@ -470,8 +552,8 @@ function vistaGuia() {
   const pasos = [
     ["Elige quién eres arriba (Juan o Karen).", "Así la bitácora sabe quién hizo cada cosa."],
     ["Abre MISIÓN.", "Salen los videos de hoy en orden, con su hora de Texas. El reloj ámbar cuenta cuánto falta para el siguiente."],
-    ["Toca GUARDAR VIDEO y luego COPIAR.", "Abre TikTok, sube el video y pega el texto. Sin música de TikTok: el video ya trae su audio."],
-    ["Pícale la palomita TikTok.", "30 minutos después súbelo a YouTube Shorts con su título y pícale YouTube. El otro lo ve al instante."],
+    ["Toca PUBLICAR ▶ y luego la red.", "En el cel se abre tu menú Compartir con el video: elige TikTok, YouTube o Instagram. El texto ya va copiado, solo pégalo."],
+    ["Confirma con \"Sí, ya quedó\".", "Se palomea solo y el otro lo ve al instante. 30 minutos después haz lo mismo en YouTube e Instagram."],
     ["Ketone-IQ es distinto.", "Activa Branded content en TikTok y registra el enlace en Vyro. Los demás NO llevan Branded content."],
     ["¿Idea nueva? Toca el botón CONSOLA (abajo a la derecha).", "Platícale como a Claude. Cuando digas \"hazlo\", queda como pedido y Claude lo produce."],
     ["Al día siguiente, anota las vistas.", "Escribe los números en Vistas TikTok / YouTube. El RADAR arma el ranking y Claude decide qué producir más."],
@@ -490,8 +572,9 @@ function lecturas() {
   const hoyPend = data.videos.filter((v) => v.fecha === t.fecha && !hecho(v)).length;
   const tv = data.videos.reduce((a, v) => a + vistas(v), 0);
   const L = $("#lecturas"); L.replaceChildren();
-  [["En órbita", `${sub}/${total}`, "verde"], ["Hoy por lanzar", hoyPend, "ambar"], ["Vistas anotadas", fmtN(tv), ""], ["Pedidos nuevos", (srv.pedidos || []).filter((p) => p.estado === "nuevo").length, ""]]
-    .forEach(([n, x, cl]) => { const d = el("div", "lectura " + cl); d.append(el("b", null, String(x)), el("span", null, n)); L.append(d); });
+  [["Publicados", `${sub}/${total}`, "verde", () => { vistaVideoteca.st = { q: "", serie: "", est: "hechos" }; irA("videoteca"); }], ["Hoy por lanzar", hoyPend, "ambar", () => irA("mision")],
+   ["Vistas anotadas", fmtN(tv), "", () => irA("radar")], ["Pedidos nuevos", (srv.pedidos || []).filter((p) => p.estado === "nuevo").length, "", () => irA("fabrica", "pedidos")]]
+    .forEach(([n, x, cl, fn]) => { const d = el("div", "lectura " + cl); d.tabIndex = 0; d.setAttribute("role", "button"); d.onclick = fn; d.onkeydown = (e) => (e.key === "Enter" || e.key === " ") && fn(); d.append(el("b", null, String(x)), el("span", null, n)); L.append(d); });
 }
 
 function reloj() {
@@ -502,6 +585,7 @@ function reloj() {
   const falta = (aMin(prox.hora) - t.min) * 60 - t.seg, h = Math.floor(falta / 3600), m = Math.floor((falta % 3600) / 60), s = falta % 60;
   $("#cuenta").textContent = (h ? h + ":" : "") + String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
   $("#que").textContent = `${prox.hora} · ${(SERIES[prox.serie] || {}).n || ""} · ${prox.titulo}`;
+  box.onclick = () => irA("mision", "v-" + prox.id);
   box.hidden = false;
 }
 
@@ -509,14 +593,21 @@ function render() {
   lecturas();
   if (!$("#sala").hidden) return;
   const act = document.activeElement; if (act && (act.classList.contains("vistas") || act.classList.contains("vistas-n") || act.tagName === "TEXTAREA")) return; // no pisar lo que se escribe
-  const V = { mision: vistaMision, calendario: vistaCalendario, radar: vistaRadar, maquinas: vistaMaquinas, guia: vistaGuia }[tab];
+  const V = VISTAS[tab] || vistaMision;
   const y = scrollY; $("#vista").replaceChildren(V()); scrollTo({ top: y });
 }
 
-document.querySelectorAll(".tab").forEach((b) => b.addEventListener("click", () => {
-  tab = b.dataset.t; document.querySelectorAll(".tab").forEach((x) => x.setAttribute("aria-selected", String(x === b)));
-  render(); scrollTo({ top: 0 });
-}));
+const VISTAS = { mision: vistaMision, videoteca: vistaVideoteca, calendario: vistaCalendario, radar: vistaRadar, fabrica: vistaFabrica };
+function irA(t, destino) { // cambia de pestaña (y la recuerda en la URL) y opcionalmente baja a un elemento
+  tab = VISTAS[t] ? t : "mision"; history.replaceState(null, "", "#" + tab);
+  document.querySelectorAll(".tab").forEach((x) => x.setAttribute("aria-selected", String(x.dataset.t === tab)));
+  if (!$("#sala").hidden) cerrarSala(); render();
+  const d = destino && document.getElementById(destino); if (d) { d.scrollIntoView({ behavior: "smooth", block: "center" }); d.animate?.([{ boxShadow: "0 0 0 3px var(--ambar)" }, { boxShadow: "none" }], 1600); } else scrollTo({ top: 0 });
+}
+document.querySelectorAll(".tab").forEach((b) => b.addEventListener("click", () => irA(b.dataset.t)));
+addEventListener("hashchange", () => location.hash.slice(1) !== tab && irA(location.hash.slice(1)));
+tab = VISTAS[location.hash.slice(1)] ? location.hash.slice(1) : "mision";
+document.querySelectorAll(".tab").forEach((x) => x.setAttribute("aria-selected", String(x.dataset.t === tab)));
 
 (async () => {
   barraTripu();
@@ -524,8 +615,8 @@ document.querySelectorAll(".tab").forEach((b) => b.addEventListener("click", () 
   catch { $("#vista").replaceChildren(el("div", "vacio", "No se pudo cargar la lista. Revisa tu conexión y recarga.")); return; }
   await traer(); render(); reloj(); setInterval(reloj, 1000);
   // Sincroniza con la tripulación cada 15 s (y al volver a la pestaña).
-  setInterval(async () => { if (document.visibilityState === "visible") { await traer(); render(); } }, 15000);
-  document.addEventListener("visibilitychange", async () => { if (document.visibilityState === "visible") { await traer(); render(); } });
+  const sync = async () => { if (document.visibilityState !== "visible") return; const antes = JSON.stringify(srv); await traer(); if (JSON.stringify(srv) !== antes) render(); }; // solo redibuja si hubo cambios
+  setInterval(sync, 15000); document.addEventListener("visibilitychange", sync);
 })();
 </script>
 </body>
