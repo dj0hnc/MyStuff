@@ -1,6 +1,7 @@
 // Publicar en 1 toque (lo usan los 3 paneles). En el cel manda el archivo al menú Compartir del sistema,
 // de donde TikTok, YouTube e Instagram lo abren directo en su editor; el texto va copiado para pegarlo.
 // En compu baja el video y abre la página de subida. Publicar.abrir({titulo, video, textos:{tiktok,youtube,instagram}, redes, nota, hecho:{red:bool}, onHecho(red),
+//   hd: key R2 del final en 1080 (se descarga y se comparte ese; el panel reproduce la vista previa ligera), mb: tamaño
 //   links:{red:url}, onLink(red, url)   -> links de los posts ya publicados (se piden al confirmar y se comparten desde aquí)
 //   vyro?: {registrado, onRegistrado()}}) agrega los pasos 2 y 3 de Vyro: pegar el link del post de TikTok y registrarlo.
 // ponytail: no hay API directa; TikTok/Meta piden app auditada y YouTube deja privado lo subido por apps sin verificar. El menú Compartir no pide permisos.
@@ -79,12 +80,16 @@
     const guardarLink = (red, u) => { links[red] = u; o.onLink?.(red, u); pintaLinks(); };
     pintaLinks(); hoja.append(cajaLinks);
 
-    // Se baja al abrir para que el toque siguiente pueda compartir sin perder el permiso del gesto.
-    if (movil && navigator.canShare) fetch(o.video).then((r) => r.blob()).then((b) => {
+    // El archivo que se comparte/descarga: el 1080 si existe. Se baja al abrir para que el toque siguiente
+    // pueda compartir sin perder el permiso del gesto. ponytail: más de 300 MB no se precarga (el cel se queda sin memoria): se descarga y se sube desde Fotos.
+    const fuente = o.hd ? `/api/crudos/bajar?key=${encodeURIComponent(o.hd)}` : o.video, descarga = o.hd ? fuente + "&descargar=1" : o.video;
+    if (o.hd) hoja.insertBefore(h("small", null, `Calidad: 1080×1920${o.mb ? ` · ${o.mb} MB` : ""}${o.dur ? ` · ${Math.round(o.dur)} s` : ""} (la que pide TikTok)`), estado);
+    if (movil && navigator.canShare && !(o.mb > 300)) fetch(fuente).then((r) => r.blob()).then((b) => {
       const f = new File([b], (o.titulo || "video").replace(/[^\w-]+/g, "-").slice(0, 40) + ".mp4", { type: "video/mp4" });
       if (navigator.canShare({ files: [f] })) { archivo = f; estado.textContent = "Listo: al tocar una red se abre tu menú Compartir con el video."; }
       else estado.textContent = "";
     }).catch(() => (estado.textContent = ""));
+    else if (o.mb > 300) estado.textContent = "Video pesado: toca Guardar en 1080p, y luego súbelo desde Fotos en TikTok.";
 
     const confirmar = (red) => {
       const c = h("div", "pub-fila"), si = h("button", "pub-btn si", `Sí, ya quedó en ${REDES[red].n}`), no = h("button", "pub-btn", "Todavía no");
@@ -102,7 +107,7 @@
       b.onclick = async () => {
         copiar(txt); // mismo toque: el texto queda listo para pegar
         if (archivo) { try { await navigator.share({ files: [archivo] }); return confirmar(red); } catch (e) { if (e.name === "AbortError") return; } }
-        const a = h("a"); a.href = o.video; a.download = ""; document.body.append(a); a.click(); a.remove();
+        const a = h("a"); a.href = descarga; a.download = ""; document.body.append(a); a.click(); a.remove();
         window.open(R.subir, "_blank", "noopener");
         confirmar(red);
       };
@@ -126,8 +131,8 @@
     }
     const texto = o.textos?.tiktok || "";
     if (texto) { const box = h("div", "pub-txt", texto); hoja.append(box); }
-    const fila = h("div", "pub-fila"), g = h("a", "pub-btn", "Guardar video"), c = h("button", "pub-btn", "Copiar texto");
-    g.href = o.video; g.download = ""; c.type = "button"; c.onclick = () => { copiar(texto); c.textContent = "¡Copiado!"; };
+    const fila = h("div", "pub-fila"), g = h("a", "pub-btn", o.hd ? "Guardar en 1080p" : "Guardar video"), c = h("button", "pub-btn", "Copiar texto");
+    g.href = descarga; g.download = ""; c.type = "button"; c.onclick = () => { copiar(texto); c.textContent = "¡Copiado!"; };
     fila.append(g, c); hoja.append(fila);
     fondo.append(hoja); document.body.append(fondo); x.focus();
   }

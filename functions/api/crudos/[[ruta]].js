@@ -6,13 +6,14 @@
 //   POST   /api/crudos/terminar  {key, id, partes:[{n,etag}], p, nota, quien} -> crea el pedido "Editar crudo" en el panel
 //   POST   /api/crudos/cancelar  {key, id}
 //   POST   /api/crudos/enlace    {p, url, nota, quien}  -> link de Dropbox/Drive/WeTransfer/TikTok/lo que sea: queda como pedido (funciona aun sin R2)
-//   GET    /api/crudos/bajar?key (acepta Range: se puede ver en el panel y bajar con curl)
+//   GET    /api/crudos/bajar?key[&descargar=1] (acepta Range: se ve en el panel, se baja con curl o como archivo)
+// Finales en 1080: iniciar con {carpeta:"finales", nombre:"<id>.mp4"} guarda en finales/<p>/<id>.mp4 (se reemplaza al volver a subir, sin pedido).
 //   DELETE /api/crudos?key
 // El PIN lo cuida _middleware.js.
 import { clave, PROYECTOS } from "../estado.js";
 
 const json = (d, s = 200) => new Response(JSON.stringify(d), { status: s, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
-const keyOk = (k) => typeof k === "string" && PROYECTOS.some((p) => k.startsWith(p + "/")) && !k.includes("..") && k.length < 300;
+const keyOk = (k) => typeof k === "string" && PROYECTOS.some((p) => k.startsWith(p + "/") || k.startsWith(`finales/${p}/`)) && !k.includes("..") && k.length < 300;
 
 // Links directos donde se pueda (así la rutina baja el archivo con curl sin página intermedia).
 function directo(u) {
@@ -51,7 +52,7 @@ export async function onRequest({ request, env, params }) {
       const b = await request.json(), p = PROYECTOS.includes(b.p) ? b.p : null;
       if (!p) return json({ error: "proyecto" }, 400);
       const nombre = String(b.nombre || "crudo").normalize("NFKD").replace(/[^\w.-]+/g, "-").slice(-80);
-      const key = `${p}/${new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-")}-${nombre}`;
+      const key = b.carpeta === "finales" ? `finales/${p}/${nombre}` : `${p}/${new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-")}-${nombre}`;
       const up = await env.CRUDOS.createMultipartUpload(key, { httpMetadata: { contentType: String(b.tipo || "application/octet-stream").slice(0, 80) }, customMetadata: { nombre: String(b.nombre || nombre).slice(0, 120), nota: String(b.nota || "").slice(0, 500), quien: String(b.quien || "").slice(0, 24) } });
       return json({ key, id: up.uploadId });
     }
@@ -65,6 +66,7 @@ export async function onRequest({ request, env, params }) {
       const b = await request.json();
       if (!keyOk(b.key) || !Array.isArray(b.partes)) return json({ error: "terminar" }, 400);
       const obj = await env.CRUDOS.resumeMultipartUpload(b.key, b.id).complete(b.partes.map((x) => ({ partNumber: Number(x.n), etag: String(x.etag) })).sort((a, c) => a.partNumber - c.partNumber));
+      if (b.key.startsWith("finales/")) return json({ key: b.key, tam: obj.size }); // un final no es pedido
       const p = b.key.split("/")[0], quien = String(b.quien || "Alguien").slice(0, 24);
       const mb = (obj.size / 1048576).toFixed(0), nombre = b.key.split("/").pop();
       // queda como pedido para la rutina, con el comando para bajarlo
@@ -82,7 +84,7 @@ export async function onRequest({ request, env, params }) {
       const o = await env.CRUDOS.get(key, range ? { range } : {});
       if (!o) return json({ error: "no_existe" }, 404);
       const h = new Headers({ "accept-ranges": "bytes", "cache-control": "private, max-age=3600" }); o.writeHttpMetadata(h);
-      h.set("content-disposition", `inline; filename="${key.split("/").pop()}"`);
+      h.set("content-disposition", `${url.searchParams.get("descargar") ? "attachment" : "inline"}; filename="${key.split("/").pop()}"`);
       if (!range) { h.set("content-length", String(o.size)); return new Response(m === "HEAD" ? null : o.body, { headers: h }); }
       const ini = o.range.offset ?? o.size - o.range.suffix, len = o.range.length ?? o.size - ini;
       h.set("content-range", `bytes ${ini}-${ini + len - 1}/${o.size}`); h.set("content-length", String(len));

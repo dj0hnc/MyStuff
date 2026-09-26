@@ -20,4 +20,4 @@ try {
 }
 props = { ...props, ...JSON.parse(extra) };
 
-await renderizar("TikTokPro", salida, ["--concurrency=4", "--crf=23", `--props=${JSON.stringify(props)}`], { titulo: props.hook || salida }); // avisa el avance al Taller del panel
+await renderizar("TikTokPro", salida, ["--concurrency=4", "--crf=18", `--props=${JSON.stringify(props)}`], { titulo: props.hook || salida }); // avisa el avance al Taller del panel

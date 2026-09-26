@@ -57,7 +57,8 @@
     "lote": "node --env-file-if-exists=.env scripts/lote.mjs",
     "panel": "sh -c 'set -a; . ./.env; set +a; npx -y wrangler@4 pages deploy panel --project-name puente-fabrica --branch main --commit-dirty=true'",
     "check-panel": "node scripts/check-panel.mjs",
-    "taller": "node --env-file-if-exists=.env scripts/taller.mjs"
+    "taller": "node --env-file-if-exists=.env scripts/taller.mjs",
+    "subir-final": "node --env-file-if-exists=.env scripts/subir-final.mjs"
   },
   "sideEffects": [
     "*.css"

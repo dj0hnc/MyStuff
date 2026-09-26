@@ -10,8 +10,8 @@ const MODELOS = ["gemini-3.6-flash", "gemini-3.5-flash"];
 const json = (d, s = 200) => new Response(JSON.stringify(d), { status: s, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
 
 const FORMATO = `Formato: respuestas completas y con personalidad (normalmente 80 a 250 palabras; más si piden un plan), nunca de una sola línea. Usa formato ligero para celular: **negritas** para lo clave, listas con guiones, ganchos entre comillas; algún emoji con medida.
-Si confirman una idea ("hazlo", "sí", "dale", "apúntalo", "mándalo"), llena "pedido" con una instrucción completa para Claude y en "respuesta" confírmalo con emoción. Si solo están platicando, "pedido" va en null.
-Responde SOLO JSON: {"respuesta":"texto con formato","pedido":null | "instrucción para Claude"}`;
+Regla de la casa: primero la idea, después la producción. Nunca mandas nada a producir tú: cuando algo les guste ("me gusta", "apúntalo", "hazlo", "dale", "sí"), llena "pedido" con la idea completa y lista para producir (serie o proyecto, tema, fuente o enlace, cuántos videos, gancho, duración y cualquier detalle que pidieron). Eso queda guardado como 💡 idea; en "respuesta" diles que ya quedó y que cuando la aprueben con el botón ✓ Aprobar pasa a producción. Si solo están platicando, "pedido" va en null.
+Responde SOLO JSON: {"respuesta":"texto con formato","pedido":null | "idea lista para producir"}`;
 
 const ESQUEMA = { type: "OBJECT", properties: { respuesta: { type: "STRING" }, pedido: { type: "STRING", nullable: true } }, required: ["respuesta"] };
 // Gemini a veces mete saltos de línea crudos dentro del JSON: si no parsea, se rescatan los campos a mano.
@@ -24,7 +24,7 @@ function leerJson(t) {
 // Claude: la herramienta forzada "responder" garantiza {respuesta, pedido} sin pelear con el JSON.
 async function claude(env, system, msgs) {
   const messages = msgs.map((m) => ({ role: m.role === "model" ? "assistant" : "user", content: m.parts[0].text }));
-  const tool = { name: "responder", description: "Entrega la respuesta al usuario y, si confirmó, el pedido para Claude.", input_schema: { type: "object", properties: { respuesta: { type: "string" }, pedido: { type: ["string", "null"] } }, required: ["respuesta", "pedido"] } };
+  const tool = { name: "responder", description: "Entrega la respuesta y, si les gustó una idea, la idea completa lista para producir (se guarda como idea por aprobar).", input_schema: { type: "object", properties: { respuesta: { type: "string" }, pedido: { type: ["string", "null"] } }, required: ["respuesta", "pedido"] } };
   const r = await fetch("https://api.anthropic.com/v1/messages", { method: "POST", headers: { "content-type": "application/json", "x-api-key": env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01" },
     body: JSON.stringify({ model: "claude-sonnet-5", max_tokens: 2048, system, messages, tools: [tool], tool_choice: { type: "tool", name: "responder" } }) });
   if (!r.ok) throw new Error(`claude: ${r.status} ${(await r.text()).slice(0, 200)}`);
@@ -78,18 +78,20 @@ export async function onRequestPost({ request, env, data }) {
   const respuesta = String(resp.respuesta || "No entendí, ¿me lo dices de otra forma?").slice(0, 4000);
   const pedido = resp.pedido ? String(resp.pedido).slice(0, 600) : null;
 
+  let ideaId = null;
   if (pedido && env.ESTADO) {
     const e = JSON.parse((await env.ESTADO.get(clave(p))) || "{}");
     const ahora = new Date().toISOString();
-    e.pedidos = [{ id: crypto.randomUUID().slice(0, 8), texto: pedido, quien, at: ahora, estado: "nuevo" }, ...(e.pedidos || [])].slice(0, 200);
-    e.bitacora = [{ quien, que: `pidió (vía chat): ${pedido.slice(0, 60)}`, at: ahora }, ...(e.bitacora || [])].slice(0, 150);
+    ideaId = crypto.randomUUID().slice(0, 8); // se guarda como idea: la aprueban ellos (✓ Aprobar) y hasta entonces la rutina la produce
+    e.pedidos = [{ id: ideaId, texto: pedido, quien, at: ahora, estado: "idea" }, ...(e.pedidos || [])].slice(0, 200);
+    e.bitacora = [{ quien, que: `guardó una idea (vía chat): ${pedido.slice(0, 60)}`, at: ahora }, ...(e.bitacora || [])].slice(0, 150);
     await env.ESTADO.put(clave(p), JSON.stringify(e));
   }
   let hilo = null;
   if (data?.usuario && env.ESTADO) { // historial por persona: lo que mandó el panel + esta respuesta (+ el pedido si hubo)
     const hist = (Array.isArray(b.mensajes) ? b.mensajes : []).map((m) => ({ rol: m.rol, texto: m.texto }));
-    hist.push({ rol: "fabrica", texto: respuesta }); if (pedido) hist.push({ rol: "pedido", texto: pedido });
+    hist.push({ rol: "fabrica", texto: respuesta }); if (pedido) hist.push({ rol: "pedido", texto: pedido, idea: ideaId });
     hilo = await guardarHilo(env, data.usuario, p, typeof b.hilo === "string" ? b.hilo : null, hist).catch(() => null);
   }
-  return json({ respuesta, pedido, motor, hilo, ...(motor === "gemini" && fallo ? { detalle: fallo } : {}) });
+  return json({ respuesta, pedido, idea: ideaId, motor, hilo, ...(motor === "gemini" && fallo ? { detalle: fallo } : {}) });
 }

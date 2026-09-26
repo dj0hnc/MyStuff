@@ -114,14 +114,14 @@ const saludo = () => { const h = +new Intl.DateTimeFormat("en-US", { timeZone: "
     const vyro = d.videos.filter((v) => v.serie === "ketone" && !vy(v)).length;
     if (cifras.clipper) cifras.clipper.textContent = `${d.videos.length} videos · ${cola.length} en cola${vyro ? ` · ${vyro} para Vyro` : ""}`;
   }
-  const ideas = (s) => (s?.pedidos || []).filter((x) => x.estado !== "listo");
-  if (cifras.karen) cifras.karen.textContent = `${ideas(ek).length} ideas en marcha · ${(ck?.videos || []).length} videos listos`;
-  if (cifras.rave) cifras.rave.textContent = `${ideas(er).length} ideas en marcha · ${(cr?.videos || []).length} episodios listos`;
+  const ideas = (s) => (s?.pedidos || []).filter((x) => x.estado !== "listo"), cuenta = (s, e) => (s?.pedidos || []).filter((x) => e.includes(x.estado)).length;
+  if (cifras.karen) cifras.karen.textContent = `${cuenta(ek, ["idea"])} ideas · ${cuenta(ek, ["nuevo", "produccion"])} en producción · ${(ck?.videos || []).length} videos listos`;
+  if (cifras.rave) cifras.rave.textContent = `${cuenta(er, ["idea"])} ideas · ${cuenta(er, ["nuevo", "produccion"])} en producción · ${(cr?.videos || []).length} episodios listos`;
   // lo tuyo hoy: según tu proyecto principal
   if (orden[0] === "clipper") cola.slice(0, 3).forEach((v, i) => agrega(i ? `#${i + 1}` : "YA", v.titulo, i ? "En cola · Fábrica de Clips" : "Siguiente a publicar · toca para ir", "/clipper#mision"));
   else {
     const mias = ideas(orden[0] === "karen" ? ek : er).slice(0, 3);
-    mias.forEach((x) => agrega(x.estado === "produccion" ? "⚙" : "💡", x.texto.split("\n")[0].slice(0, 90), x.estado === "produccion" ? "La Fábrica lo está haciendo" : "Idea guardada", `${PROY[orden[0]].url}#ideas`));
+    mias.forEach((x) => agrega(x.estado === "idea" ? "💡" : "⚙", x.texto.split("\n")[0].slice(0, 90), { idea: "Idea por aprobar · toca para aprobarla", nuevo: "Aprobada · en fila para producir", produccion: "La Fábrica lo está haciendo" }[x.estado], `${PROY[orden[0]].url}#ideas`));
     if (!mias.length) agrega("💬", "¿Qué grabo hoy?", "Toca y tu productora te da 3 ideas listas", `${PROY[orden[0]].url}#inicio`);
   }
   $("#hoySec").hidden = !hoy.children.length;

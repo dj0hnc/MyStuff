@@ -59,6 +59,11 @@ est = await (await post("https://x/api/estado?p=karen", { tipo: "pedido-editar",
 ok(est.pedidos[0].texto === "idea 1 corregida", "editar pedido");
 est = await (await post("https://x/api/estado?p=karen", { tipo: "pedido-borrar", pid, quien: "Karen" })).json();
 ok(!est.pedidos.some((x) => x.id === pid), "borrar pedido");
+// primero idea, luego pedido: la rutina solo ve "nuevo"
+est = await (await post("https://x/api/estado?p=rave", { tipo: "pedido", texto: "episodio 3", estado: "idea", quien: "Juan" })).json();
+ok(est.pedidos[0].estado === "idea", "idea guardada como idea (no va a producción)");
+est = await (await post("https://x/api/estado?p=rave", { tipo: "pedido-estado", pid: est.pedidos[0].id, estado: "nuevo", quien: "Juan" })).json();
+ok(est.pedidos[0].estado === "nuevo" && est.bitacora[0].que.startsWith("aprobó"), "aprobar idea → pedido nuevo");
 // taller: crear, avanzar, terminar
 const tpost = (b) => taller({ request: new Request("https://x/api/taller", { method: "POST", body: JSON.stringify(b) }), env: envP, params: {} });
 await tpost({ id: "prueba-1", titulo: "Video", estado: "renderizando", pct: 10 }); await tpost({ id: "prueba-1", pct: 250, restante: 30 });

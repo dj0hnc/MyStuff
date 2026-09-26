@@ -162,7 +162,7 @@ const hace = (iso) => { const m = Math.round((Date.now() - new Date(iso)) / 6000
 function toast(m) { const t = $("#toast"); t.textContent = m; t.hidden = false; clearTimeout(toast.h); toast.h = setTimeout(() => (t.hidden = true), 1800); }
 
 let cfg = {}, tab = "inicio", srv = { pedidos: [], bitacora: [] }, quien = "";
-const EST = { nuevo: "Idea", produccion: "En proceso", listo: "Listo" };
+const EST = { idea: "💡 Idea", nuevo: "Aprobado · en fila", produccion: "En producción", listo: "Listo" }; // primero idea, luego pedido
 
 async function traer() {
   try { const r = await fetch(`/api/estado?p=${P}`, { cache: "no-store" }); if (r.status === 401) return location.reload(); if (r.ok) srv = await r.json(); } catch {}
@@ -205,9 +205,10 @@ function vistaInicio() {
   f.append(L);
   if (cfg.videos?.length) f.append(el("h2", null, "Listos para subir"), listos());
   f.append(grande(cfg.botonGrande[0], cfg.botonGrande[1], () => abrirSala(cfg.botonGrande[2])));
-  const pend = (srv.pedidos || []).filter((p) => p.estado !== "listo");
-  f.append(el("h2", null, "Ideas en marcha"));
-  if (pend.length) pend.slice(0, 5).forEach((p) => f.append(filaPedido(p))); else f.append(el("div", "vacio", "Todavía no hay ideas guardadas. Platica con el chat y dile \"apúntalo\"."));
+  const ideas = (srv.pedidos || []).filter((p) => p.estado === "idea"), enFila = (srv.pedidos || []).filter((p) => p.estado === "nuevo" || p.estado === "produccion");
+  f.append(el("h2", null, `💡 Ideas por aprobar · ${ideas.length}`));
+  if (ideas.length) ideas.slice(0, 5).forEach((p) => f.append(filaPedido(p))); else f.append(el("div", "vacio", "Todavía no hay ideas. Platica con el chat y cuando algo te guste dile \"apúntalo\"."));
+  if (enFila.length) { f.append(el("h2", null, `🎬 En producción · ${enFila.length}`)); enFila.slice(0, 5).forEach((p) => f.append(filaPedido(p))); }
   f.append(el("h2", null, "Cómo se usa"));
   cfg.pasos.forEach(([a, b], i) => { const p = el("div", "paso"), t = el("div"), pa = el("p", null, a); pa.style.fontWeight = "800"; t.append(pa, el("p", "sub", b)); p.append(el("div", "n", String(i + 1)), t); f.append(p); });
   f.append(el("h2", null, "Redes"), hub());
@@ -227,7 +228,7 @@ function listos() {
     const fig = el("figure"), vid = el("video"); vid.src = v.video + "#t=1"; vid.preload = "metadata"; vid.muted = true; vid.playsInline = true;
     const b = el("button", "btn mini a", "Publicar ▶"); b.type = "button";
     const id = (v.id || v.video.split("/").pop().replace(/\.\w+$/, "")).replace(/[^\w-]/g, "-"), sv = () => srv.videos?.[id] || {};
-    b.onclick = () => Publicar.abrir({ titulo: v.titulo, video: v.video, textos: { tiktok: v.caption, youtube: v.ytTitle || v.titulo, instagram: v.caption }, redes: v.redes || cfg.redes,
+    b.onclick = () => Publicar.abrir({ titulo: v.titulo, video: v.video, hd: v.hd, mb: v.mb, dur: v.dur, textos: { tiktok: v.caption, youtube: v.ytTitle || v.titulo, instagram: v.caption }, redes: v.redes || cfg.redes,
       hecho: { tiktok: !!sv().tiktok, youtube: !!sv().youtube, instagram: !!sv().instagram }, links: sv().links || {},
       onHecho: (red) => enviar({ tipo: "video", id, cambios: { [red]: true } }), onLink: (red, u) => enviar({ tipo: "video", id, cambios: { links: { [red]: u } } }) });
     if (Object.values(sv()).some((x) => x === true)) b.textContent = "Publicado ✓ · otra red";
@@ -292,18 +293,22 @@ function filaPedido(p) {
   const ed = el("button", "btn mini", "✎"), bo = el("button", "btn mini", "🗑"); ed.type = bo.type = "button"; ed.setAttribute("aria-label", "Editar"); bo.setAttribute("aria-label", "Borrar");
   ed.onclick = () => { const n = prompt("Edita el pedido:", p.texto); if (n?.trim() && n.trim() !== p.texto) enviar({ tipo: "pedido-editar", pid: p.id, texto: n.trim() }); };
   bo.onclick = () => confirm("¿Borrar este pedido? No se puede deshacer.") && enviar({ tipo: "pedido-borrar", pid: p.id });
+  if (p.estado === "idea") { const ap = el("button", "btn mini a", "✓ Aprobar"); ap.type = "button"; ap.onclick = () => enviar({ tipo: "pedido-estado", pid: p.id, estado: "nuevo" }); acc.append(ap); }
   acc.append(sel, ed, bo); r.append(t, acc); return r;
 }
 
 function vistaIdeas() {
   const f = document.createDocumentFragment();
-  f.append(el("h2", null, "Ideas y pedidos"), el("p", "sub", "Lo que apuntas aquí o en el chat queda guardado para los dos. Claude lo toma en su siguiente sesión."));
+  f.append(el("h2", null, "Ideas y pedidos"), el("p", "sub", "Primero la idea: la platicas y la pules. Cuando te guste, ✓ Aprobar y pasa a producción. Claude solo produce lo aprobado."));
   const form = el("form", "fila"), inp = el("input", "campo"); inp.placeholder = "Apunta una idea o pega un enlace de tu clip…"; inp.maxLength = 500; inp.setAttribute("aria-label", "Nueva idea");
   const b = el("button", "btn a", "Guardar"); b.type = "submit"; form.append(inp, b);
-  form.onsubmit = async (e) => { e.preventDefault(); const t = inp.value.trim(); if (!t) return; if (!quien) return toast("Primero toca quién eres (arriba)"); if (await enviar({ tipo: "pedido", texto: t })) toast("Guardada"); };
+  form.onsubmit = async (e) => { e.preventDefault(); const t = inp.value.trim(); if (!t) return; if (!quien) return toast("Primero toca quién eres (arriba)"); if (await enviar({ tipo: "pedido", texto: t, estado: "idea" })) toast("Idea guardada"); };
   f.append(form);
   const l = srv.pedidos || []; if (!l.length) f.append(el("div", "vacio", "Nada todavía."));
-  l.slice(0, 60).forEach((p) => f.append(filaPedido(p)));
+  [["idea", "💡 Ideas por aprobar"], ["nuevo", "✓ Aprobadas · en fila"], ["produccion", "🎬 En producción"], ["listo", "Listas"]].forEach(([k, n]) => {
+    const g = l.filter((p) => p.estado === k); if (!g.length) return;
+    f.append(el("h2", null, `${n} · ${g.length}`)); g.slice(0, 40).forEach((p) => f.append(filaPedido(p)));
+  });
   return f;
 }
 
@@ -324,10 +329,18 @@ function md(t) { // markdown mínimo y seguro: se escapa todo antes de dar forma
   return out + (lista ? "</ul>" : "");
 }
 function burbujaBot(txt) { const b = el("div", "bur bot"); b.innerHTML = `<span class="quien">${esc(cfg.chatNombre)}</span>` + md(txt); return b; }
+// Idea guardada por el chat: se aprueba aquí mismo y pasa a producción (regla: primero idea, luego pedido)
+function burbujaIdea(m) {
+  const b = el("div", "bur pedido"), p = (srv.pedidos || []).find((x) => x.id === m.idea);
+  b.append(document.createTextNode("💡 Idea guardada: " + m.texto));
+  if (p?.estado === "idea") { const ok = el("button", "btn mini", "✓ Aprobar y producir"); ok.type = "button"; ok.style.cssText = "display:block;margin-top:8px"; ok.onclick = async () => { if (await enviar({ tipo: "pedido-estado", pid: p.id, estado: "nuevo" })) { ok.replaceWith(el("small", null, "✓ Aprobada: va a producción")); toast("¡A producción!"); } }; b.append(ok); }
+  else if (p) b.append(el("small", null, " · " + ({ nuevo: "aprobada, en fila", produccion: "en producción", listo: "lista ✓" }[p.estado] || "")));
+  return b;
+}
 function pintaChat(pensando) {
   const bur = $("#burbujas"); bur.replaceChildren();
   if (!chat.length) bur.append(burbujaBot(cfg.saludo.replace("{quien}", quien ? ", " + quien : "")));
-  chat.forEach((m) => bur.append(m.rol === "yo" ? el("div", "bur yo", m.texto) : m.rol === "pedido" ? el("div", "bur pedido", "✓ Apuntado: " + m.texto) : burbujaBot(m.texto)));
+  chat.forEach((m) => bur.append(m.rol === "yo" ? el("div", "bur yo", m.texto) : m.rol === "pedido" ? burbujaIdea(m) : burbujaBot(m.texto)));
   if (pensando) { const p = el("div", "pensando"); p.setAttribute("aria-label", "Pensando"); p.append(el("span"), el("span"), el("span")); bur.append(p); }
   bur.scrollTop = bur.scrollHeight;
   const ch = $("#chips"); ch.replaceChildren(); (chat.length ? cfg.ideas.slice(0, 3) : cfg.ideas).forEach((t) => { const x = el("button", null, t); x.type = "button"; x.onclick = () => mandar(t); ch.append(x); });
@@ -342,7 +355,7 @@ async function mandar(t) {
     if (r.status === 401) return location.reload();
     const d = await r.json();
     chat.push({ rol: "bot", texto: d.respuesta || "Se me fue la señal. ¿Me lo repites?" });
-    if (d.pedido) { chat.push({ rol: "pedido", texto: d.pedido }); await traer(); }
+    if (d.pedido) { chat.push({ rol: "pedido", texto: d.pedido, idea: d.idea }); await traer(); }
     if (d.hilo) hilo = d.hilo;
   } catch { chat.push({ rol: "bot", texto: "No pude conectarme. Revisa la señal e intenta de nuevo." }); }
   $("#enviar").disabled = false; guardaChat(); pintaChat(false);
@@ -388,6 +401,9 @@ document.querySelectorAll(".tab").forEach((x) => x.setAttribute("aria-selected",
   await traer(); quien = ls.get(`quien-${P}`, cfg.tripulacion[0]);
   const yo = await fetch("/api/yo").then((r) => r.json()).catch(() => ({})); // quien entró con su PIN
   if (yo.nombre) { quien = yo.nombre; ls.set(`quien-${P}`, quien); }
+  if (yo.usuario && chat.length && !hilo) { // plática de antes del historial (vivía solo en este cel): se sube a tu historial para no perderla
+    try { const r = await fetch("/api/chats", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ p: P, mensajes: chat }) }); if (r.ok) { hilo = (await r.json()).id; guardaChat(); } } catch {}
+  }
   barraTripu(); render();
   setInterval(async () => { if (document.visibilityState !== "visible") return; const antes = JSON.stringify(srv); await traer(); if (JSON.stringify(srv) !== antes) render(); }, 15000);
 })();

@@ -1,7 +1,7 @@
 // Historial de pláticas del chat, separado por persona y proyecto (misma memoria KV, clave chats:<usuario>:<proyecto>).
 // GET    /api/chats?p=karen          -> [{id, titulo, at, n}]  (lo más reciente primero)
 // GET    /api/chats?p=karen&id=x     -> {id, titulo, at, mensajes}
-// POST   /api/chats {p, id, titulo}  -> renombrar
+// POST   /api/chats {p, id, titulo}  -> renombrar · {p, mensajes} (sin id) -> importa una plática que vivía solo en el cel -> {id}
 // DELETE /api/chats?p=karen&id=x     -> borrar
 // El chat (/api/chat) guarda solo cada intercambio con guardarHilo(). Quién es lo pone el middleware.
 import { PROYECTOS } from "./estado.js";
@@ -17,7 +17,7 @@ export async function guardarHilo(env, u, p, id, mensajes) {
   const hilos = await leerHilos(env, u, p), ahora = new Date().toISOString();
   let h = hilos.find((x) => x.id === id);
   if (!h) { h = { id: id || crypto.randomUUID().slice(0, 10), titulo: String(mensajes.find((m) => m.rol === "yo")?.texto || "Plática").replace(/\s+/g, " ").slice(0, 60) }; }
-  h.mensajes = mensajes.slice(-MAX_MSGS).map((m) => ({ rol: ["yo", "fabrica", "pedido"].includes(m.rol) ? m.rol : "fabrica", texto: String(m.texto || "").slice(0, 4000) }));
+  h.mensajes = mensajes.slice(-MAX_MSGS).map((m) => ({ rol: ["yo", "fabrica", "pedido"].includes(m.rol) ? m.rol : "fabrica", texto: String(m.texto || "").slice(0, 4000), ...(m.idea ? { idea: String(m.idea).slice(0, 12) } : {}) }));
   h.at = ahora;
   await escribir(env, u, p, [h, ...hilos.filter((x) => x.id !== h.id)]);
   return h.id;
@@ -34,7 +34,9 @@ export async function onRequest({ request, env, data }) {
   }
   if (request.method === "DELETE") { const hilos = await leerHilos(env, u, p); await escribir(env, u, p, hilos.filter((x) => x.id !== id)); return json({ ok: true }); }
   if (request.method === "POST") {
-    const b = await request.json().catch(() => ({})), hilos = await leerHilos(env, u, b.p), h = hilos.find((x) => x.id === b.id);
+    const b = await request.json().catch(() => ({}));
+    if (!b.id && Array.isArray(b.mensajes) && b.mensajes.length) return json({ id: await guardarHilo(env, u, b.p, null, b.mensajes) });
+    const hilos = await leerHilos(env, u, b.p), h = hilos.find((x) => x.id === b.id);
     if (!h) return json({ error: "no_existe" }, 404);
     h.titulo = String(b.titulo || "").trim().slice(0, 60) || h.titulo; await escribir(env, u, b.p, hilos); return json({ ok: true });
   }

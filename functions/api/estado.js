@@ -2,11 +2,11 @@
 // GET  /api/estado[?p=rave|karen]  -> estado completo {videos, pedidos, bitacora} de ese proyecto (sin p: clips)
 // POST /api/estado  -> {tipo, quien, pin?, ...}:
 //   {tipo:"video", id, cambios:{tiktok,youtube,instagram,vyro,vtt,vyt,nota,link}}
-//   {tipo:"pedido", texto}
+//   {tipo:"pedido", texto, estado?:"idea"}   (flujo: idea -> nuevo (aprobado, la rutina lo produce) -> produccion -> listo)
 //   {tipo:"pedido-editar", pid, texto} · {tipo:"pedido-borrar", pid}
 //   {tipo:"ajustes", ajustes:{tripulacion, horarios, porDia, ytMin, redes, cuentas:{tiktok,youtube,instagram}}}  (ajustes del proyecto, compartidos)
 //   cambios.links:{tiktok,youtube,instagram} = links de los posts ya publicados (para compartir)
-//   {tipo:"pedido-estado", pid, estado:"nuevo"|"produccion"|"listo", nota?}  (nota = respuesta de Claude, se ve bajo el pedido)
+//   {tipo:"pedido-estado", pid, estado:"idea"|"nuevo"|"produccion"|"listo", nota?}  (nota = respuesta de Claude, se ve bajo el pedido)
 // Requiere un KV enlazado como ESTADO. El PIN lo cuida functions/_middleware.js.
 // ponytail: un solo documento en KV, último que escribe gana; sobra para 2-3 personas. Si crece, pasar a D1.
 
@@ -63,13 +63,14 @@ export async function onRequestPost({ request, env }) {
   } else if (b.tipo === "pedido") {
     const t = texto(b.texto, 500).trim();
     if (!t) return json({ error: "vacio" }, 400);
-    e.pedidos.unshift({ id: crypto.randomUUID().slice(0, 8), texto: t, quien, at: ahora, estado: "nuevo" });
+    const idea = b.estado === "idea";
+    e.pedidos.unshift({ id: crypto.randomUUID().slice(0, 8), texto: t, quien, at: ahora, estado: idea ? "idea" : "nuevo" });
     e.pedidos = e.pedidos.slice(0, 200);
-    que = `pidió: ${t.slice(0, 60)}`;
+    que = `${idea ? "guardó la idea" : "pidió"}: ${t.slice(0, 60)}`;
   } else if (b.tipo === "pedido-estado") {
     const p = e.pedidos.find((x) => x.id === b.pid);
-    if (!p || !["nuevo", "produccion", "listo"].includes(b.estado)) return json({ error: "pedido" }, 400);
-    p.estado = b.estado; que = `marcó pedido como ${b.estado}`;
+    if (!p || !["idea", "nuevo", "produccion", "listo"].includes(b.estado)) return json({ error: "pedido" }, 400);
+    que = p.estado === "idea" && b.estado === "nuevo" ? `aprobó y mandó a producir: ${p.texto.slice(0, 50)}` : `marcó pedido como ${b.estado}`; p.estado = b.estado;
     if (b.nota) { p.nota = texto(b.nota, 1500); que = `respondió: ${p.nota.slice(0, 60)}`; }
   } else if (b.tipo === "pedido-editar" || b.tipo === "pedido-borrar") {
     const i = e.pedidos.findIndex((x) => x.id === b.pid); if (i < 0) return json({ error: "pedido" }, 400);
