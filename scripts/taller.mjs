@@ -2,7 +2,8 @@
 // Sin PANEL_PIN solo renderiza, igual que antes. Lo usan render.mjs, clipear.mjs y pack-nails.mjs.
 //
 // Uso directo (en vez de `npx remotion render`):
-//   node --env-file-if-exists=.env scripts/taller.mjs Reedit out/x.mp4 --crf=22 --props='{"edl":"reedit/edl.json"}' --titulo="Video 4" --proyecto=rave
+//   node --env-file-if-exists=.env scripts/taller.mjs Reedit out/x.mp4 --props='{"edl":"reedit/edl.json"}' --titulo="Video 4" --proyecto=rave
+//   (--crf=N solo si quieres forzar otra calidad; si no, la pone CRF según el proyecto)
 import { spawn, execFileSync } from "node:child_process";
 import { readFileSync, rmSync } from "node:fs";
 import { basename } from "node:path";
@@ -11,7 +12,12 @@ import { tmpdir } from "node:os";
 const PANEL = process.env.PANEL_URL || "https://puente-fabrica.pages.dev", PIN = process.env.PANEL_PIN;
 const avisar = (b) => (PIN ? fetch(`${PANEL}/api/taller`, { method: "POST", headers: { "x-pin": PIN, "content-type": "application/json" }, body: JSON.stringify(b) }).catch(() => {}) : Promise.resolve());
 
+// Calidad por proyecto si no se pide otra con --crf: clips y Ketone en normal (TikTok recomprime; pesan la mitad),
+// material propio de Rave Couple y Karen en máxima. Siempre 1080x1920 (lo que pide TikTok); crf solo cambia la compresión.
+export const CRF = { clipper: 23, rave: 18, karen: 18 };
+
 export async function renderizar(comp, salida, args = [], { titulo = basename(salida), proyecto = "clipper" } = {}) {
+  if (!args.some((a) => a.startsWith("--crf"))) args = [...args, `--crf=${CRF[proyecto] ?? 23}`];
   const id = `${Date.now().toString(36)}-${basename(salida, ".mp4").replace(/[^\w-]/g, "-").slice(0, 40)}`;
   await avisar({ id, titulo, proyecto, comp, salida, etapa: "Preparando", pct: 0, estado: "renderizando" });
   if (PIN) { // vistazo: el cuadro de los 2 s, chiquito

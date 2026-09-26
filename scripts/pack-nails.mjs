@@ -43,7 +43,7 @@ for (const v of videos) {
   await writeFile("public/clips.json", JSON.stringify({ fuente: v.id, clips }, null, 1));
   execSync("VOZ_PROVEEDOR=gemini npm run voz", { stdio: "inherit" });
   const props = { titulo: v.titulo, servicios: v.servicios.map(([icono, texto]) => ({ icono, texto })), segundosPorClip: 2.2 };
-  await renderizar("Promo", `out/pack/${v.id}.mp4`, ["--concurrency=4", "--crf=18", `--props=${JSON.stringify(props)}`], { titulo: `Uñas · ${v.hook}`, proyecto: "karen" });
+  await renderizar("Promo", `out/pack/${v.id}.mp4`, ["--concurrency=4", `--props=${JSON.stringify(props)}`], { titulo: `Uñas · ${v.hook}`, proyecto: "karen" });
   execSync(`${FF} -y -loglevel error -i out/pack/${v.id}.mp4 -vf scale=720:1280 -c:v libx264 -crf 24 -c:a aac -b:a 160k out/pack/${v.id}-web.mp4`);
   await mkdir("public/reedit/nails/pack/guiones", { recursive: true });
   await copyFile("public/guion.json", `public/reedit/nails/pack/guiones/${v.id}.json`);
