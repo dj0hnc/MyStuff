@@ -5,6 +5,7 @@
 
 import { clave, PROYECTOS } from "./estado.js";
 import { guardarHilo } from "./chats.js";
+import { leerLink, resumen } from "../../lib/leer.js";
 
 const MODELOS = ["gemini-3.6-flash", "gemini-3.5-flash"];
 const json = (d, s = 200) => new Response(JSON.stringify(d), { status: s, headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" } });
@@ -59,7 +60,11 @@ export async function onRequestPost({ request, env, data }) {
 
   const [comun, propio] = await Promise.all([asset(env, request.url, "/cerebro/comun.md"), asset(env, request.url, `/cerebro/${p}.md`)]);
   const hoy = new Date().toLocaleDateString("es-MX", { timeZone: "America/Chicago", weekday: "long", day: "numeric", month: "long", year: "numeric" });
-  const system = `${propio}\n\n${comun}\n\n${FORMATO}\n\nHoy (Texas): ${hoy}. Hablas con: ${quien}.${await contexto(env, request.url, p)}`;
+  // Links en el último mensaje (YouTube, TikTok, Instagram, Facebook o cualquier página): se abren y se ven antes de contestar
+  const links = [...new Set(String(b.mensajes.at(-1)?.texto || "").match(/https?:\/\/[^\s<>"')]+/g) || [])].slice(0, 3);
+  const leidos = (await Promise.all(links.map((u) => leerLink(u, env).catch(() => null)))).filter(Boolean);
+  if (leidos.length) msgs.at(-1).parts[0].text += `\n\n[El Puente abrió estos links por ti y vio los videos. Esto es lo que contienen; úsalo como si lo hubieras visto tú, no digas que no puedes abrir links y no inventes lo que no dice:]\n${leidos.map(resumen).join("\n\n")}`;
+  const system = `${propio}\n\n${comun}\n\n${FORMATO}\n\nPuedes ver links: cuando te pasan uno de TikTok, YouTube, Instagram, Facebook o una página, el Puente lo abre, ve el video y te pega lo que contiene en el mensaje. También te pueden mandar videos con 📎.\n\nHoy (Texas): ${hoy}. Hablas con: ${quien}.${await contexto(env, request.url, p)}`;
   let resp = null, fallo = "", motor = "claude";
   if (env.ANTHROPIC_API_KEY) { try { resp = await claude(env, system.replace(/\nResponde SOLO JSON:.*$/s, "\nEntrega tu respuesta con la herramienta responder."), msgs); } catch (e) { fallo = e.message; } }
   if (!resp && env.GEMINI_API_KEY) {
@@ -93,5 +98,5 @@ export async function onRequestPost({ request, env, data }) {
     hist.push({ rol: "fabrica", texto: respuesta }); if (pedido) hist.push({ rol: "pedido", texto: pedido, idea: ideaId });
     hilo = await guardarHilo(env, data.usuario, p, typeof b.hilo === "string" ? b.hilo : null, hist).catch(() => null);
   }
-  return json({ respuesta, pedido, idea: ideaId, motor, hilo, ...(motor === "gemini" && fallo ? { detalle: fallo } : {}) });
+  return json({ respuesta, pedido, idea: ideaId, motor, hilo, leidos: leidos.map(({ url, plataforma, titulo, autor, vio, nota }) => ({ url, plataforma, titulo, autor, vio, nota })), ...(motor === "gemini" && fallo ? { detalle: fallo } : {}) });
 }

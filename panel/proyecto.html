@@ -142,7 +142,7 @@
   <div class="sala-top"><div><b id="salaNombre"></b><small id="salaSub"></small></div><div class="fila"><button class="btn mini" id="salaHist" type="button">Historial</button><button class="btn mini" id="salaNueva" type="button">Nueva</button><button class="btn" id="salaCerrar" type="button">Cerrar</button></div></div>
   <div class="burbujas" id="burbujas" aria-live="polite"></div>
   <div class="chips" id="chips"></div>
-  <form class="compositor" id="compositor"><textarea id="entrada" rows="1" maxlength="2000" placeholder="Escribe o pega un enlace…" aria-label="Mensaje"></textarea><button class="btn a" type="submit" id="enviar">Enviar</button></form>
+  <form class="compositor" id="compositor" style="grid-template-columns:auto 1fr auto"><label class="btn" id="adjuntar" title="Mandar un video del cel" aria-label="Mandar un video del cel" style="height:48px;border-radius:14px;cursor:pointer">📎<input type="file" accept="video/*" hidden id="adjuntoArchivo"></label><textarea id="entrada" rows="1" maxlength="2000" placeholder="Pega un link (TikTok, YouTube, Instagram…) o escribe" aria-label="Mensaje"></textarea><button class="btn a" type="submit" id="enviar">Enviar</button></form>
 </section>
 <div class="toast" id="toast" hidden></div>
 
@@ -375,6 +375,17 @@ function md(t) { // markdown mínimo y seguro: se escapa todo antes de dar forma
   return out + (lista ? "</ul>" : "");
 }
 function burbujaBot(txt) { const b = el("div", "bur bot"); b.innerHTML = `<span class="quien">${esc(cfg.chatNombre)}</span>` + md(txt); return b; }
+// 📎 Video del cel al chat: la IA lo ve (hasta 18 MB) y el análisis viaja en el mensaje, oculto tras [[visto]]
+const verTexto = (t) => { const [a, b] = String(t).split("\n\n[[visto]]"); return b != null ? a + "  · 👀 visto" : a; };
+document.getElementById("adjuntoArchivo").onchange = async (ev) => {
+  const f = ev.target.files[0]; ev.target.value = ""; if (!f) return;
+  if (f.size > 18 * 1048576) return toast("El chat ve videos de hasta 18 MB. Para más grandes súbelo como crudo.");
+  toast("Viendo tu video…");
+  try {
+    const d = await (await fetch("/api/leer", { method: "POST", headers: { "content-type": f.type || "video/mp4", "x-nombre": encodeURIComponent(f.name) }, body: f })).json();
+    mandar(`📎 Te mando este video: ${f.name}\n\n[[visto]]\nLo que se ve en el video que mandé:\n${d.analisis || d.nota || "No se pudo ver."}`);
+  } catch { toast("No se pudo mandar el video. Revisa la señal."); }
+};
 // Idea guardada por el chat: se aprueba aquí mismo y pasa a producción (regla: primero idea, luego pedido)
 function burbujaIdea(m) {
   const b = el("div", "bur pedido"), p = (srv.pedidos || []).find((x) => x.id === m.idea);
@@ -386,12 +397,13 @@ function burbujaIdea(m) {
 function pintaChat(pensando) {
   const bur = $("#burbujas"); bur.replaceChildren();
   if (!chat.length) bur.append(burbujaBot(cfg.saludo.replace("{quien}", quien ? ", " + quien : "")));
-  chat.forEach((m) => bur.append(m.rol === "yo" ? el("div", "bur yo", m.texto) : m.rol === "pedido" ? burbujaIdea(m) : burbujaBot(m.texto)));
+  chat.forEach((m) => bur.append(m.rol === "yo" ? el("div", "bur yo", verTexto(m.texto)) : m.rol === "pedido" ? burbujaIdea(m) : burbujaBot(m.texto)));
   if (pensando) { const p = el("div", "pensando"); p.setAttribute("aria-label", "Pensando"); p.append(el("span"), el("span"), el("span")); bur.append(p); }
   bur.scrollTop = bur.scrollHeight;
   const ch = $("#chips"); ch.replaceChildren(); (chat.length ? cfg.ideas.slice(0, 3) : cfg.ideas).forEach((t) => { const x = el("button", null, t); x.type = "button"; x.onclick = () => mandar(t); ch.append(x); });
 }
 async function mandar(t) {
+  if (/https?:\/\//.test(t)) toast("Abriendo el link y viendo el video…");
   t = t.trim(); if (!t) return;
   if (!quien) { quien = cfg.tripulacion[0]; ls.set(`quien-${P}`, quien); barraTripu(); }
   chat.push({ rol: "yo", texto: t }); guardaChat(); pintaChat(true);
@@ -400,7 +412,7 @@ async function mandar(t) {
     const r = await fetch("/api/chat", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ proyecto: P, mensajes: chat, quien, hilo }) });
     if (r.status === 401) return location.reload();
     const d = await r.json();
-    chat.push({ rol: "bot", texto: d.respuesta || "Se me fue la señal. ¿Me lo repites?" });
+    chat.push({ rol: "bot", texto: (d.leidos?.length ? `👀 *Vi: ${d.leidos.map((l) => `${l.plataforma}${l.autor ? " · " + l.autor : ""}${l.vio === "video" ? " (el video)" : " (solo texto)"}`).join(", ")}*\n\n` : "") + (d.respuesta || "Se me fue la señal. ¿Me lo repites?") });
     if (d.pedido) { chat.push({ rol: "pedido", texto: d.pedido, idea: d.idea }); await traer(); }
     if (d.hilo) hilo = d.hilo;
   } catch { chat.push({ rol: "bot", texto: "No pude conectarme. Revisa la señal e intenta de nuevo." }); }
@@ -455,6 +467,8 @@ document.querySelectorAll(".tab").forEach((x) => x.setAttribute("aria-selected",
     try { const r = await fetch("/api/chats", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ p: P, mensajes: chat }) }); if (r.ok) { hilo = (await r.json()).id; guardaChat(); } } catch {}
   }
   barraTripu(); render();
+  const compartido = new URLSearchParams(location.search).get("link"); // desde Compartir en el iPhone (Atajo) o Android
+  if (compartido) { history.replaceState(null, "", location.pathname + location.hash); abrirSala(`Mira este: ${compartido}`); }
   setInterval(async () => { if (document.visibilityState !== "visible") return; const antes = JSON.stringify(srv); await traer(); if (JSON.stringify(srv) !== antes) render(); }, 15000);
 })();
 </script>

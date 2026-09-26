@@ -6,6 +6,7 @@ import { onRequestGet as yoGet, onRequestPost as yoPost } from "../functions/api
 import { onRequest as chats, guardarHilo } from "../functions/api/chats.js";
 import { onRequest as taller } from "../functions/api/taller/[[ruta]].js";
 import { cifrar } from "../lib/push.js";
+import { plataforma } from "../lib/leer.js";
 import { calcularAgenda } from "../panel/agenda.mjs";
 const kv = new Map(), env = { ESTADO: { get: async (k) => kv.get(k) ?? null, put: async (k, v) => kv.set(k, v) } };
 const post = async (url, body) => (await onRequestPost({ request: new Request(url, { method: "POST", body: JSON.stringify(body) }), env }));
@@ -105,4 +106,6 @@ ok((await tpost({ id: "../x" })).status === 400, "taller: id raro rechazado");
   const pasado = calcularAgenda(P, 0, S, { fecha: "2026-09-26", min: 18 * 60 + 35 }, ["6:00 PM"]);
   ok(pasado[0].hora === "9:30 PM" && !pasado[0].tarde && pasado[1].fecha === "2026-09-27", "cola: pasarlo lo manda al siguiente horario");
 }
+// leer links: detecta cada red (la lectura real se probó en vivo desde Cloudflare)
+ok(["https://youtu.be/x", "https://www.tiktok.com/@a/video/1", "https://vm.tiktok.com/Z", "https://www.instagram.com/reel/abc/", "https://fb.watch/x", "https://m.facebook.com/watch/?v=1", "https://example.com"].map(plataforma).join() === "youtube,tiktok,tiktok,instagram,facebook,facebook,web", "leer: detecta YouTube, TikTok, Instagram, Facebook y web");
 process.exit(fallas ? 1 : 0);

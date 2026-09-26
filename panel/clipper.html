@@ -246,7 +246,7 @@
   <div class="sala-top"><div><b>CONSOLA DE LA FÁBRICA</b><small>Platica ideas; di "hazlo" y queda como pedido.</small></div><div class="fila"><button class="btn mini" id="salaHist" type="button">Historial</button><button class="btn mini" id="salaNueva" type="button">Nueva</button><button class="btn" id="salaCerrar" type="button">Cerrar</button></div></div>
   <div class="burbujas" id="burbujas" aria-live="polite"></div>
   <div class="chips" id="chips"></div>
-  <form class="compositor" id="compositor"><textarea id="entrada" rows="1" maxlength="2000" placeholder="Escribe tu idea o pega un enlace…" aria-label="Mensaje"></textarea><button class="btn cian" type="submit" id="enviar">Enviar</button></form>
+  <form class="compositor" id="compositor" style="grid-template-columns:auto 1fr auto"><label class="btn" id="adjuntar" title="Mandar un video del cel" aria-label="Mandar un video del cel" style="height:48px;border-radius:14px;cursor:pointer">📎<input type="file" accept="video/*" hidden id="adjuntoArchivo"></label><textarea id="entrada" rows="1" maxlength="2000" placeholder="Pega un link (TikTok, YouTube, Instagram…) o escribe tu idea" aria-label="Mensaje"></textarea><button class="btn cian" type="submit" id="enviar">Enviar</button></form>
 </section>
 <div class="toast" id="toast" hidden></div>
 
@@ -590,6 +590,17 @@ function md(t) { // markdown mínimo y seguro: se escapa todo antes de dar forma
   return out + (lista ? "</ul>" : "");
 }
 const IDEAS = ["¿Qué video hago hoy?", "¿Cómo vamos según el Radar?", "Ideas de OVNIs nuevos", "3 persecuciones de noche", "Una serie tipo Roswell", "¿Qué le falta al canal para crecer?"];
+// 📎 Video del cel al chat: la IA lo ve (hasta 18 MB) y el análisis viaja en el mensaje, oculto tras [[visto]]
+const verTexto = (t) => { const [a, b] = String(t).split("\n\n[[visto]]"); return b != null ? a + "  · 👀 visto" : a; };
+document.getElementById("adjuntoArchivo").onchange = async (ev) => {
+  const f = ev.target.files[0]; ev.target.value = ""; if (!f) return;
+  if (f.size > 18 * 1048576) return toast("El chat ve videos de hasta 18 MB. Para más grandes súbelo como crudo.");
+  toast("Viendo tu video…");
+  try {
+    const d = await (await fetch("/api/leer", { method: "POST", headers: { "content-type": f.type || "video/mp4", "x-nombre": encodeURIComponent(f.name) }, body: f })).json();
+    mandar(`📎 Te mando este video: ${f.name}\n\n[[visto]]\nLo que se ve en el video que mandé:\n${d.analisis || d.nota || "No se pudo ver."}`);
+  } catch { toast("No se pudo mandar el video. Revisa la señal."); }
+};
 // Idea guardada por el chat: se aprueba aquí mismo y pasa a producción (regla: primero idea, luego pedido)
 function burbujaIdea(m) {
   const b = el("div", "bur pedido"), p = (srv.pedidos || []).find((x) => x.id === m.idea);
@@ -602,7 +613,7 @@ function pintaChat(pensando) {
   const bur = $("#burbujas"); bur.replaceChildren();
   if (!chat.length) { const b = el("div", "bur fabrica"); b.innerHTML = '<span class="quien">FÁBRICA</span>' + md(`¡Qué onda${quien ? ", " + quien : ""}! Soy la **Consola de la Fábrica**.\n- Cuéntame qué video quieres, o pega un enlace.\n- Te propongo ganchos, fuentes y por qué pegaría.\n- Cuando digas **"hazlo"**, queda como pedido y Claude lo produce.`); bur.append(b); }
   chat.forEach((m) => {
-    if (m.rol === "yo") return bur.append(el("div", "bur yo", m.texto));
+    if (m.rol === "yo") return bur.append(el("div", "bur yo", verTexto(m.texto)));
     if (m.rol === "pedido") return bur.append(burbujaIdea(m));
     const b = el("div", "bur fabrica"); b.innerHTML = '<span class="quien">FÁBRICA</span>' + md(m.texto); bur.append(b);
   });
@@ -611,6 +622,7 @@ function pintaChat(pensando) {
   const ch = $("#chips"); ch.replaceChildren(); (chat.length ? IDEAS.slice(0, 3) : IDEAS).forEach((t) => { const x = el("button", null, t); x.type = "button"; x.onclick = () => mandar(t); ch.append(x); });
 }
 async function mandar(t) {
+  if (/https?:\/\//.test(t)) toast("Abriendo el link y viendo el video…");
   t = t.trim(); if (!t) return;
   if (!quien) { toast("Primero elige quién eres (arriba)"); return; }
   chat.push({ rol: "yo", texto: t }); guardaChat(); pintaChat(true);
@@ -619,7 +631,7 @@ async function mandar(t) {
     const r = await fetch("api/chat", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ proyecto: "clipper", mensajes: chat, quien, hilo }) });
     if (r.status === 401) { location.reload(); return; }
     const d = await r.json();
-    chat.push({ rol: "fabrica", texto: d.respuesta || "Se me fue la señal. ¿Me lo repites?" });
+    chat.push({ rol: "fabrica", texto: (d.leidos?.length ? `👀 *Vi: ${d.leidos.map((l) => `${l.plataforma}${l.autor ? " · " + l.autor : ""}${l.vio === "video" ? " (el video)" : " (solo texto)"}`).join(", ")}*\n\n` : "") + (d.respuesta || "Se me fue la señal. ¿Me lo repites?") });
     if (d.pedido) { chat.push({ rol: "pedido", texto: d.pedido, idea: d.idea }); await traer(); lecturas(); }
     if (d.hilo) hilo = d.hilo;
   } catch { chat.push({ rol: "fabrica", texto: "No pude conectarme. Revisa la señal e intenta de nuevo." }); }
@@ -755,6 +767,8 @@ document.querySelectorAll(".tab").forEach((x) => x.setAttribute("aria-selected",
     try { const r = await fetch("/api/chats", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ p: "clipper", mensajes: chat }) }); if (r.ok) { hilo = (await r.json()).id; guardaChat(); } } catch {}
   }
   await traer(); barraTripu(); render(); reloj(); setInterval(reloj, 1000);
+  const q = new URLSearchParams(location.search), compartido = q.get("link") || (q.get("texto") || "").match(/https?:\/\/\S+/)?.[0]; // Compartir en iPhone (Atajo) o Android
+  if (compartido) { history.replaceState(null, "", location.pathname + location.hash); abrirSala(); mandar(`Mira este: ${compartido}`); }
   // Sincroniza con la tripulación cada 15 s (y al volver a la pestaña).
   const sync = async () => { if (document.visibilityState !== "visible") return; const antes = JSON.stringify(srv); await traer(); if (JSON.stringify(srv) !== antes) render(); }; // solo redibuja si hubo cambios
   setInterval(sync, 15000); document.addEventListener("visibilitychange", sync);
